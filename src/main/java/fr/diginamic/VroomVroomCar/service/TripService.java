@@ -7,6 +7,7 @@ import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.TripMapper;
 import fr.diginamic.VroomVroomCar.repository.TripRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,18 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class TripService {
+@RequiredArgsConstructor
+@Transactional
+public class TripService implements ITripService {
 
     @Autowired
-    private TripRepository tripRepository;
+    private final TripRepository tripRepository;
 
     @Autowired
-    private TripMapper tripMapper;
+    private final TripMapper tripMapper;
 
     @Autowired
-    private ValidationUtil validationUtil;
+    private final ValidationUtil validationUtil;
 
     /**
      * Crée un nouveau trajet.
@@ -114,7 +117,7 @@ public class TripService {
     /**
      * Calcule l'heure d'arrivée estimée
      */
-    private LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) {
+    public LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) {
         // TODO: Implémenter la logique de calcul (API Google Maps, durée fixe, etc.)
         return heureDepart.plusHours(2);
     }
