@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +12,6 @@ import java.time.LocalTime;
 import java.util.Set;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "trajet")
@@ -58,4 +56,18 @@ public class Trip {
     @OneToMany(mappedBy = "trip",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Subscribe> subscribes;
 
+    public Trip(Date dateDebut, Date dateFin, LocalTime heureDepart, LocalTime heureArrivee, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee, int nbPlacesRestantes, User organisateur, Car car, Set<Subscribe> subscribes) {
+        this.dateDebut = dateDebut;
+        this.dateFin = dateFin;
+        this.heureDepart = heureDepart;
+        this.heureArrivee = heureArrivee;
+        this.lieuDepart = lieuDepart;
+        this.lieuArrivee = lieuArrivee;
+        this.villeDepart = villeDepart;
+        this.villeArrivee = villeArrivee;
+        this.nbPlacesRestantes = nbPlacesRestantes;
+        this.organisateur = organisateur;
+        this.car = car;
+        this.subscribes = subscribes;
+    }
 }
