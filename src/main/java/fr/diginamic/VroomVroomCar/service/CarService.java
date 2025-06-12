@@ -11,6 +11,7 @@ import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,11 @@ import java.util.stream.Collectors;
 @Transactional
 public class CarService implements ICarService {
 
+    @Autowired
     private final CarRepository carRepository;
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final CarMapper carMapper;
 
     // GET by ID
