@@ -32,6 +32,7 @@ public class TripMapper {
         Car car = carRepository.findById(request.getCarId())
                 .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
         trip.setCar(car);
+
         return trip;
     }
 
@@ -47,6 +48,15 @@ public class TripMapper {
         response.setVilleDepart(trip.getVilleDepart());
         response.setVilleArrivee(trip.getVilleArrivee());
         response.setNbPlacesRestantes(trip.getNbPlacesRestantes());
+
+        if (trip.getOrganisateur() != null) {
+            response.setOrganisateurId(trip.getOrganisateur().getId());
+        }
+
+        if (trip.getCar() != null) {
+            response.setCarId(trip.getCar().getId());
+        }
+
         return response;
     }
 
@@ -62,5 +72,7 @@ public class TripMapper {
         target.setVilleDepart(source.getVilleDepart());
         target.setVilleArrivee(source.getVilleArrivee());
         target.setNbPlacesRestantes(source.getNbPlacesRestantes());
+        target.setOrganisateur(source.getOrganisateur());
+        target.setCar(source.getCar());
     }
 }
