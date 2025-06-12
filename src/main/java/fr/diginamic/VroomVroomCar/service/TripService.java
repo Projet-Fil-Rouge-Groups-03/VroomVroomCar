@@ -31,9 +31,7 @@ public class TripService implements ITripService {
     @Autowired
     private final ValidationUtil validationUtil;
 
-    /**
-     * Crée un nouveau trajet.
-     */
+    // Create Trip
     @Transactional
     public TripResponseDto createTrip(TripRequestDto tripRequestDto) throws FunctionnalException {
         // Validation des dates
@@ -50,9 +48,7 @@ public class TripService implements ITripService {
     }
 
 
-    /**
-     * Récupère tous les trajets.
-     */
+    // Read Trip
     @Transactional(readOnly = true)
     public List<TripResponseDto> getAllTrips() {
         List<Trip> trips = tripRepository.findAll();
@@ -60,9 +56,6 @@ public class TripService implements ITripService {
                 .map(tripMapper::toResponse)
                 .collect(Collectors.toList());
     }
-    /**
-     * Récupère un trajet par son ID.
-     */
     @Transactional(readOnly = true)
     public TripResponseDto getTripById(Integer id) throws FunctionnalException {
         // Vérification existence
@@ -72,9 +65,7 @@ public class TripService implements ITripService {
         return tripMapper.toResponse(trip);
     }
 
-    /**
-     * Met à jour un trajet existant.
-     */
+    // Update Trip
     @Transactional
     public TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto) throws FunctionnalException {
         // Vérification existence
@@ -103,9 +94,7 @@ public class TripService implements ITripService {
         return tripMapper.toResponse(updatedTrip);
     }
 
-    /**
-     * Supprime un trajet.
-     */
+    // Delete Trip
     @Transactional
     public void deleteTrip(Integer id) throws FunctionnalException {
         if (!tripRepository.existsById(id)) {
@@ -114,9 +103,7 @@ public class TripService implements ITripService {
         tripRepository.deleteById(id);
     }
 
-    /**
-     * Calcule l'heure d'arrivée estimée
-     */
+    // Calcule l'heure d'arrivée estimée
     public LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) {
         // TODO: Implémenter la logique de calcul (API Google Maps, durée fixe, etc.)
         return heureDepart.plusHours(2);
