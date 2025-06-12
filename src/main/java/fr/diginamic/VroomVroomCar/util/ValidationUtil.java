@@ -1,4 +1,94 @@
 package fr.diginamic.VroomVroomCar.util;
 
-public class ValidationUtil {
+import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
+import lombok.NoArgsConstructor;
+
+/**
+ * Cette classe utilitaire fournit des méthodes statiques pour valider divers types de données.
+ * Elle est conçue pour être utilisée dans toute l'application afin de garantir la validité des entrées.
+ */
+@NoArgsConstructor
+public final class ValidationUtil {
+
+    /**
+     * Valide un CarRequestDto pour s'assurer qu'il n'est pas null et que l'ID de l'utilisateur est présent.
+     *
+     * @param carRequestDto Le DTO de requête de voiture à valider.
+     * @throws IllegalArgumentException si le DTO est null ou si l'ID de l'utilisateur est null.
+     */
+    public static void validateCarRequestDto(CarRequestDto carRequestDto) {
+        if (carRequestDto == null) {
+            throw new IllegalArgumentException("Le DTO de requête de voiture ne peut pas être null.");
+        }
+        if (carRequestDto.getUtilisateurId() == null) {
+            throw new IllegalArgumentException("L'ID de l'utilisateur ne peut pas être null.");
+        }
+    }
+
+    /**
+     * Valide un identifiant d'utilisateur pour s'assurer qu'il n'est pas null.
+     *
+     * @param userId L'identifiant de l'utilisateur à valider.
+     * @throws IllegalArgumentException si l'ID de l'utilisateur est null.
+     */
+    public static void validateUserId(Integer userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("L'ID de l'utilisateur ne peut pas être null.");
+        }
+    }
+
+    /**
+     * Valide une limite pour s'assurer qu'elle est supérieure à zéro.
+     *
+     * @param limit La limite à valider.
+     * @throws IllegalArgumentException si la limite est inférieure ou égale à zéro.
+     */
+    public static void validateLimit(int limit) {
+        if (limit <= 0) {
+            throw new IllegalArgumentException("La limite doit être supérieure à zéro.");
+        }
+    }
+
+    /**
+     * Valide une chaîne de caractères pour s'assurer qu'elle n'est pas vide ou null.
+     * Ex : "Le champ voiture ne peut pas être vide".
+     *
+     * @param value La chaîne de caractères à valider.
+     * @param fieldName Le nom du champ à utiliser dans le message d'erreur.
+     * @throws IllegalArgumentException si la chaîne est vide ou null.
+     */
+    public static void validateStringNotEmpty(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Le champ " + fieldName + " ne peut pas être vide.");
+        }
+    }
+
+    /**
+     * Valide un identifiant pour s'assurer qu'il n'est pas null.
+     * Ex : "L'ID de Voiture ne peut pas être null".
+     *
+     * @param id L'identifiant à valider.
+     * @param entityName Le nom de l'entité à utiliser dans le message d'erreur.
+     * @throws IllegalArgumentException si l'identifiant est null.
+     *
+     */
+    public static void validateIdNotNull(Integer id, String entityName) {
+        if (id == null) {
+            throw new IllegalArgumentException("L'ID de " + entityName + " ne peut pas être null.");
+        }
+    }
+
+    /**
+     * Valide un champ pour s'assurer qu'il n'est pas null.
+     * Ex : "Categorie ne peut pas être null"
+     *
+     * @param fieldName Le nom du champ à valider.
+     * @throws IllegalArgumentException si le champ est null.
+     */
+    public static void validateNotNull(String fieldName) {
+        if (fieldName == null) {
+            throw new IllegalArgumentException(fieldName + " ne peut pas être null.");
+        }
+    }
 }
+
