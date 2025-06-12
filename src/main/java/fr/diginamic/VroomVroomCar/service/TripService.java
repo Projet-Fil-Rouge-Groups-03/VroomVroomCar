@@ -1,7 +1,10 @@
 package fr.diginamic.VroomVroomCar.service;
 
+import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
+import fr.diginamic.VroomVroomCar.mapper.TripMapper;
 import fr.diginamic.VroomVroomCar.repository.TripRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +20,31 @@ public class TripService {
     @Autowired
     private TripRepository tripRepository;
 
-    //Create Trip
+    @Autowired
+    private TripMapper tripMapper;
+
+    /**
+     * Crée un nouveau trajet.
+     */
     @Transactional
-    public void insertTrip(Trip trip) throws FunctionnalException {
-        boolean exist = tripRepository.existsById(trip.getId());
-        if (!exist){
-            tripRepository.save(trip);
-        } else {
-            throw new FunctionnalException("La ville existe déjà sous l'identifiant " + trip.getId());
-        }
+    public TripResponseDto createTrip(TripRequestDto tripRequestDto) throws FunctionnalException {
+//        // Validation métier
+//        validateTripDates(tripRequestDto.getDateDebut(), tripRequestDto.getDateFin());
+//
+//        // Conversion DTO -> Entity
+//        Trip trip = tripMapper.toEntity(tripRequestDto);
+//
+//        // Calcul de l'heure d'arrivée (logique métier)
+//        trip.setHeureArrivee(calculateArrivalTime(trip.getHeureDepart(), trip.getLieuDepart(), trip.getLieuArrivee()));
+//
+//        // Sauvegarde
+//        Trip savedTrip = tripRepository.save(trip);
+//
+//        // Conversion Entity -> DTO pour la réponse
+//        return tripMapper.toResponseDto(savedTrip);
+        return null;
     }
+
 
     //Read Trip
     @Transactional
