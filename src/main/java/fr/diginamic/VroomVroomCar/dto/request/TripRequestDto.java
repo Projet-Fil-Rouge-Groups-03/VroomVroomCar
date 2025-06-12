@@ -9,38 +9,43 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 import java.time.LocalTime;
 
+/**
+ * DTO représentant les données nécessaires d'un trajet.
+ * Ces informations seront envoyés dans la base de donnée.
+ */
+
 @Data
 @NoArgsConstructor
 public class TripRequestDto {
 
     private Integer id;
 
-    @NotNull
+    @NotNull(message = "La date de début de trajet est obligatoire.")
     private Date dateDebut;
-    @NotNull
+    @NotNull(message = "La date de fin de trajet est obligatoire.")
     private Date dateFin;
 
-    @NotNull
+    @NotNull(message = "L'heure de départ est obligatoire.")
     private LocalTime heureDepart;
     // heureArrivee supprimée car calculée
 
-    @NotBlank
+    @NotBlank(message = "Le lieu de départ est obligatoire.")
     private String lieuDepart;
-    @NotBlank
+    @NotBlank(message = "Le lieu d'arrivée est obligatoire.")
     private String lieuArrivee;
 
-    @NotBlank
+    @NotBlank(message = "La ville de départ est obligatoire.")
     private String villeDepart;
-    @NotBlank
+    @NotBlank(message = "La ville d'arrivée est obligatoire.")
     private String villeArrivee;
 
-    @Min(0)
+    @Min(value = 0, message = "Le nombre de places restantes ne peut pas être en dessous de 0.")
     private int nbPlacesRestantes;
 
-    @NotNull
+    @NotNull(message = "L'organisateur est obligatoire.")
     private Integer organisateurId;
 
-    @NotNull
+    @NotNull(message = "Le véhicule est obligatoire.")
     private Integer carId;
 
 

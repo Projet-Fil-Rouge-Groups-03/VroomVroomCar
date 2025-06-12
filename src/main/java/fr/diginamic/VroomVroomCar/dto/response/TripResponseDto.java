@@ -1,13 +1,16 @@
 package fr.diginamic.VroomVroomCar.dto.response;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.time.LocalTime;
+
+
+/**
+ * DTO représentant les données d'un trajet renvoyées au client.
+ * Contient toutes les informations nécessaires à l'affichage d'un trajet.
+ */
 
 @Data
 @NoArgsConstructor
