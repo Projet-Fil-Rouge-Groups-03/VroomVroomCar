@@ -40,7 +40,7 @@ public class CarController implements ICarController {
 
     // POST
 
-    @PostMapping
+    @PostMapping("/create")
     @Override
     public ResponseEntity<CarResponseDto> createCar(@Valid @RequestBody CarRequestDto carRequestDto) throws ResourceNotFoundException {
         CarResponseDto createdCar = carService.createCar(carRequestDto);
@@ -49,7 +49,7 @@ public class CarController implements ICarController {
 
     // UPDATE
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @Override
     public ResponseEntity<CarResponseDto> updateCar(@PathVariable Integer id, @Valid @RequestBody CarRequestDto carRequestDto) throws ResourceNotFoundException {
         CarResponseDto updatedCar = carService.updateCar(id, carRequestDto);
@@ -58,7 +58,7 @@ public class CarController implements ICarController {
 
     // DELETE
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @Override
     public ResponseEntity<String> deleteCar(@PathVariable Integer id) throws ResourceNotFoundException {
         carService.deleteCar(id);
