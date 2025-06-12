@@ -2,9 +2,13 @@ package fr.diginamic.VroomVroomCar.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.io.Serializable;
 
+@Data
+@AllArgsConstructor
 @Embeddable
 class SubscribeKey implements Serializable {
     @Column(name = "utilisateur_id")
@@ -12,24 +16,4 @@ class SubscribeKey implements Serializable {
     @Column(name = "trajet_id")
     Integer tripId;
 
-    public SubscribeKey(Integer userid, Integer tripid) {
-        this.userId = userid;
-        this.tripId = tripid;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getTripId() {
-        return tripId;
-    }
-
-    public void setTripId(Integer tripId) {
-        this.tripId = tripId;
-    }
 }
