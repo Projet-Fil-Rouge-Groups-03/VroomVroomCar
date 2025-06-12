@@ -1,7 +1,10 @@
 package fr.diginamic.VroomVroomCar.util;
 
 import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
+import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 /**
  * Cette classe utilitaire fournit des méthodes statiques pour valider divers types de données.
@@ -88,6 +91,15 @@ public final class ValidationUtil {
     public static void validateNotNull(String fieldName) {
         if (fieldName == null) {
             throw new IllegalArgumentException(fieldName + " ne peut pas être null.");
+        }
+    }
+
+    /**
+     * Valide qu'une date de fin est postérieure à la date de début.
+     */
+    public void validateEndDateBeforeStartDate(Date dateDebut, Date dateFin) throws FunctionnalException {
+        if (dateDebut != null && dateFin != null && dateFin.before(dateDebut)) {
+            throw new FunctionnalException("La date de fin doit être postérieure à la date de début.");
         }
     }
 }
