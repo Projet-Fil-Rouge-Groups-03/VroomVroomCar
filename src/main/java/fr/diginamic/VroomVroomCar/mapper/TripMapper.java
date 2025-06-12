@@ -8,7 +8,9 @@ import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TripMapper {
 
     private UserRepository userRepository;
@@ -60,19 +62,31 @@ public class TripMapper {
         return response;
     }
 
-    public void updateEntity(Trip source, Trip target) {
-        target.setDateDebut(source.getDateDebut());
-        target.setDateFin(source.getDateFin());
-        target.setDateDebut(source.getDateDebut());
-        target.setDateFin(source.getDateFin());
-        target.setHeureDepart(source.getHeureDepart());
-        target.setHeureArrivee(source.getHeureArrivee());
-        target.setLieuDepart(source.getLieuDepart());
-        target.setLieuArrivee(source.getLieuArrivee());
-        target.setVilleDepart(source.getVilleDepart());
-        target.setVilleArrivee(source.getVilleArrivee());
-        target.setNbPlacesRestantes(source.getNbPlacesRestantes());
-        target.setOrganisateur(source.getOrganisateur());
-        target.setCar(source.getCar());
+    public void updateEntity(Trip existingTrip, TripRequestDto requestDto) {
+        if (requestDto.getDateDebut() != null) {
+            existingTrip.setDateDebut(requestDto.getDateDebut());
+        } else if (requestDto.getDateFin() != null) {
+            existingTrip.setDateFin(requestDto.getDateFin());
+        } else if (requestDto.getHeureDepart() != null) {
+            existingTrip.setHeureDepart(requestDto.getHeureDepart());
+        } else if (requestDto.getLieuDepart() != null) {
+            existingTrip.setLieuDepart(requestDto.getLieuDepart());
+        } else if (requestDto.getLieuArrivee() != null) {
+            existingTrip.setLieuArrivee(requestDto.getLieuArrivee());
+        } else if (requestDto.getVilleDepart() != null) {
+            existingTrip.setVilleDepart(requestDto.getVilleDepart());
+        } else if (requestDto.getVilleArrivee() != null) {
+            existingTrip.setVilleArrivee(requestDto.getVilleArrivee());
+        } else if (requestDto.getNbPlacesRestantes() >= 0) {
+            existingTrip.setNbPlacesRestantes(requestDto.getNbPlacesRestantes());
+        } else if (requestDto.getOrganisateurId() != null) {
+            User organisateur = userRepository.findById(requestDto.getOrganisateurId())
+                    .orElseThrow(() -> new EntityNotFoundException("Organisateur non trouvé"));
+            existingTrip.setOrganisateur(organisateur);
+        } else if (requestDto.getCarId() != null) {
+            Car car = carRepository.findById(requestDto.getCarId())
+                    .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
+            existingTrip.setCar(car);
+        }
     }
 }
