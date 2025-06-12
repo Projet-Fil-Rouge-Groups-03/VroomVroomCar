@@ -1,4 +1,7 @@
 package fr.diginamic.VroomVroomCar.exception;
 
-public class FunctionnalException {
+public class FunctionnalException extends Exception{
+    public FunctionnalException(String message) {
+        super(message);
+    }
 }
