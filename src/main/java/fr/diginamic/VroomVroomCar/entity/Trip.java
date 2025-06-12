@@ -1,13 +1,15 @@
 package fr.diginamic.VroomVroomCar.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.HashSet;
+import java.time.LocalTime;
 import java.util.Set;
 
 @Data
@@ -21,34 +23,39 @@ public class Trip {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     private Date dateDebut;
+    @NotNull
     private Date dateFin;
 
-    private LocalDate heureDepart;
-    private LocalDate heureArrivee;
+    @NotNull
+    private LocalTime heureDepart;
+    private LocalTime heureArrivee;
 
+    @NotBlank
     private String lieuDepart;
+    @NotBlank
     private String lieuArrivee;
 
+    @NotBlank
     private String villeDepart;
+    @NotBlank
     private String villeArrivee;
 
+    @Min(0)
     private int nbPlacesRestantes;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "organisateur_id")
     private User organisateur;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "car_id")
     private Car car;
 
-    @ManyToMany
-    @JoinTable(
-            name = "subscribe",
-            joinColumns = @JoinColumn(name = "trajet_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> user = new HashSet<>();
+    @OneToMany(mappedBy = "trip",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Subscribe> subscribes;
 
 }
