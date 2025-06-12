@@ -22,7 +22,7 @@ public class TripRequestDto {
 
     @NotNull
     private LocalTime heureDepart;
-    private LocalTime heureArrivee;
+    // heureArrivee supprimée car calculée
 
     @NotBlank
     private String lieuDepart;
