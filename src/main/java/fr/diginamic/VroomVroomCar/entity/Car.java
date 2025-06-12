@@ -50,9 +50,20 @@ public class Car {
     private Motorisation motorisation;
 
     @Enumerated(EnumType.STRING)
-    private Categorie categorie;
-
+    private Categorie categories;
 
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Trip> trip = new HashSet<>();
+    private Set<Trip> trips = new HashSet<>();
+
+    public Car(String marque, String modele, int nbDePlaces, String pollution, String infosSupp, User user, Motorisation motorisation, Categorie categories, Set<Trip> trips) {
+        this.marque = marque;
+        this.modele = modele;
+        this.nbDePlaces = nbDePlaces;
+        this.pollution = pollution;
+        this.infosSupp = infosSupp;
+        this.user = user;
+        this.motorisation = motorisation;
+        this.categories = categories;
+        this.trips = trips;
+    }
 }
