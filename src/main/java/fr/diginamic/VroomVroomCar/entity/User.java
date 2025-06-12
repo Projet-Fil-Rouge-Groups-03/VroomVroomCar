@@ -43,11 +43,12 @@ public class User {
     @JoinColumn(name = "reservation_id")
     private Set<Reservation> reservations;
 
-    public User(String nom, String prenom, String mail, String adresse, String motDePasse) {
+    public User(String nom, String prenom, String mail, String adresse, String motDePasse, Status status) {
         this.nom = nom;
         this.prenom = prenom;
         this.mail = mail;
         this.adresse = adresse;
         this.motDePasse = motDePasse;
+        this.status = status;
     }
 }
