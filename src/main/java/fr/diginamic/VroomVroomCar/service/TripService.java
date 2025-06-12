@@ -7,7 +7,7 @@ import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.TripMapper;
 import fr.diginamic.VroomVroomCar.repository.TripRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +50,7 @@ public class TripService {
     /**
      * Récupère tous les trajets.
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public List<TripResponseDto> getAllTrips() {
         List<Trip> trips = tripRepository.findAll();
         return trips.stream()
@@ -60,7 +60,7 @@ public class TripService {
     /**
      * Récupère un trajet par son ID.
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public TripResponseDto getTripById(Integer id) throws FunctionnalException {
         // Vérification existence
         Trip trip = tripRepository.findById(id)
