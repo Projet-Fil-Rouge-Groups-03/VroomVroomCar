@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class TripService {
 
@@ -28,9 +29,49 @@ public class TripService {
     }
 
     //Read Trip
+    @Transactional
+    public List<Trip> findAllTrip(){
+        return tripRepository.findAll();
+    }
+    @Transactional
+    public Optional<Trip> findTripById(Integer id){
+        return tripRepository.findById(id);
+    }
 
     //Update Trip
+    @Transactional
+    public void editTrip(int idTrip, Trip tripEdit) throws FunctionnalException {
+        Trip tripBDD = tripRepository.findById(idTrip)
+                .orElseThrow(() -> new FunctionnalException("Le voyage avec l'ID " + idTrip + " n'existe pas."));
+
+        tripBDD.setDateDebut(tripEdit.getDateDebut());
+        tripBDD.setDateFin(tripEdit.getDateFin());
+
+        tripBDD.setHeureDepart(tripEdit.getHeureDepart());
+        tripBDD.setHeureArrivee(tripEdit.getHeureArrivee());
+
+        tripBDD.setLieuDepart(tripEdit.getLieuDepart());
+        tripBDD.setLieuArrivee(tripEdit.getLieuArrivee());
+
+        tripBDD.setVilleDepart(tripEdit.getVilleDepart());
+        tripBDD.setVilleArrivee(tripEdit.getVilleArrivee());
+
+        tripBDD.setNbPlacesRestantes(tripEdit.getNbPlacesRestantes());
+
+        tripBDD.setOrganisateur(tripEdit.getOrganisateur());
+        tripBDD.setCar(tripEdit.getCar());
+        tripBDD.setSubscribes(tripEdit.getSubscribes());
+
+        tripRepository.save(tripBDD);
+    }
 
     //Delete Trip
+    @Transactional
+    public void deleteTrip(Integer id){
+        boolean exist = tripRepository.existsById(id);
+        if (exist){
+            tripRepository.deleteById(id);
+        }
+    }
 
 }

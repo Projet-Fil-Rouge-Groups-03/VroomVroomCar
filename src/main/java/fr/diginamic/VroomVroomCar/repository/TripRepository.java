@@ -1,7 +1,6 @@
 package fr.diginamic.VroomVroomCar.repository;
 
 import fr.diginamic.VroomVroomCar.entity.Trip;
-import jakarta.annotation.Nonnull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,8 +14,6 @@ import java.util.Optional;
 @Repository
 public interface TripRepository extends JpaRepository<Trip, Integer> {
 
-
-    Optional<Trip> findById(Integer id);
 
     boolean existsById(Integer id);
 
