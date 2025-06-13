@@ -101,6 +101,10 @@ public class Car {
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Trip> trips = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id")
+    private Set<Reservation> reservations;
+
     /**
      * Constructeur pour créer une nouvelle instance de Car avec les détails spécifiés.
      *
