@@ -8,6 +8,9 @@ import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.TripMapper;
+import fr.diginamic.VroomVroomCar.repository.CarRepository;
+import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
+import fr.diginamic.VroomVroomCar.repository.SubscribeRepository;
 import fr.diginamic.VroomVroomCar.repository.TripRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +30,15 @@ public class TripService implements ITripService {
 
     @Autowired
     private final TripRepository tripRepository;
-
     @Autowired
     private final TripMapper tripMapper;
+
+    @Autowired
+    private final CarRepository carRepository;
+    @Autowired
+    private final ReservationRepository reservationRepository;
+    @Autowired
+    private final SubscribeRepository subscribeRepository;
 
     @Autowired
     private final ValidationUtil validationUtil;
@@ -113,10 +122,32 @@ public class TripService implements ITripService {
     }
 
     // Calcul nombre de places restante
-    public int calculatePlaceRest(TripRequestDto tripRequestDto, CarResponseDto carResponseDto, ReservationResponseDto reservationResponseDto, SubscribeResponseDto subscribeResponseDto){
+    public int calculatePlaceRest(TripRequestDto tripRequestDto, CarResponseDto carResponseDto, Integer organizerId) throws FunctionnalException {
         int nbPlacesRestants = carResponseDto.getNbDePlaces();
 
-        return 0;
+        // Si c'est un véhicule de service, on doit décompter les places occupées
+        if (validationUtil.estVehiculeDeService(carResponseDto.getId(), carRepository)) {
+            // Vérifier si l'organisateur a déjà une réservation pour ce véhicule sur ces dates
+            boolean organizerHasReservation = reservationRepository.existsByCar_IdAndUser_IdAndDateDebutAndDateFin(
+                    carResponseDto.getId(),
+                    organizerId, // ID de l'organisateur
+                    tripRequestDto.getDateDebut(),
+                    tripRequestDto.getDateFin()
+            );
+            if (organizerHasReservation) {
+                nbPlacesRestants -= 1;
+            }
+        }
+
+        int totalSubscriptions = subscribeRepository.countByTripIdAndDateDebutAndDateFin(
+                tripRequestDto.getId(),
+                tripRequestDto.getDateDebut(),
+                tripRequestDto.getDateFin()
+        );
+
+        nbPlacesRestants -= totalSubscriptions;
+
+        return Math.max(0, nbPlacesRestants);
     }
 
 

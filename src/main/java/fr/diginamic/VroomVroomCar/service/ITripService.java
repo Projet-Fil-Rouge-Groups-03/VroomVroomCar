@@ -1,6 +1,7 @@
 package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 
@@ -69,4 +70,20 @@ public interface ITripService {
      */
     LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart,
                                    String lieuArrivee, String villeDepart, String villeArrivee);
+
+    /**
+     * Calcule le nombre de places restantes pour un trajet donné.
+     *
+     * Si le véhicule associé est un véhicule de service et que l'organisateur a déjà une réservation
+     * pour ce véhicule aux mêmes dates, une place lui est réservée (décomptée). Ensuite, toutes les
+     * inscriptions existantes sont également décomptées du nombre total de places disponibles.
+     *
+     * @param tripRequestDto les informations du trajet (dates, identifiant, etc.)
+     * @param carResponseDto les informations du véhicule utilisé pour le trajet
+     * @param organizerId l'identifiant de l'organisateur du trajet
+     * @return le nombre de places restantes disponibles, toujours ≥ 0
+     * @throws FunctionnalException en cas d'erreur de logique métier (véhicule introuvable, etc.)
+     */
+    int calculatePlaceRest(TripRequestDto tripRequestDto, CarResponseDto carResponseDto, Integer organizerId) throws FunctionnalException;
+
 }
