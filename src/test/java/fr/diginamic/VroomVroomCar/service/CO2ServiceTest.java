@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class CO2ServiceTest {
 
+    // TODO : Lancer les tests quand dependencies seront finis
+
     @Autowired
     private CO2Service co2Service;
 
@@ -76,4 +78,11 @@ class CO2ServiceTest {
 
         assertThrows(UnsupportedOperationException.class, () -> co2Service.calculerCo2TrajetAvecOSM(car, trip));
     }
+
+    @Test
+    void testExtractCO2FromPollution_withInvalidString() {
+        Double co2 = co2Service.extractCO2FromPollution("abc");
+        assertNull(co2);
+    }
+
 }
