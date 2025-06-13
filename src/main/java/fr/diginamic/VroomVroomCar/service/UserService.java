@@ -16,17 +16,32 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service de gestion des utilisateurs.
+ * Implémente les opérations de création, récupération, mise à jour et suppression d'utilisateurs.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserService implements IUserService {
 
+    /**
+     * Mapper pour convertir entre les entités {@link User} et les DTOs {@link UserRequestDto} / {@link UserResponseDto}.
+     */
     @Autowired
     UserMapper userMapper;
 
+    /**
+     * Référentiel pour accéder aux données utilisateur dans la base.
+     */
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * Récupère la liste de tous les utilisateurs.
+     *
+     * @return liste des utilisateurs sous forme de {@link UserResponseDto}.
+     */
     @Transactional(readOnly = true)
     @Override
     public List<UserResponseDto> getAllUsers() {
@@ -34,6 +49,14 @@ public class UserService implements IUserService {
                 .map(userMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Récupère un utilisateur par son identifiant.
+     *
+     * @param id identifiant de l'utilisateur.
+     * @return l'utilisateur correspondant sous forme de {@link UserResponseDto}.
+     * @throws ResourceNotFoundException si aucun utilisateur n'est trouvé.
+     */
     @Transactional(readOnly = true)
     @Override
     public UserResponseDto getUserById(Integer id) throws ResourceNotFoundException {
@@ -43,6 +66,14 @@ public class UserService implements IUserService {
 
         return userMapper.toResponseDto(user);
     }
+
+    /**
+     * Récupère un utilisateur par son nom.
+     *
+     * @param nom nom de l'utilisateur.
+     * @return l'utilisateur correspondant sous forme de {@link UserResponseDto}.
+     * @throws ResourceNotFoundException si aucun utilisateur n'est trouvé.
+     */
     @Transactional(readOnly = true)
     @Override
     public UserResponseDto getByNom(String nom) throws ResourceNotFoundException {
@@ -52,6 +83,13 @@ public class UserService implements IUserService {
         return userMapper.toResponseDto(user);
     }
 
+    /**
+     * Crée un nouvel utilisateur à partir des données fournies.
+     *
+     * @param userRequestDto les données de l'utilisateur à créer.
+     * @return l'utilisateur créé sous forme de {@link UserResponseDto}.
+     * @throws ResourceNotFoundException si des validations échouent.
+     */
     @Override
     public UserResponseDto createUser(UserRequestDto userRequestDto) throws ResourceNotFoundException {
         ValidationUtil.validateUserRequestDto(userRequestDto);
@@ -60,8 +98,14 @@ public class UserService implements IUserService {
         return userMapper.toResponseDto(userRepository.save(user));
     }
 
-    // UPDATE
-
+    /**
+     * Met à jour un utilisateur existant à partir de son identifiant.
+     *
+     * @param id identifiant de l'utilisateur à mettre à jour.
+     * @param userRequestDto les nouvelles données de l'utilisateur.
+     * @return l'utilisateur mis à jour sous forme de {@link UserResponseDto}.
+     * @throws ResourceNotFoundException si l'utilisateur n'existe pas.
+     */
     @Override
     public UserResponseDto updateUser(Integer id, UserRequestDto userRequestDto) throws ResourceNotFoundException{
         ValidationUtil.validateIdNotNull(id, "l'utilisateur'");
@@ -74,6 +118,14 @@ public class UserService implements IUserService {
         return userMapper.toResponseDto(userRepository.save(existingUser));
     }
 
+    /**
+     * Met à jour un utilisateur existant à partir de son nom.
+     *
+     * @param nom nom de l'utilisateur à mettre à jour.
+     * @param userRequestDto les nouvelles données de l'utilisateur.
+     * @return l'utilisateur mis à jour sous forme de {@link UserResponseDto}.
+     * @throws ResourceNotFoundException si l'utilisateur n'existe pas.
+     */
     @Override
     public UserResponseDto updateUser(String nom, UserRequestDto userRequestDto) throws ResourceNotFoundException{
         ValidationUtil.validateNotNull(nom);
@@ -86,8 +138,12 @@ public class UserService implements IUserService {
         return userMapper.toResponseDto(userRepository.save(existingUser));
     }
 
-    // DELETE
-
+    /**
+     * Supprime un utilisateur à partir de son identifiant.
+     *
+     * @param id identifiant de l'utilisateur à supprimer.
+     * @throws ResourceNotFoundException si l'utilisateur n'existe pas.
+     */
     @Override
     public void deleteUser(Integer id) throws ResourceNotFoundException {
         ValidationUtil.validateIdNotNull(id, "l'utilisateur");
