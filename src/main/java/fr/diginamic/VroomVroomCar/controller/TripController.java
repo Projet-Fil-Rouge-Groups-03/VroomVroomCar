@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/trips")
-public class TripController {
+public class TripController implements ITripController {
 
     @Autowired
     private TripService tripService;
