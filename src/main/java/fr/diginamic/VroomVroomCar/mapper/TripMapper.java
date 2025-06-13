@@ -25,7 +25,6 @@ public class TripMapper {
         trip.setLieuArrivee(request.getLieuArrivee());
         trip.setVilleDepart(request.getVilleDepart());
         trip.setVilleArrivee(request.getVilleArrivee());
-        trip.setNbPlacesRestantes(request.getNbPlacesRestantes());
 
         User organisateur = userRepository.findById(request.getOrganisateurId())
                 .orElseThrow(() -> new EntityNotFoundException("Organisateur non trouvé"));
@@ -77,8 +76,6 @@ public class TripMapper {
             existingTrip.setVilleDepart(requestDto.getVilleDepart());
         } else if (requestDto.getVilleArrivee() != null) {
             existingTrip.setVilleArrivee(requestDto.getVilleArrivee());
-        } else if (requestDto.getNbPlacesRestantes() >= 0) {
-            existingTrip.setNbPlacesRestantes(requestDto.getNbPlacesRestantes());
         } else if (requestDto.getOrganisateurId() != null) {
             User organisateur = userRepository.findById(requestDto.getOrganisateurId())
                     .orElseThrow(() -> new EntityNotFoundException("Organisateur non trouvé"));

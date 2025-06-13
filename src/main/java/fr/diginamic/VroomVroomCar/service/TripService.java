@@ -45,7 +45,7 @@ public class TripService implements ITripService {
 
     // Create Trip
     @Transactional
-    public TripResponseDto createTrip(TripRequestDto tripRequestDto) throws FunctionnalException {
+    public TripResponseDto createTrip(TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException {
         // Validation des dates
         validationUtil.validateEndDateBeforeStartDate(tripRequestDto.getDateDebut(), tripRequestDto.getDateFin());
 
@@ -53,6 +53,8 @@ public class TripService implements ITripService {
         // Calcul de l'heure d'arrivée
         trip.setHeureArrivee(calculateArrivalTime(trip.getHeureDepart(), trip.getLieuDepart(),
                 trip.getLieuArrivee(), trip.getVilleDepart(), trip.getVilleArrivee()));
+        // Calcul des places restantes
+        trip.setNbPlacesRestantes(calculatePlaceRest(tripRequestDto, carResponseDto));
 
         Trip savedTrip = tripRepository.save(trip);
 
@@ -79,7 +81,7 @@ public class TripService implements ITripService {
 
     // Update Trip
     @Transactional
-    public TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto) throws FunctionnalException {
+    public TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException {
         // Vérification existence
         Trip existingTrip = tripRepository.findById(id)
                 .orElseThrow(() -> new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas."));
@@ -100,6 +102,10 @@ public class TripService implements ITripService {
                     existingTrip.getVilleDepart(),
                     existingTrip.getVilleArrivee()
             ));
+        }
+        // Recalcul des places restantes si nécessaire
+        if (tripRequestDto.getNbPlacesRestantes() >= 0) {
+            existingTrip.setNbPlacesRestantes(calculatePlaceRest(tripRequestDto, carResponseDto));
         }
 
         Trip updatedTrip = tripRepository.save(existingTrip);
@@ -122,8 +128,9 @@ public class TripService implements ITripService {
     }
 
     // Calcul nombre de places restante
-    public int calculatePlaceRest(TripRequestDto tripRequestDto, CarResponseDto carResponseDto, Integer organizerId) throws FunctionnalException {
+    public int calculatePlaceRest(TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException {
         int nbPlacesRestants = carResponseDto.getNbDePlaces();
+        Integer organizerId = tripRequestDto.getOrganisateurId();
 
         // Si c'est un véhicule de service, on doit décompter les places occupées
         if (validationUtil.estVehiculeDeService(carResponseDto.getId(), carRepository)) {

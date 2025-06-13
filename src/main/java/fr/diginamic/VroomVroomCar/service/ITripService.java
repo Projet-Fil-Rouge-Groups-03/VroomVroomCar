@@ -19,10 +19,11 @@ public interface ITripService {
      * Crée un nouveau trajet à partir des données fournies.
      *
      * @param tripRequestDto les informations nécessaires à la création du trajet
+     * @param carResponseDto les informations nécessaires du véhicule pour la création du trajet
      * @return le trajet créé sous forme de DTO
      * @throws FunctionnalException si les données sont invalides ou si une règle métier est violée
      */
-    TripResponseDto createTrip(TripRequestDto tripRequestDto) throws FunctionnalException;
+    TripResponseDto createTrip(TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException;
 
     /**
      * Récupère la liste de tous les trajets existants.
@@ -45,10 +46,11 @@ public interface ITripService {
      *
      * @param id l'identifiant du trajet à mettre à jour
      * @param tripRequestDto les nouvelles données du trajet
+     * @param carResponseDto pour recalculer les places au besoin
      * @return le trajet mis à jour sous forme de DTO
      * @throws FunctionnalException si le trajet n'existe pas ou si une règle métier est enfreinte
      */
-    TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto) throws FunctionnalException;
+    TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException;
 
     /**
      * Supprime un trajet à partir de son identifiant.
@@ -80,10 +82,9 @@ public interface ITripService {
      *
      * @param tripRequestDto les informations du trajet (dates, identifiant, etc.)
      * @param carResponseDto les informations du véhicule utilisé pour le trajet
-     * @param organizerId l'identifiant de l'organisateur du trajet
      * @return le nombre de places restantes disponibles, toujours ≥ 0
      * @throws FunctionnalException en cas d'erreur de logique métier (véhicule introuvable, etc.)
      */
-    int calculatePlaceRest(TripRequestDto tripRequestDto, CarResponseDto carResponseDto, Integer organizerId) throws FunctionnalException;
+    int calculatePlaceRest(TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException;
 
 }
