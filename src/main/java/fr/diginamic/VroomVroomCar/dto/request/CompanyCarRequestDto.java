@@ -40,6 +40,9 @@ public class CompanyCarRequestDto {
     @Schema(description = "Taux de pollution en CO2/km", example = "110")
     private String pollution;
 
+    @Schema(description = "Informations supplémentaires sur la voiture", example = "Climatisation automatique")
+    private String infosSupp;
+
     @Schema(description = "ID de l'utilisateur responsable", example = "2")
     private Integer utilisateurId;
 

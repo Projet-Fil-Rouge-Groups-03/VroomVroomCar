@@ -33,6 +33,9 @@ public class CompanyCarResponseDto {
     @Schema(description = "Le nombre de places", example = "5")
     private int nbDePlaces;
 
+    @Schema(description = "Le niveau de pollution de la voiture", example = "120 g/km")
+    private String pollution;
+
     @Schema(description = "Informations supplémentaires sur le véhicule", example = "Avec attelage")
     private String infosSupp;
 
