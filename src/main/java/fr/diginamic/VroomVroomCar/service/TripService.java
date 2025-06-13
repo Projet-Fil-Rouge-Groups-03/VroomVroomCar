@@ -28,19 +28,13 @@ import java.util.stream.Collectors;
 @Transactional
 public class TripService implements ITripService {
 
-    @Autowired
     private final TripRepository tripRepository;
-    @Autowired
     private final TripMapper tripMapper;
 
-    @Autowired
     private final CarRepository carRepository;
-    @Autowired
     private final ReservationRepository reservationRepository;
-    @Autowired
     private final SubscribeRepository subscribeRepository;
 
-    @Autowired
     private final ValidationUtil validationUtil;
 
     // Create Trip
