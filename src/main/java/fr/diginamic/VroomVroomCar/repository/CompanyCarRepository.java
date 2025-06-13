@@ -67,4 +67,11 @@ public interface CompanyCarRepository extends JpaRepository<CompanyCar, Integer>
      */
     Optional<CompanyCar> findByImmatriculationContainingIgnoreCase(String immatriculation, Pageable pageable);
 
+    /**
+     * Vérifie si une voiture de service existe déjà avec l'immatriculation donnée.
+     *
+     * @param immatriculation L'immatriculation à vérifier.
+     * @return true si une voiture avec cette immatriculation existe, sinon false.
+     */
+    boolean existsByImmatriculation(String immatriculation);
 }
