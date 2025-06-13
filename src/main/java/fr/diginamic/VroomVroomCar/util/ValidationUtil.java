@@ -32,6 +32,20 @@ public final class ValidationUtil {
     }
 
     /**
+     * Valide un CarRequestDto pour s'assurer qu'il n'est pas null et que l'ID de l'utilisateur est présent.
+     *
+     * @param userRequestDto Le DTO de requête d'utilisateur à valider.
+     * @throws IllegalArgumentException si le DTO est null.
+     */
+    public static void validateUserRequestDto(UserRequestDto userRequestDto) {
+        if (userRequestDto == null) {
+            throw new IllegalArgumentException("Le DTO de requête d'utilisateur ne peut pas être null.");
+        }
+    }
+
+
+
+    /**
      * Valide un identifiant d'utilisateur pour s'assurer qu'il n'est pas null.
      *
      * @param userId L'identifiant de l'utilisateur à valider.
