@@ -43,12 +43,6 @@ public class CompanyCar extends Car {
     @Column(nullable = false)
     private CompanyCarStatus status;
 
-    /**
-     * L'identifiant de la voiture associée.
-     * Ce champ est obligatoire.
-     */
-    @Column(name = "voiture_id", nullable = false)
-    private Integer voitureId;
 
     /**
      * Les réservations associées à cette voiture de société.
