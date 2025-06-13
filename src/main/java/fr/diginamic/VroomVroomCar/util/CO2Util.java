@@ -14,7 +14,7 @@ public class CO2Util {
                 return Double.parseDouble(value);
             }
         } catch (NumberFormatException e) {
-            // Log l'erreur si nécessaire
+            System.out.println("Erreur sur le parsage du CO2");
         }
         return null;
     }
