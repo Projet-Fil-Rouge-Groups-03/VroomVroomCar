@@ -16,16 +16,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Interface pour le contrôleur de gestion des trajets.
- * Définit les opérations REST pour la gestion des trajets.
+ * Interface du contrôleur REST pour la gestion des trajets.
+ *
+ * Cette interface définit les points d'entrée de l'API permettant de créer,
+ * lire, mettre à jour et supprimer des trajets.
  */
-
-@Tag(name = "Trips", description = "API pour la gestion des trajets")
+@Tag(name = "Trips", description = "API permettant la gestion complète des trajets (création, consultation, mise à jour, suppression)")
 @RequestMapping("/api/trips")
 public interface ITripController {
 
     /**
-     * Crée un nouveau trajet.
+     * Crée un nouveau trajet à partir des données reçues.
+     *
+     * @param tripRequestDto les données du trajet à créer
+     * @return le trajet créé avec son identifiant
+     * @throws ResourceNotFoundException si une ressource liée (véhicule, utilisateur...) est introuvable
+     * @throws FunctionnalException en cas d'erreur métier (ex : réservation en conflit)
      */
     @Operation(summary = "Créer un nouveau trajet")
     @ApiResponses(value = {
@@ -39,7 +45,9 @@ public interface ITripController {
     ) throws ResourceNotFoundException, FunctionnalException;
 
     /**
-     * Récupère tous les trajets
+     * Récupère la liste de tous les trajets existants.
+     *
+     * @return une liste de trajets
      */
     @Operation(summary = "Récupérer tous les trajets")
     @ApiResponse(responseCode = "200", description = "Liste des trajets")
@@ -47,7 +55,11 @@ public interface ITripController {
     ResponseEntity<List<TripResponseDto>> getAllTrips();
 
     /**
-     * Récupère un trajet selon son indentifiant
+     * Récupère un trajet à partir de son identifiant.
+     *
+     * @param id l'identifiant du trajet à récupérer
+     * @return le trajet correspondant
+     * @throws FunctionnalException si le trajet n'existe pas
      */
     @Operation(summary = "Récupérer un trajet par son identifiant")
     @ApiResponses(value = {
@@ -56,11 +68,16 @@ public interface ITripController {
     })
     @GetMapping("/{id}")
     ResponseEntity<TripResponseDto> getTripById(
-            @Parameter(description = "ID du trajet") @PathVariable Integer id
+            @Parameter(description = "ID du trajet", required = true) @PathVariable Integer id
     ) throws FunctionnalException;
 
     /**
-     * Modifier un trajet
+     * Met à jour un trajet existant avec de nouvelles données.
+     *
+     * @param id l'identifiant du trajet à modifier
+     * @param tripRequestDto les nouvelles données du trajet
+     * @return le trajet mis à jour
+     * @throws FunctionnalException si le trajet n'existe pas ou en cas d’erreur métier
      */
     @Operation(summary = "Mettre à jour un trajet existant")
     @ApiResponses(value = {
@@ -69,12 +86,16 @@ public interface ITripController {
     })
     @PutMapping("/update/{id}")
     ResponseEntity<TripResponseDto> updateTrip(
-            @Parameter(description = "ID du trajet") @PathVariable Integer id,
+            @Parameter(description = "ID du trajet", required = true) @PathVariable Integer id,
             @Valid @RequestBody TripRequestDto tripRequestDto
     ) throws FunctionnalException;
 
     /**
-     * Supprimer un trajet
+     * Supprime un trajet existant à partir de son identifiant.
+     *
+     * @param id l'identifiant du trajet à supprimer
+     * @return un message de confirmation
+     * @throws FunctionnalException si le trajet n'existe pas
      */
     @Operation(summary = "Supprimer un trajet")
     @ApiResponses(value = {
@@ -83,6 +104,6 @@ public interface ITripController {
     })
     @DeleteMapping("/delete/{id}")
     ResponseEntity<String> deleteTrip(
-            @Parameter(description = "ID du trajet") @PathVariable Integer id
+            @Parameter(description = "ID du trajet", required = true) @PathVariable Integer id
     ) throws FunctionnalException;
 }

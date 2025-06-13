@@ -1,7 +1,10 @@
 package fr.diginamic.VroomVroomCar.util;
 
 import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
+import fr.diginamic.VroomVroomCar.entity.Car;
+import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
+import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -102,5 +105,14 @@ public final class ValidationUtil {
             throw new FunctionnalException("La date de fin doit être postérieure à la date de début.");
         }
     }
+
+    public boolean estVehiculeDeService(Integer idCar, CarRepository carRepository) throws FunctionnalException {
+        Car car = carRepository.findById(idCar)
+                .orElseThrow(() -> new FunctionnalException("Véhicule non trouvé"));
+
+        return car instanceof CompanyCar;
+    }
+
+
 }
 
