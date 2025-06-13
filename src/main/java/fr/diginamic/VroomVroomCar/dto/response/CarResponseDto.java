@@ -2,6 +2,7 @@ package fr.diginamic.VroomVroomCar.dto.response;
 
 import fr.diginamic.VroomVroomCar.entity.Categorie;
 import fr.diginamic.VroomVroomCar.entity.Motorisation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,55 +14,39 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "DTO pour les réponses relatives à une voiture.")
 public class CarResponseDto {
 
-    /**
-     * L'identifiant unique de la voiture.
-     */
+    @Schema(description = "L'identifiant unique de la voiture", example = "1")
     private Integer id;
 
-    /**
-     * La marque de la voiture.
-     */
+    @Schema(description = "La marque de la voiture", example = "Toyota")
     private String marque;
 
-    /**
-     * Le modèle de la voiture.
-     */
+    @Schema(description = "Le modèle de la voiture", example = "Yaris")
     private String modele;
 
-    /**
-     * Le nombre de places de la voiture.
-     */
+    @Schema(description = "Le nombre de places de la voiture", example = "5")
     private int nbDePlaces;
 
-    /**
-     * Le niveau de pollution de la voiture.
-     */
+    @Schema(description = "Le niveau de pollution de la voiture", example = "120 g/km")
     private String pollution;
 
-    /**
-     * Informations supplémentaires sur la voiture.
-     */
+    @Schema(description = "Informations supplémentaires sur la voiture", example = "Pas de place dans le coffre.")
     private String infosSupp;
 
-    /**
-     * L'identifiant de l'utilisateur associé à cette voiture.
-     */
+    @Schema(description = "L'identifiant de l'utilisateur associé à cette voiture", example = "1")
     private Integer utilisateurId;
 
-    /**
-     * Le nom de l'utilisateur associé à cette voiture.
-     */
+    @Schema(description = "Le nom de l'utilisateur associé à cette voiture", example = "Didier Mazier")
     private String utilisateurNom;
 
-    /**
-     * La motorisation de la voiture.
-     */
+    @Schema(description = "La motorisation de la voiture")
     private Motorisation motorisation;
 
-    /**
-     * La catégorie de la voiture.
-     */
+    @Schema(description = "La catégorie de la voiture")
     private Categorie categorie;
+
+    @Schema(description = "Émissions de CO2 par kilomètre", example = "120.5")
+    private Double co2ParKm;
 }
