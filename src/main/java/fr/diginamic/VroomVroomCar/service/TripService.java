@@ -1,6 +1,9 @@
 package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.SubscribeResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
@@ -107,6 +110,13 @@ public class TripService implements ITripService {
     public LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) {
         // TODO: Implémenter la logique de calcul (API Google Maps, durée fixe, etc.)
         return heureDepart.plusHours(2);
+    }
+
+    // Calcul nombre de places restante
+    public int calculatePlaceRest(TripRequestDto tripRequestDto, CarResponseDto carResponseDto, ReservationResponseDto reservationResponseDto, SubscribeResponseDto subscribeResponseDto){
+        int nbPlacesRestants = carResponseDto.getNbDePlaces();
+
+        return 0;
     }
 
 
