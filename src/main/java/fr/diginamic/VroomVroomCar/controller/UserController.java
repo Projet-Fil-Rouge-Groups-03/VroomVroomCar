@@ -1,6 +1,9 @@
 package fr.diginamic.VroomVroomCar.controller;
 
+import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,33 +16,53 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/find-all")
-    public List<User> findAll(){
-        return  userService.findAll();
+    @GetMapping()
+    public List<UserResponseDto> findAll(){
+        return  userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User findById(@RequestParam int id){
-        return userService.findById(id);
+    public UserResponseDto findById(@RequestParam int id){
+        try {
+            return userService.getUserById(id);
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping("/find-by-nom/{nom}")
-    public User findByNom(String nom){
-        return userService.findByNom(nom);
+    public UserResponseDto findByNom(String nom){
+        try {
+            return userService.getByNom(nom);
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @PostMapping("/post-user")
-    public void addUser(@RequestBody User user){
-        userService.addUser(user);
+    @PostMapping("/create-user")
+    public UserResponseDto addUser(@RequestBody UserRequestDto user){
+        try {
+           return userService.createUser(user);
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
-    @PutMapping("/put-user/{id}")
-    public void editUser(@RequestParam int id ,@RequestBody User user){
-        userService.editUser(id,user);
+    @PutMapping("/edit-user/{id}")
+    public UserResponseDto editUser(@RequestParam int id ,@RequestBody UserRequestDto user){
+        try {
+            return userService.updateUser(id,user);
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @PutMapping("/put-user-by-nom/{nom}")
-    public void editUser(@RequestParam String nom ,@RequestBody User user){
-        userService.editUser(nom,user);
+    @PutMapping("/edit-user-by-nom/{nom}")
+    public UserResponseDto editUser(@RequestParam String nom ,@RequestBody UserRequestDto user){
+        try {
+            return userService.updateUser(nom,user);
+        } catch (ResourceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package fr.diginamic.VroomVroomCar.util;
 
 import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
+import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +28,20 @@ public final class ValidationUtil {
             throw new IllegalArgumentException("L'ID de l'utilisateur ne peut pas être null.");
         }
     }
+
+    /**
+     * Valide un CarRequestDto pour s'assurer qu'il n'est pas null et que l'ID de l'utilisateur est présent.
+     *
+     * @param userRequestDto Le DTO de requête d'utilisateur à valider.
+     * @throws IllegalArgumentException si le DTO est null.
+     */
+    public static void validateUserRequestDto(UserRequestDto userRequestDto) {
+        if (userRequestDto == null) {
+            throw new IllegalArgumentException("Le DTO de requête d'utilisateur ne peut pas être null.");
+        }
+    }
+
+
 
     /**
      * Valide un identifiant d'utilisateur pour s'assurer qu'il n'est pas null.
