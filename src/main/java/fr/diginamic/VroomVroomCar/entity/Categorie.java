@@ -1,5 +1,8 @@
 package fr.diginamic.VroomVroomCar.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Catégorie du véhicule")
 public enum Categorie {
     MICRO_URBAINES,
     MINI_CITADINES,
