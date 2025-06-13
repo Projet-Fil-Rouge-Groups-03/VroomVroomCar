@@ -27,16 +27,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CarService implements ICarService {
 
-    @Autowired
     private final CarRepository carRepository;
-    @Autowired
     private final UserRepository userRepository;
-    @Autowired
     private final CarMapper carMapper;
-    @Autowired
     private final CarApiService carApiService;
-    @Autowired
-    private final CO2Service co2Service;
 
     // GET by ID
 
