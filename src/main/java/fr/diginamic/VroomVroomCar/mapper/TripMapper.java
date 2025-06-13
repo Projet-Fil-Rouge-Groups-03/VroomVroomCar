@@ -10,12 +10,25 @@ import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 
+/**
+ * Composant responsable de la transformation entre les entités Trip et leurs DTO : TripRequestDto et TripResponseDto.
+ *
+ * Ce mapper permet de convertir les données entre les couches de présentation et de persistance.
+ */
 @Component
 public class TripMapper {
 
     private UserRepository userRepository;
     private CarRepository carRepository;
 
+    /**
+     * Convertit un TripRequestDto en entité Trip.
+     * Récupère l'organisateur et le véhicule associés à partir de leurs identifiants.
+     *
+     * @param request Le DTO de création/modification du trajet
+     * @return L'entité Trip correspondante
+     * @throws EntityNotFoundException si l'organisateur ou le véhicule est introuvable
+     */
     public Trip toEntity(TripRequestDto request) {
         Trip trip = new Trip();
         trip.setDateDebut(request.getDateDebut());
@@ -31,12 +44,18 @@ public class TripMapper {
         trip.setOrganisateur(organisateur);
 
         Car car = carRepository.findById(request.getCarId())
-                .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
+                .orElseThrow(() -> new EntityNotFoundException("Véhicule non trouvé"));
         trip.setCar(car);
 
         return trip;
     }
 
+    /**
+     * Convertit une entité Trip en TripResponseDto pour l’envoi au client.
+     *
+     * @param trip L'entité Trip à convertir
+     * @return Un DTO contenant les données du trajet
+     */
     public TripResponseDto toResponse(Trip trip) {
         TripResponseDto response = new TripResponseDto();
         response.setId(trip.getId());
@@ -61,6 +80,14 @@ public class TripMapper {
         return response;
     }
 
+    /**
+     * Met à jour une entité Trip existante avec les valeurs fournies dans le TripRequestDto.
+     * Seules les propriétés non nulles sont modifiées.
+     *
+     * @param existingTrip L'entité Trip à mettre à jour
+     * @param requestDto   Le DTO contenant les nouvelles valeurs
+     * @throws EntityNotFoundException si l'organisateur ou le véhicule référencé n'existe pas
+     */
     public void updateEntity(Trip existingTrip, TripRequestDto requestDto) {
         if (requestDto.getDateDebut() != null) {
             existingTrip.setDateDebut(requestDto.getDateDebut());
@@ -82,8 +109,9 @@ public class TripMapper {
             existingTrip.setOrganisateur(organisateur);
         } else if (requestDto.getCarId() != null) {
             Car car = carRepository.findById(requestDto.getCarId())
-                    .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
+                    .orElseThrow(() -> new EntityNotFoundException("Véhicule non trouvé"));
             existingTrip.setCar(car);
         }
     }
 }
+
