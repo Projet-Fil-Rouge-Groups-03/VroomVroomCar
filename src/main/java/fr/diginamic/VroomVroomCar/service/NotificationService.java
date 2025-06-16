@@ -33,7 +33,7 @@ public class NotificationService implements INotificationService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<NotificationResponseDto> getUserNotifications(Integer userId, int limit) throws ResourceNotFoundException {
+    public List<NotificationResponseDto> getUserNotifications(Integer userId, int limit) {
         ValidationUtil.validateIdNotNull(userId, "l'utilisateur");
         Pageable pageable = PageRequest.of(0, limit);
         return notificationRepository.findByUserIdOrderByDateDesc(userId, pageable).stream()
