@@ -137,11 +137,7 @@ public class TripService implements ITripService {
             }
         }
 
-        int totalSubscriptions = subscribeRepository.countByTripIdAndDateDebutAndDateFin(
-                tripRequestDto.getId(),
-                tripRequestDto.getDateDebut(),
-                tripRequestDto.getDateFin()
-        );
+        int totalSubscriptions = subscribeRepository.countByTrip_Id(tripRequestDto.getId());
 
         nbPlacesRestants -= totalSubscriptions;
 
