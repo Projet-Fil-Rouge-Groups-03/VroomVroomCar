@@ -52,11 +52,11 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
     /**
      * Trouve toutes les voitures appartenant à une catégorie spécifiée, avec pagination.
      *
-     * @param categorie La catégorie de voitures à rechercher.
+     * @param categories La catégorie de voitures à rechercher.
      * @param pageable Les informations de pagination et de tri.
      * @return Une page de voitures appartenant à la catégorie spécifiée.
      */
-    Page<Car> findByCategorie(Categorie categorie, Pageable pageable);
+    Page<Car> findByCategories(Categorie categories, Pageable pageable);
 
 
     /**

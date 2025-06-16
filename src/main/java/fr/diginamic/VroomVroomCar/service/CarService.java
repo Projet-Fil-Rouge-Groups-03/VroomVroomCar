@@ -150,10 +150,10 @@ public class CarService implements ICarService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<CarResponseDto> getCarsByCategorie(Categorie categorie, int limit) {
+    public List<CarResponseDto> getCarsByCategories(Categorie categories, int limit) {
         ValidationUtil.validateNotNull("La catégorie");
         Pageable pageable = PageRequest.of(0, limit);
-        return carRepository.findByCategorie(categorie, pageable).stream()
+        return carRepository.findByCategories(categories, pageable).stream()
                 .map(carMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
