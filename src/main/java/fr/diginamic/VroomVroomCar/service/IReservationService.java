@@ -3,6 +3,7 @@ package fr.diginamic.VroomVroomCar.service;
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface IReservationService {
      * @param carResponseDto   Informations du véhicule concerné
      * @return La réservation créée sous forme de DTO
      */
-    ReservationResponseDto createReservation(ReservationRequestDto requestDto, CarResponseDto carResponseDto) throws FunctionnalException;
+    ReservationResponseDto createReservation(ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException;
 
     /**
      * Récupère la liste de toutes les réservations enregistrées.

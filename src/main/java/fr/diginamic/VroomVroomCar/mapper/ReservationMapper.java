@@ -1,7 +1,9 @@
 package fr.diginamic.VroomVroomCar.mapper;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import fr.diginamic.VroomVroomCar.entity.User;
@@ -16,16 +18,16 @@ public class ReservationMapper {
     private UserRepository userRepository;
     private CarRepository carRepository;
 
-    public Reservation toEntity(ReservationRequestDto request){
+    public Reservation toEntity(ReservationRequestDto request, UserResponseDto userResponseDto, CarResponseDto carResponseDto){
         Reservation reservation = new Reservation();
         reservation.setDateDebut(request.getDateDebut());
         reservation.setDateFin(request.getDateFin());
 
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findById(userResponseDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
         reservation.setUser(user);
 
-        Car car = carRepository.findById(request.getCarId())
+        Car car = carRepository.findById(carResponseDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
         reservation.setCar(car);
 

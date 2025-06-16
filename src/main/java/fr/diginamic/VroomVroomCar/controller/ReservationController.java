@@ -1,4 +1,42 @@
 package fr.diginamic.VroomVroomCar.controller;
 
+import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
+import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
+import fr.diginamic.VroomVroomCar.service.ReservationService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/reservations")
 public class ReservationController {
+
+    @Autowired
+    private ReservationService reservationService;
+
+    // Create Reservation (POST)
+    @PostMapping("/create")
+    public ResponseEntity<ReservationResponseDto> createReservation(@Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
+        ReservationResponseDto reservationCreate = reservationService.createReservation(requestDto, userResponseDto, carResponseDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservationCreate);
+    }
+
+    // Read Reservation (GET)
+    @GetMapping
+    public ResponseEntity<List<ReservationResponseDto>> getAllReservations(){
+        List<ReservationResponseDto> reservations = reservationService.getAllReservations();
+        return ResponseEntity.ok(reservations);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<ReservationResponseDto> getReservationById(@PathVariable Integer id) throws FunctionnalException {
+        ReservationResponseDto reservation = reservationService.getReservationById(id);
+        return ResponseEntity.ok(reservation);
+    }
 }
