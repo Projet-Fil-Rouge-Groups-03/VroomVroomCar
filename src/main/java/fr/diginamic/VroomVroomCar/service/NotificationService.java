@@ -9,7 +9,6 @@ import fr.diginamic.VroomVroomCar.mapper.NotificationMapper;
 import fr.diginamic.VroomVroomCar.repository.NotificationRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,9 +43,9 @@ public class NotificationService implements INotificationService {
     // CREATE
 
     @Override
-    public NotificationResponseDto createNotification(NotificationRequestDto dto) {
+    public NotificationResponseDto createNotification(NotificationRequestDto dto) throws ResourceNotFoundException  {
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé avec l'ID: " + dto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé avec l'ID: " + dto.getUserId()));
         Notification notification = notificationMapper.toEntity(dto, user);
         Notification savedNotification = notificationRepository.save(notification);
         return notificationMapper.toResponseDto(savedNotification);
@@ -55,7 +54,11 @@ public class NotificationService implements INotificationService {
     // DELETE (au cas où)
 
     @Override
-    public void deleteNotification(Integer id) {
+    public void deleteNotification(Integer id) throws ResourceNotFoundException {
+        ValidationUtil.validateIdNotNull(id, "la notification");
+        if (!notificationRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Notification non trouvée avec l'ID: " + id);
+        }
         notificationRepository.deleteById(id);
     }
 
