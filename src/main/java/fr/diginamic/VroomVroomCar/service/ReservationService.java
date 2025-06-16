@@ -70,7 +70,7 @@ public class ReservationService implements IReservationService {
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("dateDebut").descending());
-        Page<Reservation> reservations = reservationRepository.findByCar_Id(carId, pageable);
+        Page<Reservation> reservations = reservationRepository.findByCompanyCar_Id(carId, pageable);
 
         return reservations.map(reservationMapper::toResponse);
     }
