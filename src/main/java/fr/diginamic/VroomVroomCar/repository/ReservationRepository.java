@@ -1,6 +1,8 @@
 package fr.diginamic.VroomVroomCar.repository;
 
 import fr.diginamic.VroomVroomCar.entity.Reservation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Date;
@@ -9,6 +11,16 @@ import java.sql.Date;
  * Repository JPA pour l'entité Reservation.
  */
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
+
+    /**
+     * Recherche paginée des réservations associées à un véhicule spécifique.
+     *
+     * @param carId l'identifiant unique du véhicule
+     * @param pageable l'objet Pageable définissant les paramètres de pagination (page, taille, tri, etc.)
+     * @return une page de réservations Page correspondant au véhicule spécifié
+     */
+    Page<Reservation> findByCar_Id(Integer carId, Pageable pageable);
+
 
     /**
      * Vérifie si l'utilisateur a déjà une réservation pour cette voiture sur ce trajet.
