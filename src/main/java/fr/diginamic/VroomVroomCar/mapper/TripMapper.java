@@ -65,25 +65,25 @@ public class TripMapper {
     public void updateEntity(Trip existingTrip, TripRequestDto requestDto) {
         if (requestDto.getDateDebut() != null) {
             existingTrip.setDateDebut(requestDto.getDateDebut());
-        } else if (requestDto.getDateFin() != null) {
+        } if (requestDto.getDateFin() != null) {
             existingTrip.setDateFin(requestDto.getDateFin());
-        } else if (requestDto.getHeureDepart() != null) {
+        } if (requestDto.getHeureDepart() != null) {
             existingTrip.setHeureDepart(requestDto.getHeureDepart());
-        } else if (requestDto.getLieuDepart() != null) {
+        } if (requestDto.getLieuDepart() != null) {
             existingTrip.setLieuDepart(requestDto.getLieuDepart());
-        } else if (requestDto.getLieuArrivee() != null) {
+        } if (requestDto.getLieuArrivee() != null) {
             existingTrip.setLieuArrivee(requestDto.getLieuArrivee());
-        } else if (requestDto.getVilleDepart() != null) {
+        } if (requestDto.getVilleDepart() != null) {
             existingTrip.setVilleDepart(requestDto.getVilleDepart());
-        } else if (requestDto.getVilleArrivee() != null) {
+        } if (requestDto.getVilleArrivee() != null) {
             existingTrip.setVilleArrivee(requestDto.getVilleArrivee());
-        } else if (requestDto.getNbPlacesRestantes() >= 0) {
+        } if (requestDto.getNbPlacesRestantes() >= 0) {
             existingTrip.setNbPlacesRestantes(requestDto.getNbPlacesRestantes());
-        } else if (requestDto.getOrganisateurId() != null) {
+        } if (requestDto.getOrganisateurId() != null) {
             User organisateur = userRepository.findById(requestDto.getOrganisateurId())
                     .orElseThrow(() -> new EntityNotFoundException("Organisateur non trouvé"));
             existingTrip.setOrganisateur(organisateur);
-        } else if (requestDto.getCarId() != null) {
+        } if (requestDto.getCarId() != null) {
             Car car = carRepository.findById(requestDto.getCarId())
                     .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
             existingTrip.setCar(car);
