@@ -9,6 +9,7 @@ import fr.diginamic.VroomVroomCar.repository.NotificationRepository;
 import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
 import fr.diginamic.VroomVroomCar.repository.SubscribeRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
+import fr.diginamic.VroomVroomCar.util.NotificationUtil;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,9 +28,8 @@ public class NotificationService implements INotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
-    private final SubscribeRepository subscribeRepository;
-    private final ReservationRepository reservationRepository;
     private final NotificationMapper notificationMapper;
+    private final NotificationUtil notificationUtil;
 
 
     // GET by User ID
@@ -70,47 +69,47 @@ public class NotificationService implements INotificationService {
     // Envoi des Notifications
 
     public void sendNotificationToOrganisateurOnSubscribe(Trip trip, User participant) {
-        String contenu = participant.getPrenom() + " " + participant.getNom() + " s’est inscrit à votre covoiturage du " + trip.getDateDebut().toLocalDate();
-        Notification notification = new Notification(contenu, "Inscription", new Date(), trip.getOrganisateur());
-        notificationRepository.save(notification);
+        String contenu = String.format("%s s'est inscrit à votre covoiturage du %s",
+                NotificationUtil.getFullName(participant),
+                NotificationUtil.formatTripDate(trip));
+
+        notificationUtil.createAndSaveNotification(contenu, "Inscription", trip.getOrganisateur());
         // TODO : ajouter dans Create de subscribeService : notificationService.sendNotificationToOrganisateurOnSubscribe(trip, user);
         // Attention - l'organisateurID a qui envoyé la notif est dans Trip.getOrganisateur (lié à la table User)
     }
 
     public void sendNotificationToOrganisateurOnUnsubscribe(Trip trip, User participant) {
-        String contenu = participant.getPrenom() + " " + participant.getNom() + " s’est désinscrit de votre covoiturage du " + trip.getDateDebut().toLocalDate();
-        Notification notification = new Notification(contenu, "Désinscription", new Date(), trip.getOrganisateur());
-        notificationRepository.save(notification);
+        String contenu = String.format("%s s'est désinscrit de votre covoiturage du %s",
+                NotificationUtil.getFullName(participant),
+                NotificationUtil.formatTripDate(trip));
+
+        notificationUtil.createAndSaveNotification(contenu, "Désinscription", trip.getOrganisateur());
         // TODO : ajouter dans subscribeService à la suppression : notificationService.sendNotificationToOrganisateurOnUnsubscribe(trip, user);
         // Attention - l'organisateurID a qui envoyé la notif est dans Trip.getOrganisateur (lié à la table User)
     }
 
     public void sendNotificationToParticipantsOnModification(Trip trip, User organisateur) {
-        String contenu = organisateur.getPrenom() + " " + organisateur.getNom() + " à fait une modification sur votre covoiturage du " + trip.getDateDebut().toLocalDate();
-        List<Subscribe> inscriptions = subscribeRepository.findByTrip(trip);
+        String contenu = String.format("%s à fait une modification sur votre covoiturage du %s",
+                NotificationUtil.getFullName(organisateur),
+                NotificationUtil.formatTripDate(trip));
 
-        for (Subscribe inscription : inscriptions) {
-            User participant = inscription.getUser();
-            Notification notification = new Notification(contenu, "Modification Covoit", new Date(), participant);
-            notificationRepository.save(notification);
-        }
+        notificationUtil.sendNotificationToAllParticipants(trip, contenu, "Modification Covoit");
     }
 
     public void sendNotificationToParticipantsOnAnnulation(Trip trip, User organisateur) {
-        String contenu = organisateur.getPrenom() + " " + organisateur.getNom() + " a annulé votre covoiturage du " + trip.getDateDebut().toLocalDate();
-        List<Subscribe> inscriptions = subscribeRepository.findByTrip(trip);
+        String contenu = String.format("%s a annulé votre covoiturage du %s",
+                NotificationUtil.getFullName(organisateur),
+                NotificationUtil.formatTripDate(trip));
 
-        for (Subscribe inscription : inscriptions) {
-            User participant = inscription.getUser();
-            Notification notification = new Notification(contenu, "Annulation Covoit", new Date(), participant);
-            notificationRepository.save(notification);
-        }
+        notificationUtil.sendNotificationToAllParticipants(trip, contenu, "Annulation Covoit");
     }
-
 
     public void sendNotificationToUsersOnCarStatusUpdate(Car car, String newStatus, User user) {
-        String contenu = "Votre réservation de " + car.getMarque() + " " + car.getModele() + " a été annulée : " + newStatus;
-        Notification notification = new Notification(contenu, "Annulation réservation", new Date(), user);
-        notificationRepository.save(notification);
+        String contenu = String.format("Votre réservation de %s %s a été annulée : %s",
+                car.getMarque(), car.getModele(), newStatus);
+
+        notificationUtil.createAndSaveNotification(contenu, "Annulation réservation", user);
     }
+
 }
+// TODO : vérifier que findByTrip soit bien dans subscribeRepository
