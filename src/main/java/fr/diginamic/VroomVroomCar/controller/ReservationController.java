@@ -2,6 +2,7 @@ package fr.diginamic.VroomVroomCar.controller;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
@@ -24,7 +25,7 @@ public class ReservationController implements IReservationController {
 
     // Create Reservation (POST)
     @PostMapping("/create")
-    public ResponseEntity<ReservationResponseDto> createReservation(@Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
+    public ResponseEntity<ReservationResponseDto> createReservation(@Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
         ReservationResponseDto reservationCreate = reservationService.createReservation(requestDto, userResponseDto, carResponseDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservationCreate);
     }
@@ -50,7 +51,7 @@ public class ReservationController implements IReservationController {
 
     // Update Reservation (PUT)
     @PutMapping("/update/{id}")
-    public ResponseEntity<ReservationResponseDto> updateReservation(@PathVariable Integer id, @Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
+    public ResponseEntity<ReservationResponseDto> updateReservation(@PathVariable Integer id, @Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
         ReservationResponseDto reservationEdit = reservationService.updateReservation(id, requestDto, userResponseDto, carResponseDto);
         return ResponseEntity.ok(reservationEdit);
     }

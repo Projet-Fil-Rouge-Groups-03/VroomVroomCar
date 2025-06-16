@@ -2,6 +2,7 @@ package fr.diginamic.VroomVroomCar.controller;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
@@ -46,7 +47,7 @@ public interface IReservationController {
     ResponseEntity<ReservationResponseDto> createReservation (
             @Valid @RequestBody ReservationRequestDto requestDto,
             @RequestBody UserResponseDto userResponseDto,
-            @RequestBody CarResponseDto carResponseDto
+            @RequestBody CompanyCarResponseDto carResponseDto
     ) throws FunctionnalException;
 
     /**
@@ -124,7 +125,7 @@ public interface IReservationController {
             @Parameter(description = "ID de la réservation") @PathVariable Integer id,
             @Valid @RequestBody ReservationRequestDto requestDto,
             @RequestBody UserResponseDto userResponseDto,
-            @RequestBody CarResponseDto carResponseDto
+            @RequestBody CompanyCarResponseDto carResponseDto
     ) throws FunctionnalException;
 
     /**
