@@ -1,7 +1,10 @@
 package fr.diginamic.VroomVroomCar.util;
 
 import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
+import fr.diginamic.VroomVroomCar.entity.Car;
+import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
+import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -27,6 +30,20 @@ public final class ValidationUtil {
             throw new IllegalArgumentException("L'ID de l'utilisateur ne peut pas être null.");
         }
     }
+
+    /**
+     * Valide un CarRequestDto pour s'assurer qu'il n'est pas null et que l'ID de l'utilisateur est présent.
+     *
+     * @param userRequestDto Le DTO de requête d'utilisateur à valider.
+     * @throws IllegalArgumentException si le DTO est null.
+     */
+    public static void validateUserRequestDto(UserRequestDto userRequestDto) {
+        if (userRequestDto == null) {
+            throw new IllegalArgumentException("Le DTO de requête d'utilisateur ne peut pas être null.");
+        }
+    }
+
+
 
     /**
      * Valide un identifiant d'utilisateur pour s'assurer qu'il n'est pas null.
@@ -102,5 +119,14 @@ public final class ValidationUtil {
             throw new FunctionnalException("La date de fin doit être postérieure à la date de début.");
         }
     }
+
+    public boolean estVehiculeDeService(Integer idCar, CarRepository carRepository) throws FunctionnalException {
+        Car car = carRepository.findById(idCar)
+                .orElseThrow(() -> new FunctionnalException("Véhicule non trouvé"));
+
+        return car instanceof CompanyCar;
+    }
+
+
 }
 

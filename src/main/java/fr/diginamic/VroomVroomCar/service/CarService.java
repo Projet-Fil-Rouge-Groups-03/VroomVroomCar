@@ -11,6 +11,7 @@ import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,14 +24,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CarService implements ICarService {
 
-    @Autowired
     private final CarRepository carRepository;
-    @Autowired
     private final UserRepository userRepository;
-    @Autowired
     private final CarMapper carMapper;
+    private final CarApiService carApiService;
 
     // GET by ID
 
@@ -63,6 +63,12 @@ public class CarService implements ICarService {
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé avec l'ID: " + carRequestDto.getUtilisateurId()));
 
         Car car = carMapper.toEntity(carRequestDto, user);
+        boolean apiSuccess = carApiService.updatePollutionFromApi(car);
+
+        if (!apiSuccess) {
+            log.info("Impossible de récupérer les données CO2 via API pour {} {}, " +
+                    "utilisation des valeurs par défaut", car.getMarque(), car.getModele());
+        }
         Car savedCar = carRepository.save(car);
 
         return carMapper.toResponseDto(savedCar);
@@ -81,7 +87,16 @@ public class CarService implements ICarService {
         User user = userRepository.findById(carRequestDto.getUtilisateurId())
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé avec l'ID: " + carRequestDto.getUtilisateurId()));
 
+        boolean shouldUpdatePollution = !existingCar.getMarque().equals(carRequestDto.getMarque()) ||
+                !existingCar.getModele().equals(carRequestDto.getModele()) ||
+                !existingCar.getMotorisation().equals(carRequestDto.getMotorisation());
+
         carMapper.updateEntity(existingCar, carRequestDto, user);
+
+        if (shouldUpdatePollution) {
+            carApiService.updatePollutionFromApi(existingCar);
+        }
+
         Car updatedCar = carRepository.save(existingCar);
 
         return carMapper.toResponseDto(updatedCar);
