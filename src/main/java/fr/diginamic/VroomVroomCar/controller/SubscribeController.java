@@ -24,21 +24,22 @@ public class SubscribeController implements ISubscribeController{
 
     @Override
     public ResponseEntity<SubscribeResponseDto> findById(int id) throws ResourceNotFoundException {
-        return ResponseEntity.ok(subscribeService.getSubscribeById);
+        return ResponseEntity.ok(subscribeService.getSubscribeById(id));
     }
 
     @Override
     public ResponseEntity<SubscribeResponseDto> addSubscribe(SubscribeRequestDto subscribe) throws ResourceNotFoundException {
-        return null;
+        return ResponseEntity.ok(subscribeService.createSubscribe(subscribe));
     }
 
     @Override
     public ResponseEntity<SubscribeResponseDto> editSubscribe(int id, SubscribeRequestDto subscribe) throws ResourceNotFoundException {
-        return null;
+        return ResponseEntity.ok(subscribeService.editSubscribe(subscribe));
     }
 
     @Override
     public ResponseEntity<String> deleteSubscribe(int id) throws ResourceNotFoundException {
-        return null;
+        return ResponseEntity.ok(subscribeService.deleteSubscribe(id));
     }
+
 }
