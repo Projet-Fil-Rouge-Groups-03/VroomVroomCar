@@ -1,15 +1,12 @@
 package fr.diginamic.VroomVroomCar.mapper;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
-import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import fr.diginamic.VroomVroomCar.entity.User;
-import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.CompanyCarRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,7 +29,7 @@ public class ReservationMapper {
 
         CompanyCar car = carRepository.findById(carResponseDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
-        reservation.setCar(car);
+        reservation.setCompanyCar(car);
 
         return reservation;
     }
@@ -47,8 +44,8 @@ public class ReservationMapper {
             response.setUserId(reservation.getUser().getId());
         }
 
-        if (reservation.getCar() != null){
-            response.setCarId(reservation.getCar().getId());
+        if (reservation.getCompanyCar() != null){
+            response.setCarId(reservation.getCompanyCar().getId());
         }
 
         return response;
@@ -66,7 +63,7 @@ public class ReservationMapper {
         } if (requestDto.getCarId() != null) {
             CompanyCar car = carRepository.findById(carResponseDto.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
-            existingReservation.setCar(car);;
+            existingReservation.setCompanyCar(car);;
         }
     }
 }
