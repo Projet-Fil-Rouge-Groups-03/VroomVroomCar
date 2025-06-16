@@ -108,16 +108,9 @@ public class NotificationService implements INotificationService {
     }
 
 
-    public void sendNotificationToUsersOnCarStatusUpdate(Car car, String newStatus) {
-        List<Reservation> reservations = reservationRepository.findByCarAndDateDebutAfter(car, LocalDateTime.now());
-
-        for (Reservation reservation : reservations) {
-            User user = reservation.getUser();
-            String contenu = "Le véhicule " + car.getMarque() + " " + car.getModele() + " ne sera pas disponible pour votre réservation prévue le " + reservation.getDateDebut() + " : " + newStatus;
-            Notification notification = new Notification(contenu, "Annulation réservation", new Date(), user);
-            notificationRepository.save(notification);
-        }
-        // TODO : ajouter dans CarService lors de l'update si changement de statut EN_REPARATION ou HORS_SERVICE
-        // Attention - il faut que ça soit envoyé aux utilisateurs des réservations futures  Reservation.getUser (lié à la table User)
+    public void sendNotificationToUsersOnCarStatusUpdate(Car car, String newStatus, User user) {
+        String contenu = "Votre réservation de " + car.getMarque() + " " + car.getModele() + " a été annulée : " + newStatus;
+        Notification notification = new Notification(contenu, "Annulation réservation", new Date(), user);
+        notificationRepository.save(notification);
     }
 }
