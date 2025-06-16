@@ -2,6 +2,7 @@ package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
@@ -10,7 +11,6 @@ import fr.diginamic.VroomVroomCar.mapper.ReservationMapper;
 import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +36,7 @@ public class ReservationService implements IReservationService {
 
     // Create Reservation
     @Transactional
-    public ReservationResponseDto createReservation(ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
+    public ReservationResponseDto createReservation(ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
         // Validité des dates
         validationUtil.validateEndDateBeforeStartDate(requestDto.getDateDebut(), requestDto.getDateFin());
 
@@ -78,7 +78,7 @@ public class ReservationService implements IReservationService {
 
     // Update Reservation
     @Transactional
-    public ReservationResponseDto updateReservation(Integer id, ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
+    public ReservationResponseDto updateReservation(Integer id, ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
         // Verification de l'existence
         Reservation existingReservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new FunctionnalException("La reservation avec l'ID " + id + " n'existe pas."));
