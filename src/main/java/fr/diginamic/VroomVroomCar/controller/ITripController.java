@@ -1,7 +1,9 @@
 package fr.diginamic.VroomVroomCar.controller;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +31,8 @@ public interface ITripController {
      * Crée un nouveau trajet à partir des données reçues.
      *
      * @param tripRequestDto les données du trajet à créer
+     * @param userResponseDto les données de l'organisateur
+     * @param carResponseDto les données du véhicule utilisé
      * @return le trajet créé avec son identifiant
      * @throws ResourceNotFoundException si une ressource liée (véhicule, utilisateur...) est introuvable
      * @throws FunctionnalException en cas d'erreur métier (ex : réservation en conflit)
@@ -41,7 +45,8 @@ public interface ITripController {
     })
     @PostMapping("/create")
     ResponseEntity<TripResponseDto> createTrip(
-            @Valid @RequestBody TripRequestDto tripRequestDto
+            @Valid @RequestBody TripRequestDto tripRequestDto,
+            UserResponseDto userResponseDto, CarResponseDto carResponseDto
     ) throws ResourceNotFoundException, FunctionnalException;
 
     /**
@@ -87,7 +92,8 @@ public interface ITripController {
     @PutMapping("/update/{id}")
     ResponseEntity<TripResponseDto> updateTrip(
             @Parameter(description = "ID du trajet", required = true) @PathVariable Integer id,
-            @Valid @RequestBody TripRequestDto tripRequestDto
+            @Valid @RequestBody TripRequestDto tripRequestDto,
+            UserResponseDto userResponseDto, CarResponseDto carResponseDto
     ) throws FunctionnalException;
 
     /**

@@ -1,7 +1,9 @@
 package fr.diginamic.VroomVroomCar.mapper;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.User;
@@ -16,7 +18,7 @@ public class TripMapper {
     private UserRepository userRepository;
     private CarRepository carRepository;
 
-    public Trip toEntity(TripRequestDto request) {
+    public Trip toEntity(TripRequestDto request, UserResponseDto userResponseDto, CarResponseDto carResponseDto) {
         Trip trip = new Trip();
         trip.setDateDebut(request.getDateDebut());
         trip.setDateFin(request.getDateFin());
@@ -27,11 +29,11 @@ public class TripMapper {
         trip.setVilleArrivee(request.getVilleArrivee());
         trip.setNbPlacesRestantes(request.getNbPlacesRestantes());
 
-        User organisateur = userRepository.findById(request.getOrganisateurId())
+        User organisateur = userRepository.findById(userResponseDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Organisateur non trouvé"));
         trip.setOrganisateur(organisateur);
 
-        Car car = carRepository.findById(request.getCarId())
+        Car car = carRepository.findById(carResponseDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
         trip.setCar(car);
 
@@ -62,7 +64,7 @@ public class TripMapper {
         return response;
     }
 
-    public void updateEntity(Trip existingTrip, TripRequestDto requestDto) {
+    public void updateEntity(Trip existingTrip, TripRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) {
         if (requestDto.getDateDebut() != null) {
             existingTrip.setDateDebut(requestDto.getDateDebut());
         } if (requestDto.getDateFin() != null) {
@@ -80,11 +82,11 @@ public class TripMapper {
         } if (requestDto.getNbPlacesRestantes() >= 0) {
             existingTrip.setNbPlacesRestantes(requestDto.getNbPlacesRestantes());
         } if (requestDto.getOrganisateurId() != null) {
-            User organisateur = userRepository.findById(requestDto.getOrganisateurId())
+            User organisateur = userRepository.findById(userResponseDto.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Organisateur non trouvé"));
             existingTrip.setOrganisateur(organisateur);
         } if (requestDto.getCarId() != null) {
-            Car car = carRepository.findById(requestDto.getCarId())
+            Car car = carRepository.findById(carResponseDto.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
             existingTrip.setCar(car);
         }
