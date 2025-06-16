@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservations")
-public class ReservationController {
+public class ReservationController implements IReservationController {
 
     @Autowired
     private ReservationService reservationService;
@@ -45,5 +45,12 @@ public class ReservationController {
     public ResponseEntity<ReservationResponseDto> updateReservation(@PathVariable Integer id, @Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
         ReservationResponseDto reservationEdit = reservationService.updateReservation(id, requestDto, userResponseDto, carResponseDto);
         return ResponseEntity.ok(reservationEdit);
+    }
+
+    // Delete Reservation (DELETE)
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteReservation(@PathVariable Integer id) throws FunctionnalException {
+        reservationService.deleteReservation(id);
+        return ResponseEntity.ok("Reservation supprimée avec succès");
     }
 }
