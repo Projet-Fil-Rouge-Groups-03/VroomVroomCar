@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ReservationService {
+public class ReservationService implements IReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
