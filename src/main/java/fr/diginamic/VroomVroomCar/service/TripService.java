@@ -12,7 +12,6 @@ import fr.diginamic.VroomVroomCar.repository.TripRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;

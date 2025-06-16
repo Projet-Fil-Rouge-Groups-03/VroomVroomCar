@@ -6,8 +6,6 @@ import fr.diginamic.VroomVroomCar.entity.*;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.mapper.NotificationMapper;
 import fr.diginamic.VroomVroomCar.repository.NotificationRepository;
-import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
-import fr.diginamic.VroomVroomCar.repository.SubscribeRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.NotificationUtil;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
@@ -17,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 

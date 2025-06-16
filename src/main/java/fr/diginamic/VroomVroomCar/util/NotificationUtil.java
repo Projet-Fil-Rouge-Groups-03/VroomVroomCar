@@ -9,9 +9,7 @@ import fr.diginamic.VroomVroomCar.repository.SubscribeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Utilitaire pour la gestion des notifications.
