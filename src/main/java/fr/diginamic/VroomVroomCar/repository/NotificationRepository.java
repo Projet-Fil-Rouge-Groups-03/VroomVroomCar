@@ -2,9 +2,8 @@ package fr.diginamic.VroomVroomCar.repository;
 
 import fr.diginamic.VroomVroomCar.entity.Notification;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.awt.print.Pageable;
 
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
 
