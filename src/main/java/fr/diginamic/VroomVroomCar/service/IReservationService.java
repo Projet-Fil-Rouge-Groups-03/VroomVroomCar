@@ -46,7 +46,7 @@ public interface IReservationService {
      * @param carResponseDto  Informations du véhicule concerné
      * @return La réservation mise à jour sous forme de DTO
      */
-    ReservationResponseDto updateReservation(Integer id, ReservationRequestDto requestDto, CarResponseDto carResponseDto) throws FunctionnalException;
+    ReservationResponseDto updateReservation(Integer id, ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException;
 
     /**
      * Supprime une réservation selon son identifiant.
