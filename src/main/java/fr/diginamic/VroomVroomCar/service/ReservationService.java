@@ -57,7 +57,7 @@ public class ReservationService implements IReservationService {
 
     // Update Reservation
     @Transactional
-    public ReservationResponseDto updateReservation(Integer id, ReservationRequestDto requestDto, CarResponseDto carResponseDto) throws FunctionnalException {
+    public ReservationResponseDto updateReservation(Integer id, ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
         // Verification de l'existence
         Reservation existingReservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new FunctionnalException("La reservation avec l'ID " + id + " n'existe pas."));
@@ -66,7 +66,7 @@ public class ReservationService implements IReservationService {
         validationUtil.validateEndDateBeforeStartDate(requestDto.getDateDebut(), requestDto.getDateFin());
 
         // MAJ des données
-        reservationMapper.updateEntity(existingReservation, requestDto);
+        reservationMapper.updateEntity(existingReservation, requestDto, userResponseDto, carResponseDto);
         Reservation updatedReservation = reservationRepository.save(existingReservation);
 
         return reservationMapper.toResponse(updatedReservation);

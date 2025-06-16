@@ -39,4 +39,11 @@ public class ReservationController {
         ReservationResponseDto reservation = reservationService.getReservationById(id);
         return ResponseEntity.ok(reservation);
     }
+
+    // Update Reservation (PUT)
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ReservationResponseDto> updateReservation(@PathVariable Integer id, @Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
+        ReservationResponseDto reservationEdit = reservationService.updateReservation(id, requestDto, userResponseDto, carResponseDto);
+        return ResponseEntity.ok(reservationEdit);
+    }
 }

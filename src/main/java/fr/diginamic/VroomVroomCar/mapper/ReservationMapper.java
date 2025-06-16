@@ -51,19 +51,19 @@ public class ReservationMapper {
         return response;
     }
 
-    public void updateEntity(Reservation existingReservation, ReservationRequestDto requestDto){
+    public void updateEntity(Reservation existingReservation, ReservationRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto){
         if (requestDto.getDateDebut() != null) {
             existingReservation.setDateDebut(requestDto.getDateDebut());
         } if (requestDto.getDateFin() != null) {
             existingReservation.setDateFin(requestDto.getDateFin());
         } if (requestDto.getUserId() != null){
-            User user = userRepository.findById(requestDto.getUserId())
+            User user = userRepository.findById(userResponseDto.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
             existingReservation.setUser(user);
         } if (requestDto.getCarId() != null) {
-            Car car = carRepository.findById(requestDto.getCarId())
+            Car car = carRepository.findById(carResponseDto.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
-            existingReservation.setCar(car);
+            existingReservation.setCar(car);;
         }
     }
 }
