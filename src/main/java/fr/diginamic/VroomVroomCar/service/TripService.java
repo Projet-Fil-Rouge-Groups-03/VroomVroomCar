@@ -1,10 +1,7 @@
 package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.SubscribeResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.*;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.TripMapper;
@@ -39,11 +36,11 @@ public class TripService implements ITripService {
 
     // Create Trip
     @Transactional
-    public TripResponseDto createTrip(TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException {
+    public TripResponseDto createTrip(TripRequestDto tripRequestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
         // Validation des dates
         validationUtil.validateEndDateBeforeStartDate(tripRequestDto.getDateDebut(), tripRequestDto.getDateFin());
 
-        Trip trip = tripMapper.toEntity(tripRequestDto);
+        Trip trip = tripMapper.toEntity(tripRequestDto, userResponseDto, carResponseDto);
         // Calcul de l'heure d'arrivée
         trip.setHeureArrivee(calculateArrivalTime(trip.getHeureDepart(), trip.getLieuDepart(),
                 trip.getLieuArrivee(), trip.getVilleDepart(), trip.getVilleArrivee()));
@@ -75,7 +72,7 @@ public class TripService implements ITripService {
 
     // Update Trip
     @Transactional
-    public TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException {
+    public TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
         // Vérification existence
         Trip existingTrip = tripRepository.findById(id)
                 .orElseThrow(() -> new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas."));
@@ -86,7 +83,7 @@ public class TripService implements ITripService {
         }
 
         // Mise à jour des données
-        tripMapper.updateEntity(existingTrip, tripRequestDto);
+        tripMapper.updateEntity(existingTrip, tripRequestDto, userResponseDto, carResponseDto);
         // Recalcul de l'heure d'arrivée si nécessaire
         if (tripRequestDto.getHeureDepart() != null) {
             existingTrip.setHeureArrivee(calculateArrivalTime(

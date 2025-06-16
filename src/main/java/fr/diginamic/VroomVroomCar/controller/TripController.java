@@ -1,7 +1,9 @@
 package fr.diginamic.VroomVroomCar.controller;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.service.TripService;
@@ -22,8 +24,8 @@ public class TripController implements ITripController {
 
     // Create Trip (POST)
     @PostMapping("/create")
-    public ResponseEntity<TripResponseDto> createTrip(@Valid @RequestBody TripRequestDto tripRequestDto) throws ResourceNotFoundException, FunctionnalException {
-        TripResponseDto tripCreate = tripService.createTrip(tripRequestDto);
+    public ResponseEntity<TripResponseDto> createTrip(@Valid @RequestBody TripRequestDto tripRequestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws ResourceNotFoundException, FunctionnalException {
+        TripResponseDto tripCreate = tripService.createTrip(tripRequestDto, userResponseDto, carResponseDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(tripCreate);
     }
 
@@ -41,8 +43,8 @@ public class TripController implements ITripController {
 
     // Update Trip (PUT)
     @PutMapping("/update/{id}")
-    public ResponseEntity<TripResponseDto> updateTrip(@PathVariable Integer id, @Valid @RequestBody TripRequestDto tripRequestDto) throws FunctionnalException {
-        TripResponseDto tripEdit = tripService.updateTrip(id, tripRequestDto);
+    public ResponseEntity<TripResponseDto> updateTrip(@PathVariable Integer id, @Valid @RequestBody TripRequestDto tripRequestDto,  UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
+        TripResponseDto tripEdit = tripService.updateTrip(id, tripRequestDto, userResponseDto, carResponseDto);
         return ResponseEntity.ok(tripEdit);
     }
 
