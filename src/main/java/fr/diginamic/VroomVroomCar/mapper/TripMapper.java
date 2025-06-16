@@ -1,7 +1,9 @@
 package fr.diginamic.VroomVroomCar.mapper;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.User;
@@ -10,26 +12,13 @@ import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 
-/**
- * Composant responsable de la transformation entre les entités Trip et leurs DTO : TripRequestDto et TripResponseDto.
- *
- * Ce mapper permet de convertir les données entre les couches de présentation et de persistance.
- */
 @Component
 public class TripMapper {
 
     private UserRepository userRepository;
     private CarRepository carRepository;
 
-    /**
-     * Convertit un TripRequestDto en entité Trip.
-     * Récupère l'organisateur et le véhicule associés à partir de leurs identifiants.
-     *
-     * @param request Le DTO de création/modification du trajet
-     * @return L'entité Trip correspondante
-     * @throws EntityNotFoundException si l'organisateur ou le véhicule est introuvable
-     */
-    public Trip toEntity(TripRequestDto request) {
+    public Trip toEntity(TripRequestDto request, UserResponseDto userResponseDto, CarResponseDto carResponseDto) {
         Trip trip = new Trip();
         trip.setDateDebut(request.getDateDebut());
         trip.setDateFin(request.getDateFin());
@@ -38,24 +27,19 @@ public class TripMapper {
         trip.setLieuArrivee(request.getLieuArrivee());
         trip.setVilleDepart(request.getVilleDepart());
         trip.setVilleArrivee(request.getVilleArrivee());
+        trip.setNbPlacesRestantes(request.getNbPlacesRestantes());
 
-        User organisateur = userRepository.findById(request.getOrganisateurId())
+        User organisateur = userRepository.findById(userResponseDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Organisateur non trouvé"));
         trip.setOrganisateur(organisateur);
 
-        Car car = carRepository.findById(request.getCarId())
-                .orElseThrow(() -> new EntityNotFoundException("Véhicule non trouvé"));
+        Car car = carRepository.findById(carResponseDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
         trip.setCar(car);
 
         return trip;
     }
 
-    /**
-     * Convertit une entité Trip en TripResponseDto pour l’envoi au client.
-     *
-     * @param trip L'entité Trip à convertir
-     * @return Un DTO contenant les données du trajet
-     */
     public TripResponseDto toResponse(Trip trip) {
         TripResponseDto response = new TripResponseDto();
         response.setId(trip.getId());
@@ -80,38 +64,31 @@ public class TripMapper {
         return response;
     }
 
-    /**
-     * Met à jour une entité Trip existante avec les valeurs fournies dans le TripRequestDto.
-     * Seules les propriétés non nulles sont modifiées.
-     *
-     * @param existingTrip L'entité Trip à mettre à jour
-     * @param requestDto   Le DTO contenant les nouvelles valeurs
-     * @throws EntityNotFoundException si l'organisateur ou le véhicule référencé n'existe pas
-     */
-    public void updateEntity(Trip existingTrip, TripRequestDto requestDto) {
+    public void updateEntity(Trip existingTrip, TripRequestDto requestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) {
         if (requestDto.getDateDebut() != null) {
             existingTrip.setDateDebut(requestDto.getDateDebut());
-        } else if (requestDto.getDateFin() != null) {
+        } if (requestDto.getDateFin() != null) {
             existingTrip.setDateFin(requestDto.getDateFin());
-        } else if (requestDto.getHeureDepart() != null) {
+        } if (requestDto.getHeureDepart() != null) {
             existingTrip.setHeureDepart(requestDto.getHeureDepart());
-        } else if (requestDto.getLieuDepart() != null) {
+        } if (requestDto.getLieuDepart() != null) {
             existingTrip.setLieuDepart(requestDto.getLieuDepart());
-        } else if (requestDto.getLieuArrivee() != null) {
+        } if (requestDto.getLieuArrivee() != null) {
             existingTrip.setLieuArrivee(requestDto.getLieuArrivee());
-        } else if (requestDto.getVilleDepart() != null) {
+        } if (requestDto.getVilleDepart() != null) {
             existingTrip.setVilleDepart(requestDto.getVilleDepart());
-        } else if (requestDto.getVilleArrivee() != null) {
+        } if (requestDto.getVilleArrivee() != null) {
             existingTrip.setVilleArrivee(requestDto.getVilleArrivee());
-        } else if (requestDto.getOrganisateurId() != null) {
-            User organisateur = userRepository.findById(requestDto.getOrganisateurId())
+        } if (requestDto.getNbPlacesRestantes() >= 0) {
+            existingTrip.setNbPlacesRestantes(requestDto.getNbPlacesRestantes());
+        } if (requestDto.getOrganisateurId() != null) {
+            User organisateur = userRepository.findById(userResponseDto.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Organisateur non trouvé"));
             existingTrip.setOrganisateur(organisateur);
-        } else if (requestDto.getCarId() != null) {
-            Car car = carRepository.findById(requestDto.getCarId())
-                    .orElseThrow(() -> new EntityNotFoundException("Véhicule non trouvé"));
+        } if (requestDto.getCarId() != null) {
+            Car car = carRepository.findById(carResponseDto.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
             existingTrip.setCar(car);
         }
     }
 }
-

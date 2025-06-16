@@ -1,6 +1,7 @@
 package fr.diginamic.VroomVroomCar.util;
 
 import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
+import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
@@ -60,7 +61,7 @@ public final class ValidationUtil {
     /**
      * Valide une limite pour s'assurer qu'elle est supérieure à zéro.
      *
-     * @param limit La limite à valider.
+     * @param limit La limite a validé.
      * @throws IllegalArgumentException si la limite est inférieure ou égale à zéro.
      */
     public static void validateLimit(int limit) {
