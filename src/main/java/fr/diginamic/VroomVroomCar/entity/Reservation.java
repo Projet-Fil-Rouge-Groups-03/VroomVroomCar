@@ -56,16 +56,16 @@ public class Reservation {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "car_id")
-    private Car car;
+    private CompanyCar companyCar;
 
     /**
      * Constructeur personnalisé pour créer une instance de réservation.
      */
-    public Reservation(Date dateDebut, Date dateFin, User user, Car car) {
+    public Reservation(Date dateDebut, Date dateFin, User user, CompanyCar companyCar) {
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
         this.user = user;
-        this.car = car;
+        this.companyCar = companyCar;
     }
 }
 
