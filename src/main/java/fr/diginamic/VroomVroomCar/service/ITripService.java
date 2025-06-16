@@ -3,6 +3,7 @@ package fr.diginamic.VroomVroomCar.service;
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 
 import java.time.LocalTime;
@@ -19,11 +20,12 @@ public interface ITripService {
      * Crée un nouveau trajet à partir des données fournies.
      *
      * @param tripRequestDto les informations nécessaires à la création du trajet
+     * @param userResponseDto les informations nécessaires de l'organisateur du trajet
      * @param carResponseDto les informations nécessaires du véhicule pour la création du trajet
      * @return le trajet créé sous forme de DTO
      * @throws FunctionnalException si les données sont invalides ou si une règle métier est violée
      */
-    TripResponseDto createTrip(TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException;
+    TripResponseDto createTrip(TripRequestDto tripRequestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException;
 
     /**
      * Récupère la liste de tous les trajets existants.
@@ -50,7 +52,7 @@ public interface ITripService {
      * @return le trajet mis à jour sous forme de DTO
      * @throws FunctionnalException si le trajet n'existe pas ou si une règle métier est enfreinte
      */
-    TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException;
+    TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException;
 
     /**
      * Supprime un trajet à partir de son identifiant.
