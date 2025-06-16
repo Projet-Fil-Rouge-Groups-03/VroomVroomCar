@@ -7,6 +7,7 @@ import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import java.util.Date;
  * Elle est conçue pour être utilisée dans toute l'application afin de garantir la validité des entrées.
  */
 @NoArgsConstructor
+@Component
 public final class ValidationUtil {
 
     /**

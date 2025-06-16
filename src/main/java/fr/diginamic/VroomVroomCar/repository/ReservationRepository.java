@@ -19,7 +19,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
      * @param pageable l'objet Pageable définissant les paramètres de pagination (page, taille, tri, etc.)
      * @return une page de réservations Page correspondant au véhicule spécifié
      */
-    Page<Reservation> findByCar_Id(Integer carId, Pageable pageable);
+    Page<Reservation> findByCompanyCar_Id(Integer carId, Pageable pageable);
 
 
     /**
@@ -32,5 +32,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
      * @param dateFin la date de fin du trajet
      * @return vrai si l'utilisateur a déjà réservé, sinon faux
      */
-    boolean existsByCar_IdAndUser_IdAndDateDebutAndDateFin(Integer carId, Integer userId, Date dateDebut, Date dateFin);
+    boolean existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(Integer carId, Integer userId, Date dateDebut, Date dateFin);
 }

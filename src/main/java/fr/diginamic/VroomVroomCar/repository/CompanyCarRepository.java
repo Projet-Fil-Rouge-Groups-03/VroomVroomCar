@@ -51,11 +51,11 @@ public interface CompanyCarRepository extends JpaRepository<CompanyCar, Integer>
     /**
      * Trouve toutes les voitures appartenant à une catégorie spécifiée, avec pagination.
      *
-     * @param categorie La catégorie de voitures à rechercher.
+     * @param categories La catégorie de voitures à rechercher.
      * @param pageable Les informations de pagination et de tri.
      * @return Une page de voitures appartenant à la catégorie spécifiée.
      */
-    Page<CompanyCar> findByCategorie(Categorie categorie, Pageable pageable);
+    Page<CompanyCar> findByCategories(Categorie categories, Pageable pageable);
 
 
     /**
@@ -65,7 +65,7 @@ public interface CompanyCarRepository extends JpaRepository<CompanyCar, Integer>
      * @param pageable Les informations de pagination et de tri.
      * @return Une page de voitures triées par l'immatriculation.
      */
-    Optional<CompanyCar> findByImmatriculationContainingIgnoreCase(String immatriculation, Pageable pageable);
+    Page<CompanyCar> findByImmatriculationContainingIgnoreCase(String immatriculation, Pageable pageable);
 
     /**
      * Vérifie si une voiture de service existe déjà avec l'immatriculation donnée.

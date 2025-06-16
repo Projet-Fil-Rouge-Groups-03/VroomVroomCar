@@ -142,10 +142,10 @@ public class CompanyCarService implements ICompanyCarService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<CompanyCarResponseDto> getCarsByCategorie(Categorie categorie, int limit) {
+    public List<CompanyCarResponseDto> getCarsByCategories(Categorie categories, int limit) {
         ValidationUtil.validateNotNull("La catégorie");
         Pageable pageable = PageRequest.of(0, limit);
-        return companyCarRepository.findByCategorie(categorie, pageable).stream()
+        return companyCarRepository.findByCategories(categories, pageable).stream()
                 .map(companyCarMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
