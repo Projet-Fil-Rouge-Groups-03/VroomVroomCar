@@ -32,7 +32,7 @@ public class User {
     @JoinColumn(name = "trip_id")
     private Set<Trip> trips;
 
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Subscribe> subscribes;
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
