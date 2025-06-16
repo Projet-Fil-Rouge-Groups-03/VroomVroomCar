@@ -7,9 +7,15 @@ import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.ReservationMapper;
+import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +29,8 @@ public class ReservationService implements IReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
+
+    private final CarRepository carRepository;
 
     private final ValidationUtil validationUtil;
 
@@ -54,6 +62,19 @@ public class ReservationService implements IReservationService {
                 .orElseThrow(() -> new FunctionnalException("La reservation avec l'ID " + id + " n'existe pas."));
         return reservationMapper.toResponse(reservation);
     }
+    @Transactional(readOnly = true)
+    public Page<ReservationResponseDto> getReservationsByCarId(Integer carId, int page, int size) throws FunctionnalException {
+        // Vérification de l'existence de la voiture
+        if (!carRepository.existsById(carId)) {
+            throw new FunctionnalException("Voiture non trouvée avec l'ID: " + carId);
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dateDebut").descending());
+        Page<Reservation> reservations = reservationRepository.findByCar_Id(carId, pageable);
+
+        return reservations.map(reservationMapper::toResponse);
+    }
+
 
     // Update Reservation
     @Transactional

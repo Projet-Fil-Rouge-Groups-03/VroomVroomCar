@@ -5,6 +5,7 @@ import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -37,6 +38,20 @@ public interface IReservationService {
      * @return La réservation correspondante sous forme de DTO
      */
     ReservationResponseDto getReservationById(Integer id) throws FunctionnalException;
+
+    /**
+     * Récupère une page de réservations associées à un véhicule donné.
+     *
+     * Cette méthode permet de paginer les résultats en spécifiant la taille de la page
+     * et le numéro de page souhaité. Les réservations sont généralement triées par date de début.
+     *
+     * @param carId l'identifiant du véhicule pour lequel les réservations doivent être récupérées
+     * @param page le numéro de la page (0 correspond à la première page)
+     * @param size le nombre d'éléments par page
+     * @return une page contenant des {@link ReservationResponseDto} pour le véhicule spécifié
+     * @throws FunctionnalException si le véhicule spécifié n'existe pas (à gérer selon implémentation)
+     */
+    Page<ReservationResponseDto> getReservationsByCarId(Integer carId, int page, int size) throws FunctionnalException;
 
     /**
      * Met à jour une réservation existante.

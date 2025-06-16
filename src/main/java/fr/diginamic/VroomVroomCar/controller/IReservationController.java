@@ -6,6 +6,7 @@ import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -73,6 +74,36 @@ public interface IReservationController {
     ResponseEntity<ReservationResponseDto> getReservationById(
             @Parameter(description = "ID de la réservation") @PathVariable Integer id
     ) throws FunctionnalException;
+
+    /**
+     * Récupère une liste paginée des réservations associées à un véhicule spécifique.
+     *
+     * Cette méthode permet de consulter les réservations d’un véhicule donné, avec prise en charge
+     * de la pagination via les paramètres page et size.
+     *
+     * @param carId l’identifiant du véhicule pour lequel les réservations sont demandées
+     * @param page le numéro de la page à récupérer (0 par défaut)
+     * @param size la taille de la page, c’est-à-dire le nombre de réservations par page (5 par défaut)
+     * @return une réponse HTTP contenant une page de ReservationResponseDto
+     */
+    @Operation(summary = "Récupérer les réservations d’un véhicule avec pagination",
+            description = "Permet de consulter les réservations associées à un véhicule donné, paginées par défaut par blocs de 5.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Liste paginée des réservations pour le véhicule"),
+            @ApiResponse(responseCode = "404", description = "Aucune réservation trouvée ou véhicule inexistant")
+    })
+    @GetMapping("/car/{carId}")
+    ResponseEntity<Page<ReservationResponseDto>> getReservationsByCarId(
+            @Parameter(description = "Identifiant du véhicule", required = true)
+            @PathVariable Integer carId,
+
+            @Parameter(description = "Numéro de la page (0 par défaut)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+
+            @Parameter(description = "Taille de la page (5 par défaut)", example = "5")
+            @RequestParam(defaultValue = "5") int size
+    ) throws FunctionnalException;
+
 
     /**
      * Met à jour une réservation existante.

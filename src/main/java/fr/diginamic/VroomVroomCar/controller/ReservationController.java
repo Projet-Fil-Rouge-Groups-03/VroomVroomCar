@@ -8,6 +8,7 @@ import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.service.ReservationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,13 @@ public class ReservationController implements IReservationController {
     public ResponseEntity<ReservationResponseDto> getReservationById(@PathVariable Integer id) throws FunctionnalException {
         ReservationResponseDto reservation = reservationService.getReservationById(id);
         return ResponseEntity.ok(reservation);
+    }
+    @GetMapping("/car/{carId}") //?page=0&size=5
+    public ResponseEntity<Page<ReservationResponseDto>> getReservationsByCarId(@PathVariable Integer carId,
+                                                                               @RequestParam(defaultValue = "0") int page,
+                                                                               @RequestParam(defaultValue = "5") int size) throws FunctionnalException {
+        Page<ReservationResponseDto> result = reservationService.getReservationsByCarId(carId, page, size);
+        return ResponseEntity.ok(result);
     }
 
     // Update Reservation (PUT)
