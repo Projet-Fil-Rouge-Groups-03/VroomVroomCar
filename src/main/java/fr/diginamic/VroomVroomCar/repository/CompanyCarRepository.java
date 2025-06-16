@@ -65,7 +65,7 @@ public interface CompanyCarRepository extends JpaRepository<CompanyCar, Integer>
      * @param pageable Les informations de pagination et de tri.
      * @return Une page de voitures triées par l'immatriculation.
      */
-    Optional<CompanyCar> findByImmatriculationContainingIgnoreCase(String immatriculation, Pageable pageable);
+    Page<CompanyCar> findByImmatriculationContainingIgnoreCase(String immatriculation, Pageable pageable);
 
     /**
      * Vérifie si une voiture de service existe déjà avec l'immatriculation donnée.
