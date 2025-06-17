@@ -22,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -98,13 +100,13 @@ class NotificationServiceTest {
     @Test
     void testSendNotificationToOrganisateurOnSubscribe() {
         Trip trip = new Trip();
-        trip.setDateDebut(Date.valueOf(LocalDate.now())); // Initialisation de la date de début
-        trip.setDateFin(Date.valueOf(LocalDate.now().plusDays(1))); // Initialisation de la date de fin
-        trip.setHeureDepart(LocalTime.now()); // Initialisation de l'heure de départ
-        trip.setLieuDepart("Lieu de départ");
-        trip.setLieuArrivee("Lieu d'arrivée");
-        trip.setVilleDepart("Ville de départ");
-        trip.setVilleArrivee("Ville d'arrivée");
+        trip.setDateDebut(Date.valueOf(LocalDate.now()));
+        trip.setDateFin(Date.valueOf(LocalDate.now().plusDays(1)));
+        trip.setHeureDepart(LocalTime.now());
+        trip.setLieuDepart("Gare du Nord");
+        trip.setLieuArrivee("Gare Bordeaux Saint-jean");
+        trip.setVilleDepart("Paris");
+        trip.setVilleArrivee("Bordeaux");
         trip.setNbPlacesRestantes(4);
         trip.setOrganisateur(1);
         trip.setCar(1);
