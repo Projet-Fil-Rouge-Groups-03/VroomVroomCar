@@ -2,13 +2,12 @@ package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.CompanyCarRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
-import fr.diginamic.VroomVroomCar.entity.Categorie;
-import fr.diginamic.VroomVroomCar.entity.CompanyCar;
-import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.entity.*;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.mapper.CompanyCarMapper;
 import fr.diginamic.VroomVroomCar.repository.CompanyCarRepository;
+import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,9 +29,10 @@ public class CompanyCarService implements ICompanyCarService {
 
     private final CompanyCarRepository companyCarRepository;
     private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;
     private final CompanyCarMapper companyCarMapper;
     private final CarApiService carApiService;
-
+    private final NotificationService notificationService;
 
     // GET by ID
 
@@ -94,6 +95,7 @@ public class CompanyCarService implements ICompanyCarService {
         boolean shouldUpdatePollution = !existingCar.getMarque().equals(companyCarRequestDto.getMarque()) ||
                 !existingCar.getModele().equals(companyCarRequestDto.getModele()) ||
                 !existingCar.getMotorisation().equals(companyCarRequestDto.getMotorisation());
+        CompanyCarStatus oldStatus = existingCar.getStatus();
 
         companyCarMapper.updateEntity(existingCar, companyCarRequestDto, user);
 
@@ -102,6 +104,17 @@ public class CompanyCarService implements ICompanyCarService {
         }
 
         CompanyCar updatedCompanyCar = companyCarRepository.save(existingCar);
+
+        // Si statut changé vers un reparation ou hors_service, notifier les utilisateurs qui ont reservés
+        if (!oldStatus.equals(updatedCompanyCar.getStatus())
+                && (updatedCompanyCar.getStatus() == CompanyCarStatus.REPARATION || updatedCompanyCar.getStatus() == CompanyCarStatus.HORS_SERVICE)) {
+
+            List<Reservation> futureReservations = reservationRepository.findByCompanyCarAndDateDebutAfter(updatedCompanyCar, LocalDateTime.now());
+
+            for (Reservation reservation : futureReservations) {
+                notificationService.sendNotificationToUsersOnCarStatusUpdate(updatedCompanyCar, updatedCompanyCar.getStatus().toString(), reservation.getUser());
+            }
+        }
 
         return companyCarMapper.toResponseDto(updatedCompanyCar);
     }

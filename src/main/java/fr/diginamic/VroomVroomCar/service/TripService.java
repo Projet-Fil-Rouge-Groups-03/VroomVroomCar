@@ -12,7 +12,6 @@ import fr.diginamic.VroomVroomCar.repository.TripRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -31,6 +30,7 @@ public class TripService implements ITripService {
     private final CarRepository carRepository;
     private final ReservationRepository reservationRepository;
     private final SubscribeRepository subscribeRepository;
+    private final NotificationService notificationService;
 
     private final OpenRouteService openRouteService;
 
@@ -106,15 +106,17 @@ public class TripService implements ITripService {
         }
 
         Trip updatedTrip = tripRepository.save(existingTrip);
+        // Envoi notifications aux participants
+        notificationService.sendNotificationToParticipantsOnModification(updatedTrip, updatedTrip.getOrganisateur());
         return tripMapper.toResponse(updatedTrip);
     }
 
     // Delete Trip
     @Transactional
     public void deleteTrip(Integer id) throws FunctionnalException {
-        if (!tripRepository.existsById(id)) {
-            throw new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas.");
-        }
+        Trip trip = tripRepository.findById(id)
+                .orElseThrow(() -> new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas."));
+        notificationService.sendNotificationToParticipantsOnAnnulation(trip, trip.getOrganisateur());
         tripRepository.deleteById(id);
     }
 

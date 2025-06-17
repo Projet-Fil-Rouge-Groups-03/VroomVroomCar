@@ -1,11 +1,15 @@
 package fr.diginamic.VroomVroomCar.repository;
 
+import fr.diginamic.VroomVroomCar.entity.Car;
+import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Repository JPA pour l'entité Reservation.
@@ -33,4 +37,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
      * @return vrai si l'utilisateur a déjà réservé, sinon faux
      */
     boolean existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(Integer carId, Integer userId, Date dateDebut, Date dateFin);
+
+    List<Reservation> findByCompanyCarAndDateDebutAfter(CompanyCar companyCar, LocalDateTime date);
 }

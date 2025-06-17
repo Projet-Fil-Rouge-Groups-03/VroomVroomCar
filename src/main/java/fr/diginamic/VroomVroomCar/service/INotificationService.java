@@ -30,12 +30,12 @@ public interface INotificationService {
      * @param dto Le DTO de requête contenant les informations nécessaires pour créer la notification.
      * @return Un {@link NotificationResponseDto} représentant la notification créée.
      */
-    NotificationResponseDto createNotification(NotificationRequestDto dto);
+    NotificationResponseDto createNotification(NotificationRequestDto dto) throws ResourceNotFoundException ;
 
     /**
      * Supprime une notification par son ID.
      *
      * @param id L'ID de la notification à supprimer.
      */
-    void deleteNotification(Integer id);
+    void deleteNotification(Integer id) throws ResourceNotFoundException ;
 }

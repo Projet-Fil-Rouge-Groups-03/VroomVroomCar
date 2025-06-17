@@ -22,7 +22,7 @@ import java.util.*;
 public class OpenRouteService {
 
     @Value("${openroute.api.key}")
-    private final String API_KEY;
+    private String API_KEY;
     private static final String GEOCODE_URL = "https://api.openrouteservice.org/geocode/search";
     private static final String ROUTE_URL = "https://api.openrouteservice.org/v2/directions/driving-car";
 
