@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -38,6 +39,23 @@ public interface ISubscribeController {
     ResponseEntity<SubscribeResponseDto> findById(@RequestParam int id) throws ResourceNotFoundException;
 
 
+    /**
+     * Récupère la liste de toutes les inscriptions pour un trajet donné.
+     *
+     * @param id l'identifiant du trajet.
+     * @return une {@link ResponseEntity} contenant une liste d'objets {@link SubscribeResponseDto}.
+     */
+    @Operation(summary = "Récupérer toutes les inscriptions pour un trajet donné", description = "Renvoie une liste de tous les inscriptions enregistrés.")
+    ResponseEntity<List<SubscribeResponseDto>> findByTrip(int id);
+
+    /**
+     * Recherche la liste de toutes les inscriptions pour un utilisateur donné.
+     *
+     * @param id l'identifiant de l'utilisateur.
+     * @return une {@link ResponseEntity} contenant une liste d'objets {@link SubscribeResponseDto}.
+     */
+    @Operation(summary = "Récupérer toutes les inscriptions pour un utilisateur donné", description = "Renvoie une liste de tous les inscriptions enregistrés.")
+    ResponseEntity<List<SubscribeResponseDto>> findByUser(int id);
     /**
      * Ajoute une nouvelle inscription.
      *

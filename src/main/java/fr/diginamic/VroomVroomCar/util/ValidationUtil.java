@@ -1,6 +1,8 @@
 package fr.diginamic.VroomVroomCar.util;
 
 import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
+import fr.diginamic.VroomVroomCar.dto.request.SubscribeRequestDto;
+import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
@@ -63,7 +65,7 @@ public final class ValidationUtil {
     /**
      * Valide une limite pour s'assurer qu'elle est supérieure à zéro.
      *
-     * @param limit La limite a validé.
+     * @param limit La limite à valider.
      * @throws IllegalArgumentException si la limite est inférieure ou égale à zéro.
      */
     public static void validateLimit(int limit) {
@@ -111,6 +113,12 @@ public final class ValidationUtil {
     public static void validateNotNull(String fieldName) {
         if (fieldName == null) {
             throw new IllegalArgumentException(fieldName + " ne peut pas être null.");
+        }
+    }
+
+    public static void validateSubscribeRequestDto(SubscribeRequestDto subscribeRequestDto) {
+        if (subscribeRequestDto == null) {
+            throw new IllegalArgumentException("Le DTO de requête d'inscription ne peut pas être null.");
         }
     }
 
