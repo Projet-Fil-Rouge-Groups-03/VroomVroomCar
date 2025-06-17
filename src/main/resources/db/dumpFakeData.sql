@@ -8,16 +8,16 @@ INSERT INTO utilisateur (nom, prenom, mail, adresse, mot_de_passe, status) VALUE
 ('Bernard', 'Lucie', 'lucie.bernard@example.com', '5 rue Lafayette', 'mdp567', 'ACTIF');
 
 INSERT INTO voiture (marque, modele, nb_places, pollution, infos_supp, utilisateur_id, motorisation, categories) VALUES
-('Renault', 'Clio', 5, 'Euro 6', NULL, 1, 'ESSENCE', 'MINI_CITADINES'),
-('Peugeot', '208', 5, 'Euro 6', NULL, 1, 'HYBRIDE', 'CITADINES'),
-('Toyota', 'Yaris', 5, 'Euro 5', NULL, 1, 'ELECTRIQUE', 'COMPACTES'),
-('Volkswagen', 'Golf', 5, 'Euro 6', NULL, 1, 'ESSENCE', 'BERLINES_TAILLE_M'),
-('BMW', 'Série 1', 5, 'Euro 6', NULL, 2, 'HYBRIDE', 'BERLINES_TAILLE_M'),
-('Citroën', 'C3', 5, 'Euro 6d', 'Voiture urbaine confortable', 3, 'ESSENCE', 'CITADINES'),
-('Renault', 'Clio', 5, 'Euro 6', NULL, 1, 'ESSENCE', 'MINI_CITADINES'),
-('Hyundai', 'Ioniq 5', 5, 'Zero Emission', '100% électrique', 5, 'ELECTRIQUE', 'SUV'),
-('BMW', 'Série 1', 5, 'Euro 6', NULL, 2, 'HYBRIDE', 'BERLINES_TAILLE_M'),
-('Opel', 'Corsa', 5, 'Euro 5', NULL, 4, 'ESSENCE', 'MINI_CITADINES');
+('Renault', 'Clio', 5, NULL, NULL, 1, 'ESSENCE', 'MINI_CITADINES'),
+('Peugeot', '208', 5, NULL, NULL, 1, 'HYBRIDE', 'CITADINES'),
+('Toyota', 'Yaris', 5, NULL, NULL, 1, 'ELECTRIQUE', 'COMPACTES'),
+('Volkswagen', 'Golf', 5, NULL, NULL, 1, 'ESSENCE', 'BERLINES_TAILLE_M'),
+('BMW', 'Série 1', 5, NULL, NULL, 2, 'HYBRIDE', 'BERLINES_TAILLE_M'),
+('Citroën', 'C3', 5, NULL, 'Voiture urbaine confortable', 3, 'ESSENCE', 'CITADINES'),
+('Renault', 'Clio', 5, NULL, NULL, 1, 'ESSENCE', 'MINI_CITADINES'),
+('Hyundai', 'Ioniq 5', 5, NULL, '100% électrique', 5, 'ELECTRIQUE', 'SUV'),
+('BMW', 'Série 1', 5, NULL, NULL, 2, 'HYBRIDE', 'BERLINES_TAILLE_M'),
+('Opel', 'Corsa', 5, NULL, NULL, 4, 'ESSENCE', 'MINI_CITADINES');
 
 INSERT INTO voiture_de_service (id, immatriculation, url_photo, status) VALUES
 (1, 'AB-123-CD', NULL, 'EN_SERVICE'),
