@@ -11,16 +11,6 @@ import java.util.List;
  * Elle fournit des méthodes pour effectuer des opérations de base de données sur les entités Subscribe.
  */
 public interface SubscribeRepository extends JpaRepository<Subscribe, Integer> {
-    /**
-     * Compte le nombre d'inscriptions {@link Subscribe} pour un identifiant de voyage
-     * et une plage de dates donnée.
-     *
-     * @param tripId     l'identifiant du voyage
-     * @param dateDebut  la date de début de la période
-     * @param dateFin    la date de fin de la période
-     * @return le nombre d'abonnements correspondant aux critères
-     */
-    public int countByTripIdAndDateDebutAndDateFin(Integer tripId, Date dateDebut, Date dateFin);
 
     /**
      * Récupère la liste des inscriptions liées à un voyage spécifique.
