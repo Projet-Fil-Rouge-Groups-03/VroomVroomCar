@@ -4,11 +4,15 @@ import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.util.CO2Util;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
 public class CO2Service {
+
+    @Autowired
+    private OpenRouteService openRouteService;
 
     /**
      * Extrait la valeur CO2/km depuis le champ pollution
@@ -59,22 +63,21 @@ public class CO2Service {
     }
 
 
-    // Méthode future pour intégrer OpenStreetMap
+    /**
+     * Calcule les émissions de CO₂ d'un trajet en voiture, à partir de ses adresses de départ et d'arrivée,
+     * en utilisant l'API OpenRouteService pour obtenir la distance réelle.
+     *
+     * @param car  la voiture utilisée pour le trajet, contenant les données d'émission CO₂ par kilomètre
+     * @param trip le trajet à analyser, avec lieux et villes de départ/arrivée
+     * @return les émissions de CO₂ estimées pour ce trajet (en kilogrammes)
+     */
     public double calculerCo2TrajetAvecOSM(Car car, Trip trip) {
-        // TODO: Intégrer avec OpenStreetMap pour calculer la distance réelle
-        // double distance = openStreetMapService.calculerDistance(trip.getDepart(), trip.getArrivee());
-        // return calculateCarCO2(car, distance);
-        throw new UnsupportedOperationException("Intégration OSM à venir");
+        String adresseDepart = trip.getLieuDepart() + ", " + trip.getVilleDepart();
+        String adresseArrivee = trip.getLieuArrivee() + ", " + trip.getVilleArrivee();
+        double distanceKm = openRouteService.getTravelDistanceInKilometers(adresseDepart, adresseArrivee);
+
+        return calculateCarCO2(car, distanceKm);
     }
 
-    /**
-     * Récupère la distance d'un trip (placeholder)
-     * @param trip Le trajet
-     * @return Distance en km
-     */
-    private double getDistanceFromTrip(Trip trip) {
-        // TODO: Implémenter selon votre modèle Trip
-        // return trip.getDistance(); // Si vous avez ce champ
-        return 100.0; // Distance fictive pour l'exemple
-    }
+
 }
