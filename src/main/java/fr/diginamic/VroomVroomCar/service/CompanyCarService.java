@@ -109,7 +109,7 @@ public class CompanyCarService implements ICompanyCarService {
         if (!oldStatus.equals(updatedCompanyCar.getStatus())
                 && (updatedCompanyCar.getStatus() == CompanyCarStatus.REPARATION || updatedCompanyCar.getStatus() == CompanyCarStatus.HORS_SERVICE)) {
 
-            List<Reservation> futureReservations = reservationRepository.findByCarAndDateDebutAfter(updatedCompanyCar, LocalDateTime.now());
+            List<Reservation> futureReservations = reservationRepository.findByCompanyCarAndDateDebutAfter(updatedCompanyCar, LocalDateTime.now());
 
             for (Reservation reservation : futureReservations) {
                 notificationService.sendNotificationToUsersOnCarStatusUpdate(updatedCompanyCar, updatedCompanyCar.getStatus().toString(), reservation.getUser());
