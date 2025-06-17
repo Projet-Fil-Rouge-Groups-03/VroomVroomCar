@@ -67,14 +67,4 @@ public class CO2Service {
         throw new UnsupportedOperationException("Intégration OSM à venir");
     }
 
-    /**
-     * Récupère la distance d'un trip (placeholder)
-     * @param trip Le trajet
-     * @return Distance en km
-     */
-    private double getDistanceFromTrip(Trip trip) {
-        // TODO: Implémenter selon votre modèle Trip
-        // return trip.getDistance(); // Si vous avez ce champ
-        return 100.0; // Distance fictive pour l'exemple
-    }
 }

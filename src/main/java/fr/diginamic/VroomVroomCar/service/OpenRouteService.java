@@ -54,13 +54,14 @@ public class OpenRouteService {
     }
 
     /**
-     * Calcule la durée estimée du trajet (en secondes) entre deux adresses.
+     * Effectue un appel à l'API OpenRouteService Directions et retourne la réponse JSON.
      *
-     * @param fromAddress adresse de départ complète (ex : "10 rue de la paix, Paris")
-     * @param toAddress   adresse d'arrivée complète (ex : "1 place Bellecour, Lyon")
-     * @return la durée estimée du trajet en secondes
+     * @param fromAddress adresse de départ
+     * @param toAddress   adresse d’arrivée
+     * @return la réponse JSON complète de l'itinéraire
+     * @throws RuntimeException si la requête échoue ou le parsing JSON échoue
      */
-    public double getTravelDurationInSeconds(String fromAddress, String toAddress) {
+    private JsonNode getRouteResponse(String fromAddress, String toAddress) {
         double[] start = getCoordinatesFromAddress(fromAddress);
         double[] end = getCoordinatesFromAddress(toAddress);
 
@@ -75,17 +76,45 @@ public class OpenRouteService {
         ResponseEntity<String> response = restTemplate.postForEntity(ROUTE_URL, request, String.class);
 
         try {
-            JsonNode root = objectMapper.readTree(response.getBody());
-            return root
-                    .path("features")
-                    .get(0)
-                    .path("properties")
-                    .path("summary")
-                    .path("duration")
-                    .asDouble();
+            return objectMapper.readTree(response.getBody());
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors du parsing de la durée", e);
+            throw new RuntimeException("Erreur lors du parsing de la réponse JSON", e);
         }
+    }
+
+    /**
+     * Calcule la durée estimée du trajet (en secondes) entre deux adresses.
+     *
+     * @param fromAddress adresse de départ complète (ex : "10 rue de la paix, Paris")
+     * @param toAddress   adresse d'arrivée complète (ex : "1 place Bellecour, Lyon")
+     * @return la durée estimée du trajet en secondes
+     */
+    public double getTravelDurationInSeconds(String fromAddress, String toAddress) {
+        JsonNode root = getRouteResponse(fromAddress, toAddress);
+        return root.path("features")
+                .get(0)
+                .path("properties")
+                .path("summary")
+                .path("duration")
+                .asDouble();
+    }
+
+    /**
+     * Récupère la distance du trajet entre deux adresses, en kilomètres.
+     *
+     * @param fromAddress adresse de départ (ex. : "10 rue de la paix, Paris")
+     * @param toAddress   adresse d'arrivée (ex. : "1 place Bellecour, Lyon")
+     * @return la distance en kilomètres (double)
+     */
+    public double getTravelDistanceInKilometers(String fromAddress, String toAddress) {
+        JsonNode root = getRouteResponse(fromAddress, toAddress);
+        double distanceInMeters = root.path("features")
+                .get(0)
+                .path("properties")
+                .path("summary")
+                .path("distance")
+                .asDouble();
+        return distanceInMeters / 1000.0;
     }
 
 }
