@@ -55,7 +55,7 @@ public class Reservation {
      */
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "car_id")
+    @JoinColumn(name = "voiture_de_service_id")
     private CompanyCar companyCar;
 
     /**
