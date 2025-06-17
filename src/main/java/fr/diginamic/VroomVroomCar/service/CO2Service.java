@@ -63,15 +63,21 @@ public class CO2Service {
     }
 
 
-    // Méthode future pour intégrer OpenStreetMap
+    /**
+     * Calcule les émissions de CO₂ d'un trajet en voiture, à partir de ses adresses de départ et d'arrivée,
+     * en utilisant l'API OpenRouteService pour obtenir la distance réelle.
+     *
+     * @param car  la voiture utilisée pour le trajet, contenant les données d'émission CO₂ par kilomètre
+     * @param trip le trajet à analyser, avec lieux et villes de départ/arrivée
+     * @return les émissions de CO₂ estimées pour ce trajet (en kilogrammes)
+     */
     public double calculerCo2TrajetAvecOSM(Car car, Trip trip) {
-        // On récupère les adresses complètes
         String adresseDepart = trip.getLieuDepart() + ", " + trip.getVilleDepart();
         String adresseArrivee = trip.getLieuArrivee() + ", " + trip.getVilleArrivee();
-        // Distance en km via OpenRouteService
         double distanceKm = openRouteService.getTravelDistanceInKilometers(adresseDepart, adresseArrivee);
 
         return calculateCarCO2(car, distanceKm);
     }
+
 
 }
