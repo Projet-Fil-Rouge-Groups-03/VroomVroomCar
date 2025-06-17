@@ -32,6 +32,8 @@ public class TripService implements ITripService {
     private final SubscribeRepository subscribeRepository;
     private final NotificationService notificationService;
 
+    private final OpenRouteService openRouteService;
+
     private final ValidationUtil validationUtil;
 
     // Create Trip
@@ -42,8 +44,12 @@ public class TripService implements ITripService {
 
         Trip trip = tripMapper.toEntity(tripRequestDto, userResponseDto, carResponseDto);
         // Calcul de l'heure d'arrivée
-        trip.setHeureArrivee(calculateArrivalTime(trip.getHeureDepart(), trip.getLieuDepart(),
-                trip.getLieuArrivee(), trip.getVilleDepart(), trip.getVilleArrivee()));
+        trip.setHeureArrivee(calculateArrivalTime(
+                trip.getHeureDepart(),
+                trip.getLieuDepart(),
+                trip.getLieuArrivee(),
+                trip.getVilleDepart(),
+                trip.getVilleArrivee()));
         // Calcul des places restantes
         trip.setNbPlacesRestantes(calculatePlaceRest(tripRequestDto, carResponseDto));
 
@@ -116,8 +122,13 @@ public class TripService implements ITripService {
 
     // Calcule l'heure d'arrivée estimée
     public LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) {
-        // TODO: Implémenter la logique de calcul (API Google Maps, durée fixe, etc.)
-        return heureDepart.plusHours(2);
+        String fromAddress = lieuDepart + ", " + villeDepart;
+        String toAddress = lieuArrivee + ", " + villeArrivee;
+
+        double durationInSeconds = openRouteService.getTravelDurationInSeconds(fromAddress, toAddress);
+        long durationInMinutes = Math.round(durationInSeconds / 60);
+
+        return heureDepart.plusMinutes(durationInMinutes);
     }
 
     // Calcul nombre de places restante
