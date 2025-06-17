@@ -2,6 +2,7 @@ package fr.diginamic.VroomVroomCar.controller;
 
 import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.service.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,12 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody User user) throws Exception {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, authService.logUser(user).toString())
-                .body("vous êtes login");
+                .body("vous êtes connecté");
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response){
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, authService.logoutUser().toString())
+                .body("vous êtes déconnecté");
     }
 }

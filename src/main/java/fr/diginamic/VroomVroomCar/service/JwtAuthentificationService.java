@@ -1,11 +1,20 @@
 package fr.diginamic.VroomVroomCar.service;
 
 import io.jsonwebtoken.*;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+@Service
 public class JwtAuthentificationService implements IJwtAuthentificationService {
     @Value("${jwt.expires_in}")
     private Integer EXPIRES_IN;
@@ -18,8 +27,17 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
 
     public ResponseCookie generateToken(String username) {
         String jwt = Jwts.builder().setSubject(username).setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN)).signWith(SignatureAlgorithm.HS256, JWT_SECRET).compact();
-        return ResponseCookie.from(TOKEN_COOKIE, jwt).httpOnly(true)
+        return ResponseCookie.from(TOKEN_COOKIE, jwt)
+                .httpOnly(true)
                 .maxAge(EXPIRES_IN).path("/").build();
+    }
+
+    public ResponseCookie invalidateToken() {
+        return ResponseCookie.from(TOKEN_COOKIE, "")
+                .httpOnly(true)
+                .maxAge(0) // Expire immédiatement
+                .path("/")
+                .build();
     }
 
     public String getSubject(String token) {
