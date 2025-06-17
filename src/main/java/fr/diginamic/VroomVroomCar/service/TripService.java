@@ -12,7 +12,6 @@ import fr.diginamic.VroomVroomCar.repository.TripRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -31,6 +30,9 @@ public class TripService implements ITripService {
     private final CarRepository carRepository;
     private final ReservationRepository reservationRepository;
     private final SubscribeRepository subscribeRepository;
+    private final NotificationService notificationService;
+
+    private final OpenRouteService openRouteService;
 
     private final ValidationUtil validationUtil;
 
@@ -42,8 +44,12 @@ public class TripService implements ITripService {
 
         Trip trip = tripMapper.toEntity(tripRequestDto, userResponseDto, carResponseDto);
         // Calcul de l'heure d'arrivée
-        trip.setHeureArrivee(calculateArrivalTime(trip.getHeureDepart(), trip.getLieuDepart(),
-                trip.getLieuArrivee(), trip.getVilleDepart(), trip.getVilleArrivee()));
+        trip.setHeureArrivee(calculateArrivalTime(
+                trip.getHeureDepart(),
+                trip.getLieuDepart(),
+                trip.getLieuArrivee(),
+                trip.getVilleDepart(),
+                trip.getVilleArrivee()));
         // Calcul des places restantes
         trip.setNbPlacesRestantes(calculatePlaceRest(tripRequestDto, carResponseDto));
 
@@ -100,22 +106,29 @@ public class TripService implements ITripService {
         }
 
         Trip updatedTrip = tripRepository.save(existingTrip);
+        // Envoi notifications aux participants
+        notificationService.sendNotificationToParticipantsOnModification(updatedTrip, updatedTrip.getOrganisateur());
         return tripMapper.toResponse(updatedTrip);
     }
 
     // Delete Trip
     @Transactional
     public void deleteTrip(Integer id) throws FunctionnalException {
-        if (!tripRepository.existsById(id)) {
-            throw new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas.");
-        }
+        Trip trip = tripRepository.findById(id)
+                .orElseThrow(() -> new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas."));
+        notificationService.sendNotificationToParticipantsOnAnnulation(trip, trip.getOrganisateur());
         tripRepository.deleteById(id);
     }
 
     // Calcule l'heure d'arrivée estimée
     public LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) {
-        // TODO: Implémenter la logique de calcul (API Google Maps, durée fixe, etc.)
-        return heureDepart.plusHours(2);
+        String fromAddress = lieuDepart + ", " + villeDepart;
+        String toAddress = lieuArrivee + ", " + villeArrivee;
+
+        double durationInSeconds = openRouteService.getTravelDurationInSeconds(fromAddress, toAddress);
+        long durationInMinutes = Math.round(durationInSeconds / 60);
+
+        return heureDepart.plusMinutes(durationInMinutes);
     }
 
     // Calcul nombre de places restante
