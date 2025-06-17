@@ -10,6 +10,7 @@ import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class UserService implements IUserService {
-
+    @Autowired
+    private BCryptPasswordEncoder bcrypt;
     @Autowired
     UserMapper userMapper;
     @Autowired
@@ -58,7 +60,7 @@ public class UserService implements IUserService {
     public UserResponseDto createUser(UserRequestDto userRequestDto) throws ResourceNotFoundException {
         ValidationUtil.validateUserRequestDto(userRequestDto);
 
-        User user = userMapper.toEntity(userRequestDto, Status.ACTIF);
+        User user = userMapper.toEntity(userRequestDto, bcrypt.encode(userRequestDto.getMotDePasse()), Status.ACTIF);
         return userMapper.toResponseDto(userRepository.save(user));
     }
 

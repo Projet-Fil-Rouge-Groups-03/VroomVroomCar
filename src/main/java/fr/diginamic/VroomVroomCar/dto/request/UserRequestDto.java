@@ -61,8 +61,8 @@ public class UserRequestDto {
      *  Le status de l'utilisateur.
      *  Ce champ ne peut pas être vide.
      */
-    @Schema(description = "Le status de l'utilisateur.  Ce champ ne peut pas être vide.")
-    @NotBlank(message = "Le status est obligatoire")
-    private Status status;
+    //@Schema(description = "Le status de l'utilisateur. Ce champ ne peut pas être vide.")
+    //@NotBlank(message = "Le status est obligatoire")
+    //private Status status;
 
 }
