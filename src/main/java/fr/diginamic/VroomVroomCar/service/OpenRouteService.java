@@ -1,7 +1,7 @@
 package fr.diginamic.VroomVroomCar.service;
 
-import fr.diginamic.VroomVroomCar.util.TimeTravelUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,7 +21,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class OpenRouteService {
 
-    private static final String API_KEY = "5b3ce3597851110001cf62484a02071cca65432897165ca1ad37c3bb";
+    @Value("${openroute.api.key}")
+    private final String API_KEY;
     private static final String GEOCODE_URL = "https://api.openrouteservice.org/geocode/search";
     private static final String ROUTE_URL = "https://api.openrouteservice.org/v2/directions/driving-car";
 
