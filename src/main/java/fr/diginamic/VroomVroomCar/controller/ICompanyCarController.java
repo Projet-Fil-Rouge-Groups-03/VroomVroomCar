@@ -118,15 +118,15 @@ public interface ICompanyCarController {
     /**
      * Récupère des voitures de société par catégorie.
      *
-     * @param categorie la catégorie des voitures à récupérer.
+     * @param categories la catégorie des voitures à récupérer.
      * @param size le nombre maximum de résultats à retourner.
      * @return une réponse contenant une liste de voitures de société.
      */
     @Operation(summary = "Récupérer des voitures de société par catégorie")
     @GetMapping("/categorie/{categorie}")
-    ResponseEntity<List<CompanyCarResponseDto>> getCarsByCategorie(
+    ResponseEntity<List<CompanyCarResponseDto>> getCarsByCategories(
             @Parameter(description = "Catégorie des voitures à récupérer", required = true)
-            @PathVariable Categorie categorie,
+            @PathVariable Categorie categories,
             @Parameter(description = "Nombre maximum de résultats à retourner")
             @RequestParam(defaultValue = "5") int size);
 

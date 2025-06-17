@@ -92,10 +92,10 @@ public interface ICarService {
     /**
      * Récupère les voitures appartenant à une catégorie spécifiée, avec une limite sur le nombre de résultats.
      *
-     * @param categorie La catégorie de voitures à rechercher.
+     * @param categories La catégorie de voitures à rechercher.
      * @param limit Le nombre maximum de voitures à retourner.
      * @return Une liste de DTOs de réponse contenant les informations des voitures de la catégorie spécifiée.
      */
     @Transactional(readOnly = true)
-    List<CarResponseDto> getCarsByCategorie(Categorie categorie, int limit);
+    List<CarResponseDto> getCarsByCategories(Categorie categories, int limit);
 }

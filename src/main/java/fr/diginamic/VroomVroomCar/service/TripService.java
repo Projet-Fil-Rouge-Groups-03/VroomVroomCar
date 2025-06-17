@@ -128,7 +128,7 @@ public class TripService implements ITripService {
         // Si c'est un véhicule de service, on doit décompter les places occupées
         if (validationUtil.estVehiculeDeService(carResponseDto.getId(), carRepository)) {
             // Vérifier si l'organisateur a déjà une réservation pour ce véhicule sur ces dates
-            boolean organizerHasReservation = reservationRepository.existsByCar_IdAndUser_IdAndDateDebutAndDateFin(
+            boolean organizerHasReservation = reservationRepository.existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
                     carResponseDto.getId(),
                     organizerId, // ID de l'organisateur
                     tripRequestDto.getDateDebut(),
@@ -139,11 +139,7 @@ public class TripService implements ITripService {
             }
         }
 
-        int totalSubscriptions = subscribeRepository.countByTripIdAndDateDebutAndDateFin(
-                tripRequestDto.getId(),
-                tripRequestDto.getDateDebut(),
-                tripRequestDto.getDateFin()
-        );
+        int totalSubscriptions = subscribeRepository.countByTrip_Id(tripRequestDto.getId());
 
         nbPlacesRestants -= totalSubscriptions;
 

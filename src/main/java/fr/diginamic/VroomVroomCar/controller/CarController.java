@@ -88,10 +88,10 @@ public class CarController implements ICarController {
         return ResponseEntity.ok(cars);
     }
 
-    @GetMapping("/categorie/{categorie}")
+    @GetMapping("/categorie/{categories}")
     @Override
-    public ResponseEntity<List<CarResponseDto>> getCarsByCategorie(@PathVariable Categorie categorie, @RequestParam(defaultValue = "5") int size) {
-        List<CarResponseDto> cars = carService.getCarsByCategorie(categorie, size);
+    public ResponseEntity<List<CarResponseDto>> getCarsByCategories(@PathVariable Categorie categories, @RequestParam(defaultValue = "5") int size) {
+        List<CarResponseDto> cars = carService.getCarsByCategories(categories, size);
         return ResponseEntity.ok(cars);
     }
 }

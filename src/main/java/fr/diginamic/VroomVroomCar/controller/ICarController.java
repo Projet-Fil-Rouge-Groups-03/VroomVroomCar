@@ -212,10 +212,10 @@ public interface ICarController {
                                     array = @ArraySchema(schema = @Schema(implementation = CarResponseDto.class))))
             }
     )
-    @GetMapping("/categorie/{categorie}")
-    ResponseEntity<List<CarResponseDto>> getCarsByCategorie(
+    @GetMapping("/categorie/{categories}")
+    ResponseEntity<List<CarResponseDto>> getCarsByCategories(
             @Parameter(description = "Catégorie à rechercher")
-            @PathVariable Categorie categorie,
+            @PathVariable Categorie categories,
             @Parameter(description = "Nombre maximum de voitures à retourner")
             @RequestParam(defaultValue = "5") int size);
 }

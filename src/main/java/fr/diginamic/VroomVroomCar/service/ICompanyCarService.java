@@ -85,12 +85,12 @@ public interface ICompanyCarService {
     /**
      * Récupère des voitures de société par catégorie.
      *
-     * @param categorie la catégorie des voitures à récupérer.
+     * @param categories la catégorie des voitures à récupérer.
      * @param limit le nombre maximum de résultats à retourner.
      * @return une liste de DTOs de réponse contenant les détails des voitures de société.
      */
     @Transactional(readOnly = true)
-    List<CompanyCarResponseDto> getCarsByCategorie(Categorie categorie,int limit);
+    List<CompanyCarResponseDto> getCarsByCategories(Categorie categories,int limit);
 
     /**
      * Recherche des voitures de société par immatriculation.

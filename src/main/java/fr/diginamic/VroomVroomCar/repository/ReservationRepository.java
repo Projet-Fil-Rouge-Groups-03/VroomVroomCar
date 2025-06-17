@@ -1,14 +1,11 @@
 package fr.diginamic.VroomVroomCar.repository;
 
-import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Repository JPA pour l'entité Reservation.
@@ -22,7 +19,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
      * @param pageable l'objet Pageable définissant les paramètres de pagination (page, taille, tri, etc.)
      * @return une page de réservations Page correspondant au véhicule spécifié
      */
-    Page<Reservation> findByCar_Id(Integer carId, Pageable pageable);
+    Page<Reservation> findByCompanyCar_Id(Integer carId, Pageable pageable);
 
 
     /**
@@ -35,8 +32,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
      * @param dateFin la date de fin du trajet
      * @return vrai si l'utilisateur a déjà réservé, sinon faux
      */
-    boolean existsByCar_IdAndUser_IdAndDateDebutAndDateFin(Integer carId, Integer userId, Date dateDebut, Date dateFin);
-
-    List<Reservation> findByCarAndDateDebutAfter(Car car, LocalDateTime date);
-
+    boolean existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(Integer carId, Integer userId, Date dateDebut, Date dateFin);
 }
