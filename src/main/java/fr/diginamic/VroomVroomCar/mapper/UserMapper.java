@@ -1,6 +1,5 @@
 package fr.diginamic.VroomVroomCar.mapper;
 
-import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Status;
@@ -14,15 +13,17 @@ public class UserMapper {
      * Convertit un UserRequestDto et un utilisateur en une entité User.
      *
      * @param userRequestDto Le DTO de requête contenant les informations sur l'utilisateur.
+     * @param password
+     * @param status
      * @return Une nouvelle instance de User initialisée avec les données du DTO et de l'utilisateur.
      */
-    public User toEntity(UserRequestDto userRequestDto, Status status){
+    public User toEntity(UserRequestDto userRequestDto, String password, Status status){
         return new User(
                 userRequestDto.getNom(),
                 userRequestDto.getPrenom(),
                 userRequestDto.getMail(),
                 userRequestDto.getAdresse(),
-                userRequestDto.getMotDePasse(),
+                password,
                 status);
     }
 
@@ -53,6 +54,5 @@ public class UserMapper {
         user.setPrenom(userRequestDto.getPrenom());
         user.setMail(userRequestDto.getMail());
         user.setAdresse(userRequestDto.getAdresse());
-        user.setStatus(userRequestDto.getStatus());
     }
 }
