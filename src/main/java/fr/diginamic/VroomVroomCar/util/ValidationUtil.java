@@ -3,7 +3,6 @@ package fr.diginamic.VroomVroomCar.util;
 import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.SubscribeRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
-import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
@@ -115,10 +114,23 @@ public final class ValidationUtil {
             throw new IllegalArgumentException(fieldName + " ne peut pas être null.");
         }
     }
-
     public static void validateSubscribeRequestDto(SubscribeRequestDto subscribeRequestDto) {
         if (subscribeRequestDto == null) {
             throw new IllegalArgumentException("Le DTO de requête d'inscription ne peut pas être null.");
+        }
+    }
+    public  static  void validateUserPassword(String password) {
+        if (password == null || password.length() < 6) {
+            throw new IllegalArgumentException("Le mot de passe doit contenir au moins 6 caractères");
+        }
+    }
+
+    public static void validateUserMail(String email){
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("L'email est requis");
+        }
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new IllegalArgumentException("Format d'email invalide");
         }
     }
 
