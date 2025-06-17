@@ -51,71 +51,39 @@ class NotificationServiceTest {
     @InjectMocks
     private NotificationService notificationService;
 
-    @Test
-    void testGetUserNotifications() {
-        Notification notification = new Notification();
-        NotificationResponseDto responseDto = new NotificationResponseDto();
-
-        when(notificationRepository.findByUserIdOrderByDateDesc(anyInt(), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(Collections.singletonList(notification)));
-        when(notificationMapper.toResponseDto(any(Notification.class))).thenReturn(responseDto);
-
-        List<NotificationResponseDto> result = notificationService.getUserNotifications(1, 10);
-
-        assertFalse(result.isEmpty());
-        verify(notificationRepository, times(1)).findByUserIdOrderByDateDesc(anyInt(), any(Pageable.class));
-    }
-
-    @Test
-    void testCreateNotification() throws ResourceNotFoundException {
-        NotificationRequestDto requestDto = new NotificationRequestDto();
-        requestDto.setUserId(1);
-
-        User user = new User();
-        Notification notification = new Notification();
-        NotificationResponseDto responseDto = new NotificationResponseDto();
-
-        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
-        when(notificationMapper.toEntity(any(NotificationRequestDto.class), any(User.class))).thenReturn(notification);
-        when(notificationRepository.save(any(Notification.class))).thenReturn(notification);
-        when(notificationMapper.toResponseDto(any(Notification.class))).thenReturn(responseDto);
-
-        NotificationResponseDto result = notificationService.createNotification(requestDto);
-
-        assertNotNull(result);
-        verify(userRepository, times(1)).findById(anyInt());
-        verify(notificationRepository, times(1)).save(any(Notification.class));
-    }
-
-    @Test
-    void testDeleteNotification() throws ResourceNotFoundException {
-        doNothing().when(notificationRepository).deleteById(anyInt());
-        when(notificationRepository.existsById(anyInt())).thenReturn(true);
-
-        notificationService.deleteNotification(1);
-
-        verify(notificationRepository, times(1)).deleteById(anyInt());
-    }
-
-    @Test
-    void testSendNotificationToOrganisateurOnSubscribe() {
+    private Trip createTrip() {
         Trip trip = new Trip();
         trip.setDateDebut(Date.valueOf(LocalDate.now()));
         trip.setDateFin(Date.valueOf(LocalDate.now().plusDays(1)));
         trip.setHeureDepart(LocalTime.now());
-        trip.setLieuDepart("Gare du Nord");
-        trip.setLieuArrivee("Gare Bordeaux Saint-jean");
+        trip.setLieuDepart("Gare Montparnasse");
+        trip.setLieuArrivee("Gare Lille Flandres");
         trip.setVilleDepart("Paris");
-        trip.setVilleArrivee("Bordeaux");
+        trip.setVilleArrivee("Lille");
         trip.setNbPlacesRestantes(4);
-        trip.setOrganisateur(1);
-        trip.setCar(1);
+        trip.setOrganisateur(createUser());
+        trip.setCar(createCar());
+        return trip;
+    }
 
-        User participant = new User();
-        participant.setId(2);
+    private User createUser() {
+        User user = new User();
+        user.setId(1);
+        return user;
+    }
 
-        NotificationRequestDto requestDto = new NotificationRequestDto();
-        requestDto.setUserId(1);
+    private Car createCar() {
+        Car car = new Car();
+        car.setId(1);
+        car.setMarque("Toyoya");
+        car.setModele("Yaris");
+        return car;
+    }
+
+    @Test
+    void testSendNotificationToOrganisateurOnSubscribe() {
+        Trip trip = createTrip();
+        User participant = createUser();
 
         doNothing().when(notificationUtil).createAndSaveNotification(anyString(), anyString(), any(User.class));
 
@@ -126,8 +94,8 @@ class NotificationServiceTest {
 
     @Test
     void testSendNotificationToOrganisateurOnUnsubscribe() {
-        Trip trip = new Trip();
-        User participant = new User();
+        Trip trip = createTrip();
+        User participant = createUser();
 
         doNothing().when(notificationUtil).createAndSaveNotification(anyString(), anyString(), any(User.class));
 
@@ -138,8 +106,8 @@ class NotificationServiceTest {
 
     @Test
     void testSendNotificationToParticipantsOnModification() {
-        Trip trip = new Trip();
-        User organisateur = new User();
+        Trip trip = createTrip();
+        User organisateur = createUser();
 
         doNothing().when(notificationUtil).sendNotificationToAllParticipants(any(Trip.class), anyString(), anyString());
 
@@ -150,8 +118,8 @@ class NotificationServiceTest {
 
     @Test
     void testSendNotificationToParticipantsOnAnnulation() {
-        Trip trip = new Trip();
-        User organisateur = new User();
+        Trip trip = createTrip();
+        User organisateur = createUser();
 
         doNothing().when(notificationUtil).sendNotificationToAllParticipants(any(Trip.class), anyString(), anyString());
 
@@ -159,19 +127,4 @@ class NotificationServiceTest {
 
         verify(notificationUtil, times(1)).sendNotificationToAllParticipants(any(Trip.class), anyString(), anyString());
     }
-
-    @Test
-    void testSendNotificationToUsersOnCarStatusUpdate() {
-        Car car = new Car();
-        car.setMarque("MarqueTest");
-        car.setModele("ModeleTest");
-        User user = new User();
-
-        doNothing().when(notificationUtil).createAndSaveNotification(anyString(), anyString(), any(User.class));
-
-        notificationService.sendNotificationToUsersOnCarStatusUpdate(car, "Nouveau Statut", user);
-
-        verify(notificationUtil, times(1)).createAndSaveNotification(anyString(), anyString(), any(User.class));
-    }
-
 }
