@@ -3,6 +3,8 @@ package fr.diginamic.VroomVroomCar.service;
 import fr.diginamic.VroomVroomCar.dto.request.SubscribeRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.SubscribeResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Subscribe;
+import fr.diginamic.VroomVroomCar.entity.Trip;
+import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.mapper.SubscribeMapper;
 import fr.diginamic.VroomVroomCar.repository.SubscribeRepository;
@@ -26,6 +28,9 @@ public class SubscribeService implements ISubscribeService {
     @Autowired
     SubscribeRepository subscribeRepository;
 
+    @Autowired
+    NotificationService notificationService;
+
     @Transactional(readOnly = true)
     @Override
     public List<SubscribeResponseDto> getAllSubscribes() {
@@ -48,7 +53,13 @@ public class SubscribeService implements ISubscribeService {
         ValidationUtil.validateSubscribeRequestDto(subscribeRequestDto);
 
         Subscribe subscribe = subscribeMapper.toEntity(subscribeRequestDto);
-        return subscribeMapper.toResponseDto(subscribeRepository.save(subscribe));
+        Subscribe saved = subscribeRepository.save(subscribe);
+
+        Trip trip = saved.getTrip();
+        User participant = saved.getUser();
+        notificationService.sendNotificationToOrganisateurOnSubscribe(trip, participant);
+
+        return subscribeMapper.toResponseDto(saved);
     }
 
     @Override
@@ -66,9 +77,13 @@ public class SubscribeService implements ISubscribeService {
     @Override
     public String deleteSubscribe(int id) throws ResourceNotFoundException {
         ValidationUtil.validateIdNotNull(id, "l'inscription");
-        if (!subscribeRepository.existsById(id)) {
-            throw new ResourceNotFoundException("inscription non trouvée avec l'ID: " + id);
-        }
+        Subscribe subscribe = subscribeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("inscription non trouvée avec l'ID: " + id));
+
+        Trip trip = subscribe.getTrip();
+        User participant = subscribe.getUser();
+        notificationService.sendNotificationToOrganisateurOnUnsubscribe(trip, participant);
+
         subscribeRepository.deleteById(id);
         return "inscription supprimée";
     }

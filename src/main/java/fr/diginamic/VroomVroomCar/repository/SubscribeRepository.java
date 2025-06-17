@@ -1,6 +1,7 @@
 package fr.diginamic.VroomVroomCar.repository;
 
 import fr.diginamic.VroomVroomCar.entity.Subscribe;
+import fr.diginamic.VroomVroomCar.entity.Trip;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Date;
@@ -37,5 +38,14 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, Integer> {
      */
     public List<Subscribe> findByUserId(int userId);
     int countByTrip_Id(Integer tripId);
+
+    /**
+     * Récupère toutes les inscriptions liées à un trajet spécifique.
+     *
+     * @param trip L'entité {@link Trip} représentant le trajet concerné.
+     * @return Une liste d'objets {@link Subscribe} correspondant aux utilisateurs inscrits à ce trajet.
+     *
+     */
+    List<Subscribe> findByTrip(Trip trip);
 
 }

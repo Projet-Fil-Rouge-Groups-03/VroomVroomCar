@@ -109,4 +109,3 @@ public class NotificationService implements INotificationService {
     }
 
 }
-// TODO : vérifier que findByTrip soit bien dans subscribeRepository
