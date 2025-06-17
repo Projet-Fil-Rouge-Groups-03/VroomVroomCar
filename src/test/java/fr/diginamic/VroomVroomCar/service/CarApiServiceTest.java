@@ -50,7 +50,6 @@ class CarApiServiceTest {
 
     @Test
     void testGetCO2FromApi_withValidData() {
-        // Configuration du mock avec données valides
         fields.setCo2(123.0);
         mockResponse.setRecords(List.of(record));
 
@@ -60,10 +59,8 @@ class CarApiServiceTest {
                 eq(AdemeApiResponse.class)
         )).thenReturn(ResponseEntity.ok(mockResponse));
 
-        // Exécution du test
         Optional<Double> co2 = carApiService.getCO2FromApi("Peugeot", "208", Motorisation.ESSENCE);
 
-        // Vérifications
         assertTrue(co2.isPresent());
         assertEquals(123.0, co2.get());
 
@@ -80,7 +77,6 @@ class CarApiServiceTest {
 
     @Test
     void testGetCO2FromApi_withNoData() {
-        // Configuration du mock avec liste vide
         mockResponse.setRecords(Collections.emptyList());
 
         when(restTemplate.getForEntity(
@@ -88,30 +84,24 @@ class CarApiServiceTest {
                 eq(AdemeApiResponse.class)
         )).thenReturn(ResponseEntity.ok(mockResponse));
 
-        // Exécution du test
         Optional<Double> co2 = carApiService.getCO2FromApi("Marque", "Modele", Motorisation.ESSENCE);
 
-        // Vérifications
         assertFalse(co2.isPresent());
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(AdemeApiResponse.class));
     }
 
     @Test
     void testGetCO2FromApi_withApiError() {
-        // Test du comportement en cas d'erreur API
         when(restTemplate.getForEntity(anyString(), eq(AdemeApiResponse.class)))
                 .thenThrow(new RuntimeException("API Error"));
 
-        // Exécution du test
         Optional<Double> co2 = carApiService.getCO2FromApi("Marque", "Modele", Motorisation.ESSENCE);
 
-        // Vérification que la méthode gère l'erreur gracieusement
         assertTrue(co2.isEmpty());
     }
 
     @Test
     void testGetCO2FromApi_withNullCO2() {
-        // Test avec CO2 null dans la réponse
         fields.setCo2(null);
         mockResponse.setRecords(List.of(record));
 
@@ -125,7 +115,6 @@ class CarApiServiceTest {
 
     @Test
     void testGetCO2FromApi_withZeroCO2() {
-        // Test avec CO2 = 0 (considéré comme invalide)
         fields.setCo2(0.0);
         mockResponse.setRecords(List.of(record));
 
@@ -139,23 +128,19 @@ class CarApiServiceTest {
 
     @Test
     void testUpdatePollutionFromApi_withValidCar() {
-        // Préparation
         Car car = new Car();
         car.setMarque("Peugeot");
         car.setModele("308");
         car.setMotorisation(Motorisation.ESSENCE);
 
-        // Configuration du mock
         fields.setCo2(135.5);
         mockResponse.setRecords(List.of(record));
 
         when(restTemplate.getForEntity(anyString(), eq(AdemeApiResponse.class)))
                 .thenReturn(ResponseEntity.ok(mockResponse));
 
-        // Exécution
         boolean updated = carApiService.updatePollutionFromApi(car);
 
-        // Vérifications
         assertTrue(updated);
         assertEquals("135.5", car.getPollution());
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(AdemeApiResponse.class));
@@ -163,17 +148,14 @@ class CarApiServiceTest {
 
     @Test
     void testUpdatePollutionFromApi_withExistingPollution() {
-        // Test avec pollution déjà présente (ne doit pas écraser)
         Car car = new Car();
         car.setMarque("Peugeot");
         car.setModele("308");
         car.setMotorisation(Motorisation.ESSENCE);
-        car.setPollution("100.0"); // Valeur existante
+        car.setPollution("100.0");
 
-        // Exécution
         boolean updated = carApiService.updatePollutionFromApi(car);
 
-        // Vérifications
         assertTrue(updated);
         assertEquals("100.0", car.getPollution()); // Valeur inchangée
 
@@ -183,7 +165,6 @@ class CarApiServiceTest {
 
     @Test
     void testUpdatePollutionFromApi_withApiFailureUsesDefault() {
-        // Test avec échec de l'API -> utilise valeur par défaut
         Car car = new Car();
         car.setMarque("Peugeot");
         car.setModele("308");
@@ -192,7 +173,6 @@ class CarApiServiceTest {
         when(restTemplate.getForEntity(anyString(), eq(AdemeApiResponse.class)))
                 .thenThrow(new RuntimeException("API Error"));
 
-        // Exécution
         boolean updated = carApiService.updatePollutionFromApi(car);
 
         // Vérifications - devrait utiliser la valeur par défaut pour ESSENCE (120.0)
@@ -202,18 +182,15 @@ class CarApiServiceTest {
 
     @Test
     void testUpdatePollutionFromApi_withHybridMotorisation() {
-        // Test des valeurs par défaut pour HYBRIDE
         Car car = new Car();
         car.setMarque("Toyota");
         car.setModele("Prius");
         car.setMotorisation(Motorisation.HYBRIDE);
 
-        // Mock avec liste vide (pas de données trouvées)
         mockResponse.setRecords(Collections.emptyList());
         when(restTemplate.getForEntity(anyString(), eq(AdemeApiResponse.class)))
                 .thenReturn(ResponseEntity.ok(mockResponse));
 
-        // Exécution
         boolean updated = carApiService.updatePollutionFromApi(car);
 
         // Vérifications - devrait utiliser la valeur par défaut pour HYBRIDE (80.0)
@@ -223,18 +200,15 @@ class CarApiServiceTest {
 
     @Test
     void testUpdatePollutionFromApi_withElectricMotorisation() {
-        // Test des valeurs par défaut pour ELECTRIQUE
         Car car = new Car();
         car.setMarque("Tesla");
         car.setModele("Model 3");
         car.setMotorisation(Motorisation.ELECTRIQUE);
 
-        // Mock avec liste vide
         mockResponse.setRecords(Collections.emptyList());
         when(restTemplate.getForEntity(anyString(), eq(AdemeApiResponse.class)))
                 .thenReturn(ResponseEntity.ok(mockResponse));
 
-        // Exécution
         boolean updated = carApiService.updatePollutionFromApi(car);
 
         // Vérifications - devrait utiliser la valeur par défaut pour ELECTRIQUE (0.0)
@@ -244,17 +218,14 @@ class CarApiServiceTest {
 
     @Test
     void testUpdatePollutionFromApi_withNullCar() {
-        // Test avec voiture null
         boolean updated = carApiService.updatePollutionFromApi(null);
         assertFalse(updated);
 
-        // Vérification qu'aucun appel REST n'a été fait
         verifyNoInteractions(restTemplate);
     }
 
     @Test
     void testUpdatePollutionFromApi_withNullMarque() {
-        // Test avec marque null
         Car car = new Car();
         car.setMarque(null);
         car.setModele("308");
@@ -268,7 +239,6 @@ class CarApiServiceTest {
 
     @Test
     void testUpdatePollutionFromApi_withNullModele() {
-        // Test avec modèle null
         Car car = new Car();
         car.setMarque("Peugeot");
         car.setModele(null);
