@@ -10,6 +10,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
+/**
+ * Service pour interagir avec l'API OpenRouteService.
+ *
+ * Fournit des méthodes pour géocoder une adresse en coordonnées GPS
+ * et calculer la durée de trajet entre deux adresses.
+ *
+ */
 @Service
 @RequiredArgsConstructor
 public class OpenRouteService {
@@ -21,9 +28,12 @@ public class OpenRouteService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final TimeTravelUtil timeTravelUtil;
-
-    // Géocodage d'une adresse
+    /**
+     * Géocode une adresse en coordonnées GPS (longitude, latitude).
+     *
+     * @param adresse l'adresse complète à géocoder (exemple : "10 rue de la paix, Paris")
+     * @return un tableau de deux doubles : [longitude, latitude]
+     */
     public double[] getCoordinatesFromAddress(String adresse) {
         String url = GEOCODE_URL + "?api_key=" + API_KEY + "&text=" + adresse;
 
@@ -43,7 +53,13 @@ public class OpenRouteService {
         }
     }
 
-
+    /**
+     * Calcule la durée estimée du trajet (en secondes) entre deux adresses.
+     *
+     * @param fromAddress adresse de départ complète (ex : "10 rue de la paix, Paris")
+     * @param toAddress   adresse d'arrivée complète (ex : "1 place Bellecour, Lyon")
+     * @return la durée estimée du trajet en secondes
+     */
     public double getTravelDurationInSeconds(String fromAddress, String toAddress) {
         double[] start = getCoordinatesFromAddress(fromAddress);
         double[] end = getCoordinatesFromAddress(toAddress);
