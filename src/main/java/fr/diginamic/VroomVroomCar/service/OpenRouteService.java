@@ -56,14 +56,14 @@ public class OpenRouteService {
     /**
      * Effectue un appel à l'API OpenRouteService Directions et retourne la réponse JSON.
      *
-     * @param fromAddress adresse de départ
-     * @param toAddress   adresse d’arrivée
+     * @param adresseDepart adresse de départ
+     * @param adresseArrivee   adresse d’arrivée
      * @return la réponse JSON complète de l'itinéraire
      * @throws RuntimeException si la requête échoue ou le parsing JSON échoue
      */
-    private JsonNode getRouteResponse(String fromAddress, String toAddress) {
-        double[] start = getCoordinatesFromAddress(fromAddress);
-        double[] end = getCoordinatesFromAddress(toAddress);
+    private JsonNode getRouteResponse(String adresseDepart, String adresseArrivee) {
+        double[] start = getCoordinatesFromAddress(adresseDepart);
+        double[] end = getCoordinatesFromAddress(adresseArrivee);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", API_KEY);
@@ -85,12 +85,12 @@ public class OpenRouteService {
     /**
      * Calcule la durée estimée du trajet (en secondes) entre deux adresses.
      *
-     * @param fromAddress adresse de départ complète (ex : "10 rue de la paix, Paris")
-     * @param toAddress   adresse d'arrivée complète (ex : "1 place Bellecour, Lyon")
+     * @param adresseDepart adresse de départ complète (ex : "10 rue de la paix, Paris")
+     * @param adresseArrivee   adresse d'arrivée complète (ex : "1 place Bellecour, Lyon")
      * @return la durée estimée du trajet en secondes
      */
-    public double getTravelDurationInSeconds(String fromAddress, String toAddress) {
-        JsonNode root = getRouteResponse(fromAddress, toAddress);
+    public double getTravelDurationInSeconds(String adresseDepart, String adresseArrivee) {
+        JsonNode root = getRouteResponse(adresseDepart, adresseArrivee);
         return root.path("features")
                 .get(0)
                 .path("properties")
@@ -102,12 +102,12 @@ public class OpenRouteService {
     /**
      * Récupère la distance du trajet entre deux adresses, en kilomètres.
      *
-     * @param fromAddress adresse de départ (ex. : "10 rue de la paix, Paris")
-     * @param toAddress   adresse d'arrivée (ex. : "1 place Bellecour, Lyon")
+     * @param adresseDepart adresse de départ (ex. : "10 rue de la paix, Paris")
+     * @param adresseArrivee   adresse d'arrivée (ex. : "1 place Bellecour, Lyon")
      * @return la distance en kilomètres (double)
      */
-    public double getTravelDistanceInKilometers(String fromAddress, String toAddress) {
-        JsonNode root = getRouteResponse(fromAddress, toAddress);
+    public double getTravelDistanceInKilometers(String adresseDepart, String adresseArrivee) {
+        JsonNode root = getRouteResponse(adresseDepart, adresseArrivee);
         double distanceInMeters = root.path("features")
                 .get(0)
                 .path("properties")
