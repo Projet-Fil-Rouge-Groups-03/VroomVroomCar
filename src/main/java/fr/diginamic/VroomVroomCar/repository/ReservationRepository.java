@@ -38,5 +38,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
      */
     boolean existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(Integer carId, Integer userId, Date dateDebut, Date dateFin);
 
-    List<Reservation> findByCompanyCarAndDateDebutAfter(CompanyCar companyCar, LocalDateTime date);
+    List<Reservation> findByCompanyCarAndDateDebutAfter(CompanyCar companyCar, Date date);
 }
