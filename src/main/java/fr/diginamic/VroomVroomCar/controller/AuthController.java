@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.controller;
 
+import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+//@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -29,5 +30,10 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, authService.logoutUser().toString())
                 .body("vous êtes déconnecté");
+    }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UserRequestDto userRequestDto){
+        authService.register(userRequestDto);
+        return ResponseEntity.ok("Utilisateur ajouté");
     }
 }

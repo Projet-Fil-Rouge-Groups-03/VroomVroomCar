@@ -1,6 +1,9 @@
 package fr.diginamic.VroomVroomCar.service;
 
+import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
+import fr.diginamic.VroomVroomCar.entity.Status;
 import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.mapper.UserMapper;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
@@ -11,6 +14,8 @@ import java.util.Optional;
 
 @Service
 public class AuthService implements IAuthService {
+    @Autowired
+    private UserMapper userMapper;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -26,5 +31,9 @@ public class AuthService implements IAuthService {
     }
     public ResponseCookie logoutUser() {
         return jwtAuthentificationService.invalidateToken();
+    }
+
+    public void register(UserRequestDto userRequestDto){
+        userRepository.save(userMapper.toEntity(userRequestDto, Status.ACTIF));
     }
 }
