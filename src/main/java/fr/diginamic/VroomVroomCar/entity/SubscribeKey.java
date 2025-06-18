@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @Embeddable
-class SubscribeKey implements Serializable {
+public class SubscribeKey implements Serializable {
     @Column(name = "utilisateur_id")
     Integer userId;
     @Column(name = "trajet_id")

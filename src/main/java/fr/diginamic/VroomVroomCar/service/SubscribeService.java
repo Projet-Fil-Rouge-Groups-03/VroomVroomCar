@@ -10,7 +10,6 @@ import fr.diginamic.VroomVroomCar.mapper.SubscribeMapper;
 import fr.diginamic.VroomVroomCar.repository.SubscribeRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

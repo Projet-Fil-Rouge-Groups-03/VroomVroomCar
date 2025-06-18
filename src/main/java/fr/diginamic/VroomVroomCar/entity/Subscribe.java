@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.Date;
 
 @Data
@@ -33,5 +32,10 @@ public class Subscribe {
         this.user = user;
         this.trip = trip;
         this.dateInscription = dateInscription;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        dateInscription = new Date();
     }
 }
