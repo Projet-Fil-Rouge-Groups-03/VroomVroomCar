@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -23,10 +22,9 @@ public class AuthController {
                 .body("vous êtes connecté");
     }
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response){
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, authService.logoutUser().toString())
-                .body("vous êtes déconnecté");
+    public ResponseEntity<?> logout(HttpServletResponse http) throws Exception {
+        authService.logoutUser(http);
+        return ResponseEntity.ok().body("vous êtes déconnecté");
     }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDto userRequestDto){

@@ -1,16 +1,11 @@
 package fr.diginamic.VroomVroomCar.service;
 
 import io.jsonwebtoken.*;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -34,12 +29,12 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
                 .maxAge(EXPIRES_IN).path("/").build();
     }
 
-    public ResponseCookie invalidateToken() {
-        return ResponseCookie.from(TOKEN_COOKIE, "")
-                .httpOnly(true)
-                .maxAge(0) // Expire immédiatement
-                .path("/")
-                .build();
+    public void invalidateToken(HttpServletResponse http) {
+        Cookie cookie = new Cookie(TOKEN_COOKIE, "");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+        http.addCookie(cookie);
     }
 
     public String getSubject(String token) {
