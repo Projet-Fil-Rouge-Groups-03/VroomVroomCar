@@ -15,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class CO2ServiceTest {
 
-    // TODO : Lancer les tests quand dependencies seront finis
-
     @Autowired
     private CO2Service co2Service;
 

@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,7 +110,8 @@ public class CompanyCarService implements ICompanyCarService {
         if (!oldStatus.equals(updatedCompanyCar.getStatus())
                 && (updatedCompanyCar.getStatus() == CompanyCarStatus.REPARATION || updatedCompanyCar.getStatus() == CompanyCarStatus.HORS_SERVICE)) {
 
-            List<Reservation> futureReservations = reservationRepository.findByCompanyCarAndDateDebutAfter(updatedCompanyCar, LocalDateTime.now());
+            Date now = new Date(System.currentTimeMillis());
+            List<Reservation> futureReservations = reservationRepository.findByCompanyCarAndDateDebutAfter(updatedCompanyCar, now);
 
             for (Reservation reservation : futureReservations) {
                 notificationService.sendNotificationToUsersOnCarStatusUpdate(updatedCompanyCar, updatedCompanyCar.getStatus().toString(), reservation.getUser());
