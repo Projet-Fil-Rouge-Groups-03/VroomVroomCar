@@ -34,4 +34,9 @@ public class Subscribe {
         this.trip = trip;
         this.dateInscription = dateInscription;
     }
+
+    @PrePersist
+    protected void onCreate() {
+        dateInscription = new Date();
+    }
 }
