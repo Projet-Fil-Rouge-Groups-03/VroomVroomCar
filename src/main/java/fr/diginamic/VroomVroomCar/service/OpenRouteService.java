@@ -26,8 +26,8 @@ public class OpenRouteService {
     private static final String GEOCODE_URL = "https://api.openrouteservice.org/geocode/search";
     private static final String ROUTE_URL = "https://api.openrouteservice.org/v2/directions/driving-car";
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     /**
      * Géocode une adresse en coordonnées GPS (longitude, latitude).

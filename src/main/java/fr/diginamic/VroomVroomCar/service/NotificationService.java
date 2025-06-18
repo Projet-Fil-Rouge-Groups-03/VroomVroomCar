@@ -71,8 +71,6 @@ public class NotificationService implements INotificationService {
                 NotificationUtil.formatTripDate(trip));
 
         notificationUtil.createAndSaveNotification(contenu, "Inscription", trip.getOrganisateur());
-        // TODO : ajouter dans Create de subscribeService : notificationService.sendNotificationToOrganisateurOnSubscribe(trip, user);
-        // Attention - l'organisateurID a qui envoyé la notif est dans Trip.getOrganisateur (lié à la table User)
     }
 
     public void sendNotificationToOrganisateurOnUnsubscribe(Trip trip, User participant) {
@@ -81,8 +79,6 @@ public class NotificationService implements INotificationService {
                 NotificationUtil.formatTripDate(trip));
 
         notificationUtil.createAndSaveNotification(contenu, "Désinscription", trip.getOrganisateur());
-        // TODO : ajouter dans subscribeService à la suppression : notificationService.sendNotificationToOrganisateurOnUnsubscribe(trip, user);
-        // Attention - l'organisateurID a qui envoyé la notif est dans Trip.getOrganisateur (lié à la table User)
     }
 
     public void sendNotificationToParticipantsOnModification(Trip trip, User organisateur) {

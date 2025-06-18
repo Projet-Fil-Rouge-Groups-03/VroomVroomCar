@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -32,17 +32,22 @@ public class Notification {
 
     @NotNull
     @Column(nullable = false)
-    private Date date;
+    private LocalDateTime date;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Notification(String contenu, String nom, Date date, User user) {
+    public Notification(String contenu, String nom, LocalDateTime date, User user) {
         this.contenu = contenu;
         this.nom = nom;
         this.date = date;
         this.user = user;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.date = LocalDateTime.now();
     }
 }
