@@ -1,7 +1,9 @@
 package fr.diginamic.VroomVroomCar.controller;
 
+import fr.diginamic.VroomVroomCar.dto.request.AuthLoginRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) throws Exception {
+    public ResponseEntity<?> login(@RequestBody AuthLoginRequestDto user) throws Exception {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, authService.logUser(user).toString())
                 .body("vous êtes connecté");
@@ -27,7 +29,7 @@ public class AuthController {
         return ResponseEntity.ok().body("vous êtes déconnecté");
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserRequestDto userRequestDto){
+    public ResponseEntity<?> register(@RequestBody UserRequestDto userRequestDto) throws FunctionnalException {
         authService.register(userRequestDto);
         return ResponseEntity.ok("Utilisateur ajouté");
     }

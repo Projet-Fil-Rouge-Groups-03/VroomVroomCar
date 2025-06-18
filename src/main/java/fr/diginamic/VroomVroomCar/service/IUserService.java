@@ -40,6 +40,9 @@ public interface IUserService {
      */
     UserResponseDto getByNom(String nom) throws ResourceNotFoundException;
 
+    @Transactional(readOnly = true)
+    UserResponseDto getByEmail(String nom) throws ResourceNotFoundException;
+
     /**
      * Crée un nouvel utilisateur à partir des données fournies.
      *
