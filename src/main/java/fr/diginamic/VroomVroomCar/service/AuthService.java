@@ -6,6 +6,8 @@ import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.mapper.UserMapper;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
+import jakarta.servlet.http.HttpServletResponse;
+import org.hibernate.exception.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,8 +32,12 @@ public class AuthService implements IAuthService {
         }
         throw new Exception();
     }
-    public ResponseCookie logoutUser() {
-        return jwtAuthentificationService.invalidateToken();
+    public void logoutUser(HttpServletResponse http) throws Exception {
+        try {
+            jwtAuthentificationService.invalidateToken(http);
+        } catch (Exception e){
+            throw new Exception("erreur lors de la déconnexion :" + e.toString());
+        }
     }
 
     public void register(UserRequestDto userRequestDto){
