@@ -27,9 +27,9 @@ public class AuthService implements IAuthService {
     @Autowired
     private JwtAuthentificationService jwtAuthentificationService;
     public ResponseCookie logUser(AuthLoginRequestDto user) throws Exception {
-        Optional<User> userOptional = userRepository.findByMail(user.getEmail());
-        if(userOptional.isPresent() && bcrypt.matches( user.getPassword(),userOptional.get().getMotDePasse()) ){
-            return jwtAuthentificationService.generateToken(user.getEmail());
+        Optional<User> userOptional = userRepository.findByMail(user.getMail());
+        if(userOptional.isPresent() && bcrypt.matches( user.getMotDePasse(),userOptional.get().getMotDePasse()) ){
+            return jwtAuthentificationService.generateToken(user.getMail());
         }
         throw new Exception();
     }
