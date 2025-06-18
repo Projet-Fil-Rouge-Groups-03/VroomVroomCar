@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Cette classe représente un DTO (Data Transfer Object) pour les réponses relatives à une notification.
@@ -27,7 +27,7 @@ public class NotificationResponseDto {
     private String nom;
 
     @Schema(description = "Date de la notification", example = "2025-07-15")
-    private Date date;
+    private LocalDateTime date;
 
     @Schema(description = "L'identifiant de l'utilisateur associé à cette notification", example = "1", required = true)
     private Integer userId;

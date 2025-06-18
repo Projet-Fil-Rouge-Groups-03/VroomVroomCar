@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Cette classe représente un DTO (Data Transfer Object) pour les requêtes relatives à une notification.
@@ -29,7 +29,7 @@ public class NotificationRequestDto {
 
     @Schema(description = "Date de la notification", example = "2025-07-15")
     @NotNull(message = "La date de la notification est obligatoire.")
-    private Date date;
+    private LocalDateTime date;
 
     @NotNull(message = "L'ID utilisateur est obligatoire")
     @Schema(description = "L'identifiant de l'utilisateur associé à cette notification", example = "1", required = true)
