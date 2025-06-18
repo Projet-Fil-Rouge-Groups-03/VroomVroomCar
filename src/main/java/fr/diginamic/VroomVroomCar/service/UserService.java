@@ -82,7 +82,7 @@ public class UserService implements IUserService {
         ValidationUtil.validateUserRequestDto(userRequestDto);
 
         User existingUser = userRepository.findByNom(nom)
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvée avec l'ID: " + nom));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvée avec le nom: " + nom));
 
         userMapper.updateEntity(existingUser, userRequestDto);
         return userMapper.toResponseDto(userRepository.save(existingUser));
