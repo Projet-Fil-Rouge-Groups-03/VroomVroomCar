@@ -38,7 +38,11 @@ public class OpenRouteService {
     public double[] getCoordinatesFromAddress(String adresse) {
         String url = GEOCODE_URL + "?api_key=" + API_KEY + "&text=" + adresse;
 
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8");
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
         try {
             JsonNode coordinates = objectMapper.readTree(response.getBody())
