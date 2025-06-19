@@ -3,6 +3,7 @@ package fr.diginamic.VroomVroomCar.service;
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.*;
 import fr.diginamic.VroomVroomCar.entity.Trip;
+import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.TripMapper;
 import fr.diginamic.VroomVroomCar.repository.CarRepository;
@@ -11,10 +12,14 @@ import fr.diginamic.VroomVroomCar.repository.SubscribeRepository;
 import fr.diginamic.VroomVroomCar.repository.TripRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,6 +79,17 @@ public class TripService implements ITripService {
                 .orElseThrow(() -> new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas."));
 
         return tripMapper.toResponse(trip);
+    }
+    @Transactional(readOnly = true)
+    public List<Trip> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
+                                  LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException {
+        return tripRepository.findTripsWithFilters(
+                villeDepart,
+                villeArrivee,
+                dateDebut,
+                heureDepart,
+                vehiculeType.name()
+        );
     }
 
     // Update Trip

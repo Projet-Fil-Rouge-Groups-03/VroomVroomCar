@@ -4,8 +4,11 @@ import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
+import fr.diginamic.VroomVroomCar.entity.Trip;
+import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 
+import java.sql.Date;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -42,6 +45,21 @@ public interface ITripService {
      * @throws FunctionnalException si aucun trajet ne correspond à l'identifiant fourni
      */
     TripResponseDto getTripById(Integer id) throws FunctionnalException;
+
+    /**
+     * Recherche les trajets en fonction des critères de filtre fournis.
+     * Tous les paramètres sont optionnels, mais au moins un doit être présent pour que la recherche ait du sens.
+     *
+     * @param villeDepart   la ville de départ du trajet (peut être {@code null} pour ignorer ce critère)
+     * @param villeArrivee  la ville d'arrivée du trajet (peut être {@code null} pour ignorer ce critère)
+     * @param dateDebut     la date de début du trajet (peut être {@code null} pour ignorer ce critère)
+     * @param heureDepart   l'heure de départ du trajet (peut être {@code null} pour ignorer ce critère)
+     * @param vehiculeType  le type de véhicule souhaité (ex : SERVICE, PERSONNEL, TOUS)
+     * @return une liste de trajets correspondant aux critères spécifiés
+     * @throws FunctionnalException si une erreur fonctionnelle survient lors de la recherche
+     */
+    List<Trip> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
+                           LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException;
 
     /**
      * Met à jour un trajet existant avec les nouvelles données fournies.
