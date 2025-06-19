@@ -13,11 +13,13 @@ import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.TripMapper;
 import fr.diginamic.VroomVroomCar.repository.*;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Date;
@@ -240,6 +242,30 @@ public class TripServiceTest {
         assertEquals(villeArrivee, result.get(0).getVilleArrivee());
 
         verify(tripRepository).findTripsWithFilters(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name());
+    }
+
+    @Test
+    void testGetUpcomingUserTrips() {
+        Integer userId = 1;
+        List<Trip> mockTrips = List.of(new Trip(), new Trip());
+        when(tripRepository.findUpcomingUserTrips(userId)).thenReturn(mockTrips);
+
+        List<Trip> result = tripService.getUpcomingUserTrips(userId);
+
+        assertEquals(2, result.size());
+        verify(tripRepository).findUpcomingUserTrips(userId);
+    }
+
+    @Test
+    void testGetPastUserTrips() {
+        Integer userId = 2;
+        List<Trip> mockTrips = List.of(new Trip());
+        when(tripRepository.findPastUserTrips(userId)).thenReturn(mockTrips);
+
+        List<Trip> result = tripService.getPastUserTrips(userId);
+
+        assertEquals(1, result.size());
+        verify(tripRepository).findPastUserTrips(userId);
     }
 
     /**
