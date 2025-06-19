@@ -40,7 +40,6 @@ public class JwtFilter extends OncePerRequestFilter {
                     .map(Cookie::getValue)
                     .forEach(token -> {
                         try {
-                            System.out.println("Token trouvé: " + token.substring(0, Math.min(20, token.length())) + "...");
                             if (jwtService.isTokenValid(token)) {
                                 String email = jwtService.getEmailFromToken(token);
                                 String role = jwtService.getRoleFromToken(token);
