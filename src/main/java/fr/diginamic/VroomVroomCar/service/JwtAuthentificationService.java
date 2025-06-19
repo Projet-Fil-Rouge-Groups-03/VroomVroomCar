@@ -22,11 +22,18 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
     @Value("${jwt.secret}")
     private String JWT_SECRET;
 
-    public ResponseCookie generateToken(String username) {
-        String jwt = Jwts.builder().setSubject(username).setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN)).signWith(SignatureAlgorithm.HS256, JWT_SECRET).compact();
+    public ResponseCookie generateToken(String mail, String role) {
+        String jwt = Jwts.builder()
+                .setSubject(mail)
+                .claim("roles", role)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN))
+                .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
+                .compact();
         return ResponseCookie.from(TOKEN_COOKIE, jwt)
                 .httpOnly(true)
-                .maxAge(EXPIRES_IN).path("/").build();
+                .maxAge(EXPIRES_IN)
+                .path("/")
+                .build();
     }
 
     public void invalidateToken(HttpServletResponse http) {
@@ -69,4 +76,30 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
             return false;
         }
     }
+
+    public String getEmailFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(JWT_SECRET)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    public String getRoleFromToken(String token) {
+        return (String) Jwts.parser()
+                .setSigningKey(JWT_SECRET)
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles");
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

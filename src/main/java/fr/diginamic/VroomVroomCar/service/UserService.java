@@ -60,7 +60,7 @@ public class UserService implements IUserService {
     public UserResponseDto createUser(UserRequestDto userRequestDto) throws ResourceNotFoundException {
         ValidationUtil.validateUserRequestDto(userRequestDto);
 
-        User user = userMapper.toEntity(userRequestDto, bcrypt.encode(userRequestDto.getMotDePasse()), Status.ACTIF);
+        User user = userMapper.toEntity(userRequestDto, bcrypt.encode(userRequestDto.getMotDePasse()), Status.ROLE_ACTIF);
         return userMapper.toResponseDto(userRepository.save(user));
     }
 

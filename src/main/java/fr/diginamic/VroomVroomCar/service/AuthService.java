@@ -26,9 +26,10 @@ public class AuthService implements IAuthService {
     @Autowired
     private JwtAuthentificationService jwtAuthentificationService;
     public ResponseCookie logUser(User user) throws Exception {
-        Optional<User> userOptional = userRepository.findByNom(user.getNom());
+        Optional<User> userOptional = userRepository.findByNom(user.getMail());
         if(userOptional.isPresent() && bcrypt.matches( user.getMotDePasse(),userOptional.get().getMotDePasse()) ){
-            return jwtAuthentificationService.generateToken(user.getNom());
+            String role = userOptional.get().getStatus().name();
+            return jwtAuthentificationService.generateToken(user.getMail(), role);
         }
         throw new Exception();
     }
@@ -43,8 +44,7 @@ public class AuthService implements IAuthService {
     public void register(UserRequestDto userRequestDto){
         ValidationUtil.validateUserMail(userRequestDto.getMail());
         ValidationUtil.validateUserPassword(userRequestDto.getMotDePasse());
-        User user = userMapper.toEntity(userRequestDto, bcrypt.encode(userRequestDto.getMotDePasse()),Status.ACTIF);
-        //vérification sur l'email
+        User user = userMapper.toEntity(userRequestDto, bcrypt.encode(userRequestDto.getMotDePasse()),Status.ROLE_ACTIF);
         userRepository.save(user);
     }
 }

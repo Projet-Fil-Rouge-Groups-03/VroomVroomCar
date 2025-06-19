@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/subscribe")
+@RequestMapping("/api/subscribe")
 public class SubscribeController implements ISubscribeController{
     @Autowired
     SubscribeService subscribeService;

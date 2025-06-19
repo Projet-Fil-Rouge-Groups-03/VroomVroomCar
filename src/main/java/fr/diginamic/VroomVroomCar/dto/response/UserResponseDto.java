@@ -49,6 +49,6 @@ public class UserResponseDto {
      *  Le status de l'utilisateur.
      */
     @Schema(description = "Le status de l'utilisateur.")
-    private Status status;
+    private String status;
 
 }
