@@ -117,7 +117,7 @@ public class Trip {
      * Relation One-to-Many avec l'entité Subscribe.
      * Chargement paresseux et suppression en cascade.
      */
-    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "trip", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Subscribe> subscribes;
 
     /**

@@ -49,6 +49,6 @@ public class CompanyCar extends Car {
      * Les réservations sont chargées de manière paresseuse et toutes les opérations de persistance
      * sont cascadées depuis la voiture de société.
      */
-    @OneToMany(mappedBy = "companyCar", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "companyCar", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Reservation> reservations = new HashSet<>();
 }

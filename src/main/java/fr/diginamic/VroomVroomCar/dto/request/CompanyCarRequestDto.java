@@ -49,7 +49,7 @@ public class CompanyCarRequestDto {
     @Schema(description = "Type de motorisation", example = "HYBRIDE")
     private Motorisation motorisation;
 
-    @Schema(description = "Catégorie du véhicule", example = "BERLINE_TAILLE_M")
+    @Schema(description = "Catégorie du véhicule", example = "BERLINES_TAILLE_M")
     private Categorie categorie;
 
     // Champs spécifiques à CompanyCar

@@ -1,7 +1,5 @@
 package fr.diginamic.VroomVroomCar.dto.response;
 
-import fr.diginamic.VroomVroomCar.entity.Trip;
-import fr.diginamic.VroomVroomCar.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,16 +20,17 @@ import java.util.Date;
 @NoArgsConstructor
 @Schema(description = "Représente les informations d'une inscription à un trajet.")
 public class SubscribeResponseDto {
+
     /**
      * Informations de l'utilisateur inscrit au trajet.
      */
     @Schema(description = "Utilisateur inscrit", hidden = true)
-    private User user;
+    private Integer userId;
     /**
      * Informations du trajet auquel l'utilisateur est inscrit.
      */
     @Schema(description = "trajet concerné", hidden = true)
-    private Trip trip;
+    private Integer tripId;
     /**
      * Date à laquelle l'utilisateur s'est inscrit au voyage.
      */

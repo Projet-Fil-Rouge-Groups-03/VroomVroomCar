@@ -86,7 +86,7 @@ public class CompanyCarController implements ICompanyCarController {
         return ResponseEntity.ok(cars);
     }
 
-    @GetMapping("/categorie/{categorie}")
+    @GetMapping("/categorie/{categories}")
     @Override
     public ResponseEntity<List<CompanyCarResponseDto>> getCarsByCategories(@PathVariable Categorie categories, @RequestParam(defaultValue = "5") int size) {
         List<CompanyCarResponseDto> cars = companyCarService.getCarsByCategories(categories, size);
