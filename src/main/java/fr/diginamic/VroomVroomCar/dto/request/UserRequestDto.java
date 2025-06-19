@@ -46,8 +46,14 @@ public class UserRequestDto {
      *  Ce champ ne peut pas être vide.
      */
     @Schema(description = "L'adresse de l'utilisateur.  Ce champ ne peut pas être vide.")
-    @NotBlank(message = "L'adresse est obligatoire")
-    private String adresse;
+    @NotBlank(message = "La ville est obligatoire")
+    private String ville;
+
+    @NotBlank(message = "Le codepostal est obligatoire")
+    private String codePostal;
+
+    @NotBlank(message = "Le libellé est obligatoire")
+    private String libelle;
 
     /**
      *  Le mot de passe de l'utilisateur.

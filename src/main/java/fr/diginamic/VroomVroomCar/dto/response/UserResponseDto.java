@@ -43,7 +43,11 @@ public class UserResponseDto {
      *  L'adresse de l'utilisateur.
      */
     @Schema(description = "L'adresse de l'utilisateur.")
-    private String adresse;
+    private String libelle;
+
+    private String codePostal;
+
+    private String ville;
 
     /**
      *  Le status de l'utilisateur.

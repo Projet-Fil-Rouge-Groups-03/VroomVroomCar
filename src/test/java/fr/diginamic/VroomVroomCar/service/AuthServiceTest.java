@@ -85,7 +85,9 @@ public class AuthServiceTest {
         userRequestDto.setMail("email@test.fr");
         userRequestDto.setNom("NomTest");
         userRequestDto.setPrenom("PrenomTest");
-        userRequestDto.setAdresse("127 rue d'ici, Nulle-Part");
+        userRequestDto.setLibelle("127 rue d'ici");
+        userRequestDto.setCodePostal("55372");
+        userRequestDto.setVille("Nulle-Part");
         userRequestDto.setMotDePasse("Pz276-V7aab?=f");
 
         User user = new User();
