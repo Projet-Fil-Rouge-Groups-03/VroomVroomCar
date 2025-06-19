@@ -120,6 +120,35 @@ public interface ITripController {
             @RequestParam(defaultValue = "TOUS") VehiculeType vehiculeType);
 
     /**
+     * Récupère la liste des trajets à venir pour un utilisateur donné.
+     * L'utilisateur peut être organisateur ou simple passager.
+     *
+     * @param userId l'identifiant de l'utilisateur
+     * @return liste des trajets futurs triés par date croissante
+     */
+    @Operation(summary = "Récupérer les trajets à venir d'un utilisateur",
+            description = "Retourne la liste des trajets futurs auxquels un utilisateur participe ou qu'il organise.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Liste des trajets récupérée avec succès"),
+            @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
+    })
+    List<Trip> getUpcomingTrip(@PathVariable Integer userId) throws ResourceNotFoundException;
+    /**
+     * Récupère la liste des trajets passés pour un utilisateur donné.
+     * L'utilisateur peut être organisateur ou simple passager (abonné).
+     *
+     * @param userId l'identifiant de l'utilisateur
+     * @return liste des trajets passés triés par date décroissante
+     */
+    @Operation(summary = "Récupérer les trajets passés d'un utilisateur",
+            description = "Retourne la liste des trajets déjà effectués par un utilisateur, qu’il soit organisateur ou passager.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Liste des trajets récupérée avec succès"),
+            @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
+    })
+    List<Trip> getPastTrip(@PathVariable Integer userId) throws ResourceNotFoundException;
+
+    /**
      * Met à jour un trajet existant avec de nouvelles données.
      *
      * @param id l'identifiant du trajet à modifier

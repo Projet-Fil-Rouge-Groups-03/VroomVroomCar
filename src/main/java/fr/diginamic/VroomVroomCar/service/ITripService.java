@@ -62,6 +62,24 @@ public interface ITripService {
                                       LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException;
 
     /**
+     * Service permettant de récupérer les trajets futurs (à venir) d’un utilisateur,
+     * qu’il en soit l’organisateur ou un participant inscrit.
+     *
+     * @param userId l’identifiant de l’utilisateur concerné
+     * @return la liste des trajets futurs
+     */
+    List<Trip> getUpcomingUserTrips(Integer userId);
+
+    /**
+     * Service permettant de récupérer les trajets passés d’un utilisateur,
+     * qu’il en soit l’organisateur ou un participant inscrit.
+     *
+     * @param userId l’identifiant de l’utilisateur concerné
+     * @return la liste des trajets passés
+     */
+    List<Trip> getPastUserTrips(Integer userId);
+
+    /**
      * Met à jour un trajet existant avec les nouvelles données fournies.
      *
      * @param id l'identifiant du trajet à mettre à jour

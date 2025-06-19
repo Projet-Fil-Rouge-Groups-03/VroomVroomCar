@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.sql.Date;
 import java.time.LocalTime;
 import java.util.List;
@@ -59,6 +60,14 @@ public class TripController implements ITripController {
         } catch (IllegalArgumentException | FunctionnalException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+    @GetMapping("/upcoming/{userId}")
+    public List<Trip> getUpcomingTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
+        return tripService.getUpcomingUserTrips(userId);
+    }
+    @GetMapping("/past/{userId}")
+    public List<Trip> getPastTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
+        return tripService.getPastUserTrips(userId);
     }
 
     // Update Trip (PUT)

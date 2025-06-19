@@ -19,8 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -90,6 +89,14 @@ public class TripService implements ITripService {
                 heureDepart,
                 vehiculeType.name()
         );
+    }
+    @Transactional(readOnly = true)
+    public List<Trip> getUpcomingUserTrips(Integer userId) {
+        return tripRepository.findUpcomingUserTrips(userId);
+    }
+    @Transactional(readOnly = true)
+    public List<Trip> getPastUserTrips(Integer userId) {
+        return tripRepository.findPastUserTrips(userId);
     }
 
     // Update Trip
