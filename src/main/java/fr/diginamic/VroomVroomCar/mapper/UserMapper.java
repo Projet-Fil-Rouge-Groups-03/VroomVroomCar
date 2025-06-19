@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Component
 @RequiredArgsConstructor
 public class UserMapper {
@@ -18,19 +21,30 @@ public class UserMapper {
     /**
      * Convertit un UserRequestDto et un utilisateur en une entité User.
      *
-     * @param userRequestDto Le DTO de requête contenant les informations sur l'utilisateur.
+     * @param dto Le DTO de requête contenant les informations sur l'utilisateur.
      * @param password
      * @param status
      * @return Une nouvelle instance de User initialisée avec les données du DTO et de l'utilisateur.
      */
-    public User toEntity(UserRequestDto userRequestDto, String password, Status status){
+    public User toEntity(UserRequestDto dto, String password, Status status){
         return new User(
-                userRequestDto.getNom(),
-                userRequestDto.getPrenom(),
-                userRequestDto.getMail(),
-                userRequestDto.getAdresse(),
+                dto.getNom(),
+                dto.getPrenom(),
+                dto.getMail(),
+                convertLibelleCpVilleToAdresse(dto.getLibelle(), dto.getCodePostal(), dto.getVille()),
                 password,
                 status);
+    }
+
+    /**
+     * Convertit les trois String d'entrée en un String adresse
+     * @param libelle Le numéro et nom de rue, le numéro d'appartement etc..
+     * @param codePostal Le code postal.
+     * @param ville La ville.
+     * @return
+     */
+    private String convertLibelleCpVilleToAdresse(String libelle, String codePostal, String ville){
+        return String.join(" ", libelle, codePostal, ville);
     }
 
     /**
@@ -60,7 +74,8 @@ public class UserMapper {
         user.setNom(userRequestDto.getNom());
         user.setPrenom(userRequestDto.getPrenom());
         user.setMail(userRequestDto.getMail());
-        user.setAdresse(userRequestDto.getAdresse());
+        user.setAdresse(convertLibelleCpVilleToAdresse
+                (userRequestDto.getLibelle(), userRequestDto.getCodePostal(), userRequestDto.getVille()));
     }
 
 }
