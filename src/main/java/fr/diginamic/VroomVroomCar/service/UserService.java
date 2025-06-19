@@ -55,6 +55,14 @@ public class UserService implements IUserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé avec le nom: " + nom));
         return userMapper.toResponseDto(user);
     }
+    @Transactional(readOnly = true)
+    @Override
+    public UserResponseDto getByEmail(String mail) throws ResourceNotFoundException {
+        ValidationUtil.validateNotNull(mail);
+        User user = userRepository.findByMail(mail)
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé avec l'email: " + mail));
+        return userMapper.toResponseDto(user);
+    }
 
     @Override
     public UserResponseDto createUser(UserRequestDto userRequestDto) throws ResourceNotFoundException {

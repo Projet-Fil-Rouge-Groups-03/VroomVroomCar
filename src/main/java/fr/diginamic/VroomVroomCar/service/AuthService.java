@@ -1,13 +1,14 @@
 package fr.diginamic.VroomVroomCar.service;
 
+import fr.diginamic.VroomVroomCar.dto.request.AuthLoginRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.entity.Status;
 import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.UserMapper;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import org.hibernate.exception.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,11 +26,10 @@ public class AuthService implements IAuthService {
     private UserRepository userRepository;
     @Autowired
     private JwtAuthentificationService jwtAuthentificationService;
-    public ResponseCookie logUser(User user) throws Exception {
-        Optional<User> userOptional = userRepository.findByNom(user.getMail());
+    public ResponseCookie logUser(AuthLoginRequestDto user) throws Exception {
+        Optional<User> userOptional = userRepository.findByMail(user.getMail());
         if(userOptional.isPresent() && bcrypt.matches( user.getMotDePasse(),userOptional.get().getMotDePasse()) ){
-            String role = userOptional.get().getStatus().name();
-            return jwtAuthentificationService.generateToken(user.getMail(), role);
+            return jwtAuthentificationService.generateToken(user.getMail());
         }
         throw new Exception();
     }
@@ -41,10 +41,11 @@ public class AuthService implements IAuthService {
         }
     }
 
-    public void register(UserRequestDto userRequestDto){
+    public void register(UserRequestDto userRequestDto) throws FunctionnalException {
         ValidationUtil.validateUserMail(userRequestDto.getMail());
         ValidationUtil.validateUserPassword(userRequestDto.getMotDePasse());
-        User user = userMapper.toEntity(userRequestDto, bcrypt.encode(userRequestDto.getMotDePasse()),Status.ROLE_ACTIF);
+        if(userRepository.findByMail(userRequestDto.getMail()).isPresent()) throw new FunctionnalException("Cet utilisateur existe déjà");
+        User user = userMapper.toEntity(userRequestDto, bcrypt.encode(userRequestDto.getMotDePasse()),Status.ACTIF);
         userRepository.save(user);
     }
 }
