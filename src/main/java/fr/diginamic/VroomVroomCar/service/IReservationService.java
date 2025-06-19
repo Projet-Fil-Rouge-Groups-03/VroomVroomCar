@@ -70,4 +70,10 @@ public interface IReservationService {
      * @param id Identifiant de la réservation à supprimer
      */
     void deleteReservation(Integer id) throws FunctionnalException;
+
+    /**
+     * Retourne toutes les voitures non louées actuellement.
+     * @return Une liste de voitures mise sous forme de DTO.
+     */
+    List<CompanyCarResponseDto> getAllAvailableCompanyCars();
 }
