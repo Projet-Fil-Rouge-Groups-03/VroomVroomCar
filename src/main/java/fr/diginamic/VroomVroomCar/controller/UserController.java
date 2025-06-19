@@ -6,12 +6,13 @@ import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController implements IUserController {
     @Autowired
     UserService userService;
@@ -32,19 +33,23 @@ public class UserController implements IUserController {
     }
 
     @PostMapping("/create-user")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> addUser(@RequestBody UserRequestDto user) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.createUser(user));
     }
     @PutMapping("/edit-user/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> editUser(@RequestParam int id ,@RequestBody UserRequestDto user) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.updateUser(id,user));
     }
 
     @PutMapping("/edit-user-by-nom/{nom}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> editUser(@RequestParam String nom ,@RequestBody UserRequestDto user) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.updateUser(nom,user));
     }
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteUser(@RequestParam int id) throws ResourceNotFoundException {
         userService.deleteUser(id);
         return ResponseEntity.ok("L'utilisateur à l'id : " + id + " à bien été supprimé");

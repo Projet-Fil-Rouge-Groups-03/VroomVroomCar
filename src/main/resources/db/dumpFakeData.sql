@@ -1,11 +1,12 @@
 -- Mettre ici les fake Datas INSERT INTO....
 
 INSERT INTO utilisateur (nom, prenom, mail, adresse, mot_de_passe, status) VALUES
-('N/A', 'admin', 'admin@admin.com', 'N/A', 'admin', 'ADMIN'),
-('Martin', 'Claire', 'claire.martin@example.com', '25 avenue de Paris', 'mdp456', 'ACTIF'),
-('Lemoine', 'Paul', 'paul.lemoine@example.com', '8 place des Fleurs', 'mdp789', 'ACTIF'),
-('Dubois', 'Sophie', 'sophie.dubois@example.com', '12 boulevard des Alpes', 'mdp234', 'ACTIF'),
-('Bernard', 'Lucie', 'lucie.bernard@example.com', '5 rue Lafayette', 'mdp567', 'ACTIF');
+('N/A', 'admin', 'admin@admin.com', 'N/A', 'admin', 'ROLE_ADMIN'),
+('Martin', 'Claire', 'claire.martin@example.com', '25 avenue de Paris', 'mdp456', 'ROLE_ACTIF'),
+('Lemoine', 'Paul', 'paul.lemoine@example.com', '8 place des Fleurs', 'mdp789', 'ROLE_ACTIF'),
+('Dubois', 'Sophie', 'sophie.dubois@example.com', '12 boulevard des Alpes', 'mdp234', 'ROLE_ACTIF'),
+('Mechant', 'Bowser', 'koopa@nintendo.com', 'Château de Bowser, 75000 PARIS', 'peach', 'ROLE_BANNI'),
+('Bernard', 'Lucie', 'lucie.bernard@example.com', '5 rue Lafayette', 'mdp567', 'ROLE_ACTIF');
 
 INSERT INTO voiture (marque, modele, nb_places, pollution, infos_supp, utilisateur_id, motorisation, categories) VALUES
 ('Renault', 'Clio', 5, NULL, NULL, 1, 'ESSENCE', 'MINI_CITADINES'),

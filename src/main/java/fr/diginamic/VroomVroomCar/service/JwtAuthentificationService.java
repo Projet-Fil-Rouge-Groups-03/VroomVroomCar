@@ -34,16 +34,19 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public ResponseCookie generateToken(String username) {
+    public ResponseCookie generateToken(String mail, String role) {
         String jwt = Jwts.builder()
-                .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .setSubject(mail)
+                .claim("roles", role)
+                .setExpiration(new Date(System.currentTimeMillis() + (EXPIRES_IN * 1000L)))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
         return ResponseCookie.from(TOKEN_COOKIE, jwt)
                 .httpOnly(true)
-                .maxAge(EXPIRES_IN).path("/").build();
+                .maxAge(EXPIRES_IN)
+                .path("/")
+                .build();
     }
 
     public void invalidateToken(HttpServletResponse http) {
@@ -55,13 +58,13 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
     }
 
     public String getSubject(String token) {
-        return Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     };
 
     public Boolean validateToken(String token) {
         try {
             Claims claims = Jwts.parser()
-                    .setSigningKey(JWT_SECRET)
+                    .setSigningKey(secretKey)
                     .parseClaimsJws(token)
                     .getBody();
 
@@ -83,6 +86,31 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
             return false;
         }catch (Exception e) {
             System.out.println("C'est pas normal ça....");
+            return false;
+        }
+    }
+
+    public String getEmailFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    public String getRoleFromToken(String token) {
+        return (String) Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles");
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
             return false;
         }
     }

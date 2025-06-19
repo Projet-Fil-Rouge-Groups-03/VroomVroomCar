@@ -4,10 +4,16 @@ import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Status;
 import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.util.StatusUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapper {
+
+    public final StatusUtil statusUtil;
 
     /**
      * Convertit un UserRequestDto et un utilisateur en une entité User.
@@ -40,7 +46,8 @@ public class UserMapper {
                 user.getPrenom(),
                 user.getMail(),
                 user.getAdresse(),
-                user.getStatus());
+                statusUtil.convertStatusToString(user.getStatus())
+        );
     }
 
     /**
@@ -55,4 +62,5 @@ public class UserMapper {
         user.setMail(userRequestDto.getMail());
         user.setAdresse(userRequestDto.getAdresse());
     }
+
 }
