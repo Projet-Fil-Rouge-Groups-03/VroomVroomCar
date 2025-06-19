@@ -9,6 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Component
 @RequiredArgsConstructor
 public class UserMapper {
@@ -18,19 +23,40 @@ public class UserMapper {
     /**
      * Convertit un UserRequestDto et un utilisateur en une entité User.
      *
-     * @param userRequestDto Le DTO de requête contenant les informations sur l'utilisateur.
+     * @param dto Le DTO de requête contenant les informations sur l'utilisateur.
      * @param password
      * @param status
      * @return Une nouvelle instance de User initialisée avec les données du DTO et de l'utilisateur.
      */
-    public User toEntity(UserRequestDto userRequestDto, String password, Status status){
+    public User toEntity(UserRequestDto dto, String password, Status status){
         return new User(
-                userRequestDto.getNom(),
-                userRequestDto.getPrenom(),
-                userRequestDto.getMail(),
-                userRequestDto.getAdresse(),
+                dto.getNom(),
+                dto.getPrenom(),
+                dto.getMail(),
+                convertLibelleCpVilleToAdresse(dto.getLibelle(), dto.getCodePostal(), dto.getVille()),
                 password,
                 status);
+    }
+
+    /**
+     * Convertit les trois String d'entrée en un String adresse séparé par des ";"
+     * @param libelle Le numéro et nom de rue, le numéro d'appartement etc..
+     * @param codePostal Le code postal.
+     * @param ville La ville.
+     * @return
+     */
+    private String convertLibelleCpVilleToAdresse(String libelle, String codePostal, String ville){
+        return Stream.of(libelle, codePostal, ville)
+                .map(s -> s.replace(";", ",")) // sécurité
+                .collect(Collectors.joining(";"));
+    }
+
+    public List<String> convertAdresseToLibelleCpVille(String adresse) throws IllegalArgumentException {
+        String[] parts = adresse.split(";");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("L'adresse doit contenir exactement 3 parties séparées par ';'");
+        }
+        return Arrays.asList(parts[0].trim(), parts[1].trim(), parts[2].trim());
     }
 
     /**
@@ -40,12 +66,15 @@ public class UserMapper {
      * @return Une nouvelle instance de USerResponseDto initialisée avec les données de l'entité User.
      */
     public UserResponseDto toResponseDto(User user){
+        List<String> adresse = convertAdresseToLibelleCpVille(user.getAdresse());
         return new UserResponseDto(
                 user.getId(),
                 user.getNom(),
                 user.getPrenom(),
                 user.getMail(),
-                user.getAdresse(),
+                adresse.get(0),
+                adresse.get(1),
+                adresse.get(2),
                 statusUtil.convertStatusToString(user.getStatus())
         );
     }
@@ -60,7 +89,8 @@ public class UserMapper {
         user.setNom(userRequestDto.getNom());
         user.setPrenom(userRequestDto.getPrenom());
         user.setMail(userRequestDto.getMail());
-        user.setAdresse(userRequestDto.getAdresse());
+        user.setAdresse(convertLibelleCpVilleToAdresse
+                (userRequestDto.getLibelle(), userRequestDto.getCodePostal(), userRequestDto.getVille()));
     }
 
 }

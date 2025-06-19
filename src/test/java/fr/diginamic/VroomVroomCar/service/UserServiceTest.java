@@ -98,7 +98,6 @@ public class UserServiceTest {
 
         assertNotNull(result);
         verify(userRepository, times(1)).save(any(User.class));
-
     }
 
     @Test
@@ -107,7 +106,9 @@ public class UserServiceTest {
         userRequestDto.setMail("email@test.fr");
         userRequestDto.setNom("NomTest");
         userRequestDto.setPrenom("PrenomTest");
-        userRequestDto.setAdresse("127 rue d'ici, Nulle-Part");
+        userRequestDto.setLibelle("127 rue d'ici");
+        userRequestDto.setCodePostal("55372");
+        userRequestDto.setVille("Nulle-Part");
 
         User user = new User();
         user.setId(1);
@@ -138,7 +139,9 @@ public class UserServiceTest {
         userRequestDto.setMail("email@test.fr");
         userRequestDto.setNom("NomTest");
         userRequestDto.setPrenom("PrenomTest");
-        userRequestDto.setAdresse("127 rue d'ici, Nulle-Part");
+        userRequestDto.setLibelle("127 rue d'ici");
+        userRequestDto.setCodePostal("55372");
+        userRequestDto.setVille("Nulle-Part");
 
         User existingUser = new User();
         existingUser.setNom("AncienNom");

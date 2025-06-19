@@ -8,15 +8,18 @@ import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.TripMapper;
 import fr.diginamic.VroomVroomCar.repository.*;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Date;
@@ -210,6 +213,59 @@ public class TripServiceTest {
         assertNotNull(result);
         verify(tripRepository, times(1)).findById(anyInt());
 
+    }
+
+    @Test
+    void testSearchTrips() throws FunctionnalException {
+        String villeDepart = "Toulouse";
+        String villeArrivee = "Paris";
+        Date dateDebut = Date.valueOf(LocalDate.now());
+        LocalTime heureDepart = LocalTime.of(8, 30);
+        VehiculeType vehiculeType = VehiculeType.VOITURE_SERVICE;
+
+        Trip trip1 = new Trip();
+        trip1.setVilleDepart(villeDepart);
+        trip1.setVilleArrivee(villeArrivee);
+        trip1.setDateDebut(dateDebut);
+        trip1.setHeureDepart(heureDepart);
+
+        List<Trip> expectedTrips = List.of(trip1);
+
+        when(tripRepository.findTripsWithFilters(
+                villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name())
+        ).thenReturn(expectedTrips);
+
+        List<Trip> result = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(villeDepart, result.get(0).getVilleDepart());
+        assertEquals(villeArrivee, result.get(0).getVilleArrivee());
+
+        verify(tripRepository).findTripsWithFilters(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name());
+    }
+
+    @Test
+    void testGetUpcomingUserTrips() {
+        Integer userId = 1;
+        List<Trip> mockTrips = List.of(new Trip(), new Trip());
+        when(tripRepository.findUpcomingUserTrips(userId)).thenReturn(mockTrips);
+
+        List<Trip> result = tripService.getUpcomingUserTrips(userId);
+
+        assertEquals(2, result.size());
+        verify(tripRepository).findUpcomingUserTrips(userId);
+    }
+
+    @Test
+    void testGetPastUserTrips() {
+        Integer userId = 2;
+        List<Trip> mockTrips = List.of(new Trip());
+        when(tripRepository.findPastUserTrips(userId)).thenReturn(mockTrips);
+
+        List<Trip> result = tripService.getPastUserTrips(userId);
+
+        assertEquals(1, result.size());
+        verify(tripRepository).findPastUserTrips(userId);
     }
 
     /**

@@ -54,6 +54,14 @@ public interface IReservationController {
     ResponseEntity<List<ReservationResponseDto>> getAllReservations();
 
     /**
+     * Récupère toutes les voitures non louées actuellement
+     *
+     * @return Liste des voitures
+     */
+    @GetMapping("/all-available-cars")
+    ResponseEntity<List<CompanyCarResponseDto>> getAllAvailableCompanyCars();
+
+    /**
      * Récupère une réservation à partir de son identifiant.
      *
      * @param id Identifiant de la réservation
