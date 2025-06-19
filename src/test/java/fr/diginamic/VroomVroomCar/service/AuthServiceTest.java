@@ -46,7 +46,8 @@ public class AuthServiceTest {
 
         User user = new User();
         user.setMail("test@example.com");
-        user.setMotDePasse("hashedPassword"); // ce que contient la base
+        user.setMotDePasse("hashedPassword");
+        user.setStatus(Status.ROLE_ACTIF);
 
         ResponseCookie fakeCookie = ResponseCookie.from("jwt", "fake-token").build();
 
@@ -56,7 +57,7 @@ public class AuthServiceTest {
         //Soulève un exception car les passwords ne correspondent pas
         //when(bcrypt.matches("plainPassword", "hashedPassword")).thenReturn(false);
         when(bcrypt.matches("plainPassword", "hashedPassword")).thenReturn(true);
-        when(jwtAuthentificationService.generateToken("test@example.com")).thenReturn(fakeCookie);
+        when(jwtAuthentificationService.generateToken("test@example.com", "ROLE_ACTIF")).thenReturn(fakeCookie);
 
         ResponseCookie result = authService.logUser(loginDto);
 
@@ -64,7 +65,7 @@ public class AuthServiceTest {
         assertEquals("fake-token", result.getValue());
         verify(userRepository).findByMail("test@example.com");
         verify(bcrypt).matches("plainPassword", "hashedPassword");
-        verify(jwtAuthentificationService).generateToken("test@example.com");
+        verify(jwtAuthentificationService).generateToken("test@example.com", "ROLE_ACTIF");
     }
 
     @Test
