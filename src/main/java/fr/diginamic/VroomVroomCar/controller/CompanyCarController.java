@@ -43,7 +43,7 @@ public class CompanyCarController implements ICompanyCarController {
     // POST
 
     @PostMapping("/create")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     @Override
     public ResponseEntity<CompanyCarResponseDto> createCar(@Valid @RequestBody CompanyCarRequestDto companyCarRequestDto) throws ResourceNotFoundException, FunctionnalException {
         CompanyCarResponseDto createdCar = companyCarService.createCompanyCar(companyCarRequestDto);
@@ -53,7 +53,7 @@ public class CompanyCarController implements ICompanyCarController {
     // UPDATE
 
     @PutMapping("/update/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     @Override
     public ResponseEntity<CompanyCarResponseDto> updateCar(@PathVariable Integer id, @Valid @RequestBody CompanyCarRequestDto companyCarRequestDto) throws ResourceNotFoundException {
         CompanyCarResponseDto updatedCar = companyCarService.updateCar(id, companyCarRequestDto);
@@ -63,7 +63,7 @@ public class CompanyCarController implements ICompanyCarController {
     // DELETE
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     @Override
     public ResponseEntity<String> deleteCar(@PathVariable Integer id) throws ResourceNotFoundException {
         companyCarService.deleteCar(id);
@@ -86,7 +86,7 @@ public class CompanyCarController implements ICompanyCarController {
         return ResponseEntity.ok(cars);
     }
 
-    @GetMapping("/categorie/{categorie}")
+    @GetMapping("/categorie/{categories}")
     @Override
     public ResponseEntity<List<CompanyCarResponseDto>> getCarsByCategories(@PathVariable Categorie categories, @RequestParam(defaultValue = "5") int size) {
         List<CompanyCarResponseDto> cars = companyCarService.getCarsByCategories(categories, size);
