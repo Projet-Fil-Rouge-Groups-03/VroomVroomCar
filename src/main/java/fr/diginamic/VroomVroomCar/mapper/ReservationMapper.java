@@ -1,69 +1,53 @@
 package fr.diginamic.VroomVroomCar.mapper;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import fr.diginamic.VroomVroomCar.entity.User;
-import fr.diginamic.VroomVroomCar.repository.CompanyCarRepository;
-import fr.diginamic.VroomVroomCar.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReservationMapper {
 
-    private UserRepository userRepository;
-    private CompanyCarRepository carRepository;
-
-    public Reservation toEntity(ReservationRequestDto request, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto){
+    public Reservation toEntity(ReservationRequestDto request, User user, CompanyCar car) {
         Reservation reservation = new Reservation();
         reservation.setDateDebut(request.getDateDebut());
         reservation.setDateFin(request.getDateFin());
-
-        User user = userRepository.findById(userResponseDto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
         reservation.setUser(user);
-
-        CompanyCar car = carRepository.findById(carResponseDto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
         reservation.setCompanyCar(car);
-
         return reservation;
     }
 
-    public ReservationResponseDto toResponse(Reservation reservation){
+    public ReservationResponseDto toResponse(Reservation reservation) {
         ReservationResponseDto response = new ReservationResponseDto();
-        response.setId(response.getCarId());
+        response.setId(reservation.getId());
         response.setDateDebut(reservation.getDateDebut());
         response.setDateFin(reservation.getDateFin());
 
-        if (reservation.getUser() != null){
+        if (reservation.getUser() != null) {
             response.setUserId(reservation.getUser().getId());
         }
 
-        if (reservation.getCompanyCar() != null){
+        if (reservation.getCompanyCar() != null) {
             response.setCarId(reservation.getCompanyCar().getId());
         }
 
         return response;
     }
 
-    public void updateEntity(Reservation existingReservation, ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto){
-        if (requestDto.getDateDebut() != null) {
-            existingReservation.setDateDebut(requestDto.getDateDebut());
-        } if (requestDto.getDateFin() != null) {
-            existingReservation.setDateFin(requestDto.getDateFin());
-        } if (requestDto.getUserId() != null){
-            User user = userRepository.findById(userResponseDto.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
+    public void updateEntity(Reservation existingReservation, ReservationRequestDto request, User user, CompanyCar car) {
+        if (request.getDateDebut() != null) {
+            existingReservation.setDateDebut(request.getDateDebut());
+        }
+        if (request.getDateFin() != null) {
+            existingReservation.setDateFin(request.getDateFin());
+        }
+        if (user != null) {
             existingReservation.setUser(user);
-        } if (requestDto.getCarId() != null) {
-            CompanyCar car = carRepository.findById(carResponseDto.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Vehicule non trouvé"));
-            existingReservation.setCompanyCar(car);;
+        }
+        if (car != null) {
+            existingReservation.setCompanyCar(car);
         }
     }
 }

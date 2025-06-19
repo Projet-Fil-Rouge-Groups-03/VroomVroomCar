@@ -25,8 +25,8 @@ public class ReservationController implements IReservationController {
 
     // Create Reservation (POST)
     @PostMapping("/create")
-    public ResponseEntity<ReservationResponseDto> createReservation(@Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
-        ReservationResponseDto reservationCreate = reservationService.createReservation(requestDto, userResponseDto, carResponseDto);
+    public ResponseEntity<ReservationResponseDto> createReservation(@Valid @RequestBody ReservationRequestDto requestDto) throws FunctionnalException {
+        ReservationResponseDto reservationCreate = reservationService.createReservation(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservationCreate);
     }
 
@@ -51,8 +51,8 @@ public class ReservationController implements IReservationController {
 
     // Update Reservation (PUT)
     @PutMapping("/update/{id}")
-    public ResponseEntity<ReservationResponseDto> updateReservation(@PathVariable Integer id, @Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
-        ReservationResponseDto reservationEdit = reservationService.updateReservation(id, requestDto, userResponseDto, carResponseDto);
+    public ResponseEntity<ReservationResponseDto> updateReservation(@PathVariable Integer id, @Valid @RequestBody ReservationRequestDto requestDto) throws FunctionnalException {
+        ReservationResponseDto reservationEdit = reservationService.updateReservation(id, requestDto);
         return ResponseEntity.ok(reservationEdit);
     }
 
