@@ -63,13 +63,38 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
             @Param("vehiculeType") String vehiculeType
     );
 
+    /**
+     * Récupère la liste des trajets à venir pour un utilisateur donné.
+     * Un trajet est considéré comme à venir si :
+     * - la date de fin est null et la date de début est aujourd'hui ou plus tard
+     * - ou la date de fin est aujourd'hui ou plus tard
+     *
+     * L'utilisateur peut être :
+     * - organisateur du trajet
+     * - ou inscrit au trajet via une souscription
+     *
+     * @param userId l'identifiant de l'utilisateur (organisateur ou passager)
+     * @return une liste de trajets futurs, triés par date de début et heure de départ croissantes
+     */
     @Query("SELECT DISTINCT t FROM Trip t " +
             "LEFT JOIN Subscribe s ON s.trip.id = t.id " +
             "WHERE (t.organisateur.id = :userId OR s.user.id = :userId) " +
             "AND (t.dateFin IS NULL AND t.dateDebut >= CURRENT_DATE OR t.dateFin >= CURRENT_DATE) " +
             "ORDER BY t.dateDebut ASC, t.heureDepart ASC")
     List<Trip> findUpcomingUserTrips(@Param("userId") Integer userId);
-
+    /**
+     * Récupère la liste des trajets passés pour un utilisateur donné.
+     * Un trajet est considéré comme passé si :
+     * - la date de fin est définie et antérieure à aujourd'hui
+     * - ou si la date de fin est null et que la date de début est antérieure à aujourd'hui
+     *
+     * L'utilisateur peut être :
+     * - organisateur du trajet
+     * - ou inscrit au trajet via une souscription
+     *
+     * @param userId l'identifiant de l'utilisateur (organisateur ou passager)
+     * @return une liste de trajets passés, triés par date de début et heure de départ décroissantes
+     */
     @Query("SELECT DISTINCT t FROM Trip t " +
             "LEFT JOIN Subscribe s ON s.trip.id = t.id " +
             "WHERE (t.organisateur.id = :userId OR s.user.id = :userId) " +
