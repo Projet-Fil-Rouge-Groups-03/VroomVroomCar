@@ -1,7 +1,6 @@
 package fr.diginamic.VroomVroomCar.controller;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
@@ -36,6 +35,12 @@ public class ReservationController implements IReservationController {
         List<ReservationResponseDto> reservations = reservationService.getAllReservations();
         return ResponseEntity.ok(reservations);
     }
+    @GetMapping("/all-available-cars")
+    public ResponseEntity<List<CompanyCarResponseDto>> getAllAvailableCompanyCars(){
+        List<CompanyCarResponseDto> cars = reservationService.getAllAvailableCompanyCars();
+        return ResponseEntity.ok(cars);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ReservationResponseDto> getReservationById(@PathVariable Integer id) throws FunctionnalException {
         ReservationResponseDto reservation = reservationService.getReservationById(id);

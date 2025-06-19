@@ -1,14 +1,16 @@
 package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
+import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
+import fr.diginamic.VroomVroomCar.mapper.CompanyCarMapper;
 import fr.diginamic.VroomVroomCar.mapper.ReservationMapper;
 import fr.diginamic.VroomVroomCar.repository.CarRepository;
+import fr.diginamic.VroomVroomCar.repository.CompanyCarRepository;
 import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,8 +35,9 @@ public class ReservationService implements IReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
+    private final CompanyCarMapper companyCarMapper;
 
-    private final CarRepository carRepository;
+    private final CompanyCarRepository companyCarRepository;
 
     private final ValidationUtil validationUtil;
 
@@ -65,7 +72,7 @@ public class ReservationService implements IReservationService {
     @Transactional(readOnly = true)
     public Page<ReservationResponseDto> getReservationsByCarId(Integer carId, int page, int size) throws FunctionnalException {
         // Vérification de l'existence de la voiture
-        if (!carRepository.existsById(carId)) {
+        if (!companyCarRepository.existsById(carId)) {
             throw new FunctionnalException("Voiture non trouvée avec l'ID: " + carId);
         }
 
@@ -100,5 +107,21 @@ public class ReservationService implements IReservationService {
             throw new FunctionnalException("La reservation avec l'ID \" + id + \" n'existe pas.");
         }
         reservationRepository.deleteById(id);
+    }
+
+    @Override
+    public List<CompanyCarResponseDto> getAllAvailableCompanyCars() {
+        Date now = Date.valueOf(LocalDate.now());
+
+        List<CompanyCar> allCars = companyCarRepository.findAll();
+        List<CompanyCar> reservedCars = reservationRepository.findAll().stream()
+                .filter(r -> r.getDateFin().after(now))
+                .map(Reservation::getCompanyCar)
+                .toList();
+
+        return allCars.stream()
+                .filter(car -> !reservedCars.contains(car))
+                .map(companyCarMapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 }

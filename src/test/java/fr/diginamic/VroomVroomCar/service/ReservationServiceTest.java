@@ -4,10 +4,12 @@ import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
+import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
+import fr.diginamic.VroomVroomCar.mapper.CompanyCarMapper;
 import fr.diginamic.VroomVroomCar.mapper.ReservationMapper;
-import fr.diginamic.VroomVroomCar.repository.CarRepository;
+import fr.diginamic.VroomVroomCar.repository.CompanyCarRepository;
 import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Sort;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +44,9 @@ class ReservationServiceTest {
     private ReservationMapper reservationMapper;
 
     @Mock
-    private CarRepository carRepository;
+    private CompanyCarRepository companyCarRepository;
+    @Mock
+    private CompanyCarMapper companyCarMapper;
 
     @Mock
     private ValidationUtil validationUtil;
@@ -135,7 +140,7 @@ class ReservationServiceTest {
         Pageable pageable = PageRequest.of(page, size, Sort.by("dateDebut").descending());
         Page<Reservation> reservationPage = new PageImpl<>(Collections.singletonList(reservation));
 
-        when(carRepository.existsById(carId)).thenReturn(true);
+        when(companyCarRepository.existsById(carId)).thenReturn(true);
         when(reservationRepository.findByCompanyCar_Id(eq(carId), any(Pageable.class))).thenReturn(reservationPage);
         when(reservationMapper.toResponse(any(Reservation.class))).thenReturn(responseDto);
 
@@ -176,5 +181,42 @@ class ReservationServiceTest {
         reservationService.deleteReservation(reservationId);
 
         verify(reservationRepository, times(1)).deleteById(reservationId);
+    }
+    @Test
+    void getAvailableCars() {
+        CompanyCar car1 = new CompanyCar();
+        car1.setId(1);
+        CompanyCar car2 = new CompanyCar();
+        car2.setId(2);
+        CompanyCar car3 = new CompanyCar();
+        car3.setId(3);
+
+        List<CompanyCar> allCars = Arrays.asList(car1, car2, car3);
+
+        Reservation activeReservation = new Reservation();
+        activeReservation.setCompanyCar(car2);
+        activeReservation.setDateFin(Date.valueOf(LocalDate.now().plusDays(1))); // encore réservée
+
+        when(companyCarRepository.findAll()).thenReturn(allCars);
+        when(reservationRepository.findAll()).thenReturn(List.of(activeReservation));
+
+        CompanyCarResponseDto dto1 = new CompanyCarResponseDto();
+        CompanyCarResponseDto dto3 = new CompanyCarResponseDto();
+
+        when(companyCarMapper.toResponseDto(car1)).thenReturn(dto1);
+        when(companyCarMapper.toResponseDto(car3)).thenReturn(dto3);
+
+        List<CompanyCarResponseDto> result = reservationService.getAllAvailableCompanyCars();
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(dto1));
+        assertTrue(result.contains(dto3));
+        assertFalse(result.contains(car2));
+
+        verify(companyCarRepository).findAll();
+        verify(reservationRepository).findAll();
+        verify(companyCarMapper).toResponseDto(car1);
+        verify(companyCarMapper).toResponseDto(car3);
+        verify(companyCarMapper, never()).toResponseDto(car2);
     }
 }
