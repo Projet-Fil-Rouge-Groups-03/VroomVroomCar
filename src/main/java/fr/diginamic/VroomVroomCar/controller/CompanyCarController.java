@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class CompanyCarController implements ICompanyCarController {
     // POST
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Override
     public ResponseEntity<CompanyCarResponseDto> createCar(@Valid @RequestBody CompanyCarRequestDto companyCarRequestDto) throws ResourceNotFoundException, FunctionnalException {
         CompanyCarResponseDto createdCar = companyCarService.createCompanyCar(companyCarRequestDto);
@@ -51,6 +53,7 @@ public class CompanyCarController implements ICompanyCarController {
     // UPDATE
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Override
     public ResponseEntity<CompanyCarResponseDto> updateCar(@PathVariable Integer id, @Valid @RequestBody CompanyCarRequestDto companyCarRequestDto) throws ResourceNotFoundException {
         CompanyCarResponseDto updatedCar = companyCarService.updateCar(id, companyCarRequestDto);
@@ -60,6 +63,7 @@ public class CompanyCarController implements ICompanyCarController {
     // DELETE
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Override
     public ResponseEntity<String> deleteCar(@PathVariable Integer id) throws ResourceNotFoundException {
         companyCarService.deleteCar(id);
