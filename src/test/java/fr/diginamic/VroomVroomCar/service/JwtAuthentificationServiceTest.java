@@ -46,7 +46,7 @@ class JwtAuthentificationServiceTest {
 
     @Test
     void testGenerateToken() {
-        ResponseCookie cookie = jwtService.generateToken("user1");
+        ResponseCookie cookie = jwtService.generateToken("user1", "ROLE_ACTIF");
 
         assertEquals("jwt_token", cookie.getName());
         assertNotNull(cookie.getValue());
@@ -74,7 +74,7 @@ class JwtAuthentificationServiceTest {
 
     @Test
     void testGetSubject() {
-        String token = jwtService.generateToken("user1").getValue();
+        String token = jwtService.generateToken("user1", "ROLE_ACTIF").getValue();
 
         String subject = jwtService.getSubject(token);
 
@@ -83,7 +83,7 @@ class JwtAuthentificationServiceTest {
 
     @Test
     void testValidateToken_Valid() {
-        String token = jwtService.generateToken("user1").getValue();
+        String token = jwtService.generateToken("user1", "ROLE_ACTIF").getValue();
 
         assertTrue(jwtService.validateToken(token));
     }

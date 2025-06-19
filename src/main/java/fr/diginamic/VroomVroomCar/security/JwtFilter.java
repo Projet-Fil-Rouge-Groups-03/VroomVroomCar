@@ -33,33 +33,33 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
         if (request.getCookies() != null) {
             Stream.of(request.getCookies())
                     .filter(cookie -> cookie.getName().equals(TOKEN_COOKIE))
                     .map(Cookie::getValue)
                     .forEach(token -> {
                         try {
+                            System.out.println("Token trouvé: " + token.substring(0, Math.min(20, token.length())) + "...");
                             if (jwtService.isTokenValid(token)) {
                                 String email = jwtService.getEmailFromToken(token);
-                                String role = jwtService.getRoleFromToken(token); // Assurez-vous que cette méthode existe
+                                String role = jwtService.getRoleFromToken(token);
 
-                                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                                authorities.add(new SimpleGrantedAuthority(role));
+                                if (!"ROLE_BANNI".equals(role)) {
+                                    List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                                    authorities.add(new SimpleGrantedAuthority(role));
 
-                                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                                        email,
-                                        null,
-                                        authorities
-                                );
-                                SecurityContextHolder.getContext().setAuthentication(auth);
+                                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                                            email, null, authorities
+                                    );
+                                    SecurityContextHolder.getContext().setAuthentication(auth);
+                                }
                             }
                         } catch (Exception e) {
                             System.err.println("Erreur lors du parsing du JWT : " + e.getMessage());
                         }
                     });
         }
-
-
         filterChain.doFilter(request, response);
     }
 }

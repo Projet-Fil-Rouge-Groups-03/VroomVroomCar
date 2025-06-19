@@ -27,11 +27,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/register", "/logout").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/**").hasAnyRole("ACTIF", "ADMIN")
+                        .requestMatchers("/api/**").hasAnyAuthority("ROLE_ACTIF", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // utile pour afficher h2-console
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
 
                 .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class);
