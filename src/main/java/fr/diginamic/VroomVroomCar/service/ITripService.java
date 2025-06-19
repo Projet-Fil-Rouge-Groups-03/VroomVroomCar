@@ -8,8 +8,8 @@ import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 
-import java.sql.Date;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,7 +59,7 @@ public interface ITripService {
      * @throws FunctionnalException si une erreur fonctionnelle survient lors de la recherche
      */
     List<Trip> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
-                           LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException;
+                                      LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException;
 
     /**
      * Met à jour un trajet existant avec les nouvelles données fournies.
