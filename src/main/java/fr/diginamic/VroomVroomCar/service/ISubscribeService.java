@@ -3,7 +3,6 @@ package fr.diginamic.VroomVroomCar.service;
 import fr.diginamic.VroomVroomCar.dto.request.SubscribeRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.SubscribeResponseDto;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
-import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

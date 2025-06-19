@@ -1,15 +1,12 @@
 package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.ReservationMapper;
-import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.CompanyCarRepository;
 import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;

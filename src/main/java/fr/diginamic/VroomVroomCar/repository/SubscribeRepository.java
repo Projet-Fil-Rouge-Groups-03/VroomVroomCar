@@ -5,7 +5,6 @@ import fr.diginamic.VroomVroomCar.entity.SubscribeKey;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.sql.Date;
 import java.util.List;
 /**
  * Cette interface est un dépôt Spring Data JPA pour l'entité Subscribe.
