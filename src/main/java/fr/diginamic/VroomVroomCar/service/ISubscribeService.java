@@ -21,11 +21,12 @@ public interface ISubscribeService {
     /**
      * Récupère une inscription spécifique à partir de son identifiant.
      *
-     * @param id l'identifiant de l'inscription.
+     * @param userId l'identifiant du User inscrit.
+     * @param tripId l'identifiant du trajet concerné.
      * @return l'objet {@link SubscribeResponseDto} correspondant à l'inscription.
      * @throws ResourceNotFoundException si aucune inscription n'est trouvée avec cet identifiant.
      */
-    public SubscribeResponseDto getSubscribeById(int id) throws ResourceNotFoundException;
+    public SubscribeResponseDto getSubscribeById(Integer userId, Integer tripId) throws ResourceNotFoundException;
     /**
      * Crée une nouvelle inscription d'un utilisateur à un trajet en fonction des données fournies.
      *
@@ -37,20 +38,22 @@ public interface ISubscribeService {
     /**
      * Modifie une inscription existante à un trajet à partir de son identifiant.
      *
-     * @param id        l'identifiant de l'inscription à modifier.
+     * @param userId l'identifiant du User inscrit.
+     * @param tripId l'identifiant du trajet concerné.
      * @param subscribe les nouvelles données de l'inscription.
      * @return l'objet {@link SubscribeResponseDto} mis à jour.
      * @throws ResourceNotFoundException si l'inscription ou les entités liées ne sont pas trouvées.
      */
-    public SubscribeResponseDto editSubscribe(int id, SubscribeRequestDto subscribe) throws ResourceNotFoundException;
+    public SubscribeResponseDto editSubscribe(Integer userId, Integer tripId, SubscribeRequestDto subscribe) throws ResourceNotFoundException;
     /**
      * Supprime une inscription à un trajet à partir de son identifiant.
      *
-     * @param id l'identifiant de l'inscription à supprimer.
+     * @param userId l'identifiant du User inscrit.
+     * @param tripId l'identifiant du trajet concerné.
      * @return un message de confirmation de suppression.
      * @throws ResourceNotFoundException si aucune inscription n'est trouvée avec cet identifiant.
      */
-    public String deleteSubscribe(int id) throws ResourceNotFoundException;
+    public String deleteSubscribe(Integer userId, Integer tripId) throws ResourceNotFoundException;
 
     /**
      * Récupère les inscriptions pour un trajet donné
@@ -58,12 +61,12 @@ public interface ISubscribeService {
      * @param id        l'identifiant du trajet
      * @return          Une liste d'objets {@link SubscribeResponseDto} représentant toutes les inscriptions pour un trajet donné.
      */
-    public List<SubscribeResponseDto> findSubscribesByTrip(int id);
+    public List<SubscribeResponseDto> findSubscribesByTrip(Integer id);
     /**
      * Récupère les inscriptions pour un utilisateur donné
      *
      * @param id        l'identifiant de l'utilisateur
      * @return          Une liste d'objets {@link SubscribeResponseDto} représentant toutes les inscriptions pour un utilisateur donné.
      */
-    public List<SubscribeResponseDto> findSubscribesByUser(int id);
+    public List<SubscribeResponseDto> findSubscribesByUser(Integer id);
 }

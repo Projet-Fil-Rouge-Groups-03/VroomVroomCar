@@ -29,10 +29,13 @@ public class Subscribe {
     private Date dateInscription;
 
     public Subscribe(User user, Trip trip, Date dateInscription) {
+        this.id = new SubscribeKey(user.getId(), trip.getId());
         this.user = user;
         this.trip = trip;
         this.dateInscription = dateInscription;
     }
+
+
 
     @PrePersist
     protected void onCreate() {

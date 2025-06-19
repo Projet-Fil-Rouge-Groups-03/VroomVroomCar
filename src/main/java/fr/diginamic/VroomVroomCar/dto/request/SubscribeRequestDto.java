@@ -23,6 +23,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Schema(description = "Représente une inscription à un trajet.")
 public class SubscribeRequestDto {
+
     /**
      * Identifiant de l'utilisateur souhaitant s'inscrire.
      */
