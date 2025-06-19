@@ -120,8 +120,8 @@ public final class ValidationUtil {
         }
     }
     public  static  void validateUserPassword(String password) {
-        if (password == null || password.length() < 6) {
-            throw new IllegalArgumentException("Le mot de passe doit contenir au moins 6 caractères");
+        if (password == null || !password.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")) {
+            throw new IllegalArgumentException("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial");
         }
     }
 
