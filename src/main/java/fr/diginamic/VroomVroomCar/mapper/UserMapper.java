@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,14 +39,24 @@ public class UserMapper {
     }
 
     /**
-     * Convertit les trois String d'entrée en un String adresse
+     * Convertit les trois String d'entrée en un String adresse séparé par des ";"
      * @param libelle Le numéro et nom de rue, le numéro d'appartement etc..
      * @param codePostal Le code postal.
      * @param ville La ville.
      * @return
      */
     private String convertLibelleCpVilleToAdresse(String libelle, String codePostal, String ville){
-        return String.join(" ", libelle, codePostal, ville);
+        return Stream.of(libelle, codePostal, ville)
+                .map(s -> s.replace(";", ",")) // sécurité
+                .collect(Collectors.joining(";"));
+    }
+
+    public List<String> convertAdresseToLibelleCpVille(String adresse) throws IllegalArgumentException {
+        String[] parts = adresse.split(";");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("L'adresse doit contenir exactement 3 parties séparées par ';'");
+        }
+        return Arrays.asList(parts[0].trim(), parts[1].trim(), parts[2].trim());
     }
 
     /**
@@ -54,12 +66,15 @@ public class UserMapper {
      * @return Une nouvelle instance de USerResponseDto initialisée avec les données de l'entité User.
      */
     public UserResponseDto toResponseDto(User user){
+        List<String> adresse = convertAdresseToLibelleCpVille(user.getAdresse());
         return new UserResponseDto(
                 user.getId(),
                 user.getNom(),
                 user.getPrenom(),
                 user.getMail(),
-                user.getAdresse(),
+                adresse.get(0),
+                adresse.get(1),
+                adresse.get(2),
                 statusUtil.convertStatusToString(user.getStatus())
         );
     }
