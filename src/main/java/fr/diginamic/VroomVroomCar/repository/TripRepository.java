@@ -63,21 +63,19 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
             @Param("vehiculeType") String vehiculeType
     );
 
-    /**
-     * Recherche les trajets ayant un nombre de places restantes supérieur à un seuil donné.
-     *
-     * @param nbPlaces Seuil minimum de places restantes
-     * @return Liste des trajets disponibles avec des places restantes
-     */
-    List<Trip> findByNbPlacesRestantesGreaterThan(int nbPlaces);
+    @Query("SELECT DISTINCT t FROM Trip t " +
+            "LEFT JOIN Subscribe s ON s.trip.id = t.id " +
+            "WHERE (t.organisateur.id = :userId OR s.user.id = :userId) " +
+            "AND (t.dateFin IS NULL AND t.dateDebut >= CURRENT_DATE OR t.dateFin >= CURRENT_DATE) " +
+            "ORDER BY t.dateDebut ASC, t.heureDepart ASC")
+    List<Trip> findUpcomingUserTrips(@Param("userId") Integer userId);
 
-    /**
-     * Récupère tous les trajets organisés par un utilisateur spécifique.
-     *
-     * @param organisateurId L'identifiant de l'organisateur
-     * @return Liste des trajets organisés par cet utilisateur
-     */
-    List<Trip> findByOrganisateurId(Integer organisateurId);
+    @Query("SELECT DISTINCT t FROM Trip t " +
+            "LEFT JOIN Subscribe s ON s.trip.id = t.id " +
+            "WHERE (t.organisateur.id = :userId OR s.user.id = :userId) " +
+            "AND (t.dateFin IS NOT NULL AND t.dateFin < CURRENT_DATE OR t.dateFin IS NULL AND t.dateDebut < CURRENT_DATE) " +
+            "ORDER BY t.dateDebut DESC, t.heureDepart DESC")
+    List<Trip> findPastUserTrips(@Param("userId") Integer userId);
 
     /**
      * Récupère tous les trajets dont la date de début est aujourd’hui ou dans le futur.
