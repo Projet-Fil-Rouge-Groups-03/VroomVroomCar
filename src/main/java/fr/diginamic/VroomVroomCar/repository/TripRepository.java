@@ -26,6 +26,27 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
      */
     boolean existsById(Integer id);
 
+    /**
+     * Recherche les trajets correspondant aux filtres spécifiés. Tous les paramètres sont optionnels :
+     * si un paramètre est null (ou "TOUS" pour le type de véhicule), il est ignoré dans les critères de recherche.
+     *
+     * La recherche prend en compte les critères suivants :
+     *   villeDepart : la ville de départ du trajet (exacte).
+     *   villeArrivee : la ville d'arrivée du trajet (exacte).
+     *   dateDebut : la date de début minimale du trajet.
+     *   heureDepart : l'heure de départ minimale du trajet.
+     *   vehiculeType :
+     *       "VOITURE_SERVICE" : seuls les trajets avec une voiture de service sont inclus.
+     *       "VOITURE_COVOIT" : seuls les trajets sans voiture de service sont inclus.
+     *       "TOUS" : tous les trajets sont inclus, quel que soit le type de véhicule.
+     *
+     * @param villeDepart la ville de départ à filtrer (peut être {@code null})
+     * @param villeArrivee la ville d'arrivée à filtrer (peut être {@code null})
+     * @param dateDebut la date de début minimale du trajet (peut être {@code null})
+     * @param heureDepart l'heure de départ minimale du trajet (peut être {@code null})
+     * @param vehiculeType le type de véhicule à filtrer : "VOITURE_SERVICE", "VOITURE_COVOIT" ou "TOUS"
+     * @return une liste de trajets correspondant aux filtres appliqués
+     */
     @Query("SELECT t FROM Trip t LEFT JOIN CompanyCar cc ON (t.car IS NOT NULL AND t.car.id = cc.id) " +
             "WHERE (:villeDepart IS NULL OR t.villeDepart = :villeDepart) " +
             "AND (:villeArrivee IS NULL OR t.villeArrivee = :villeArrivee) " +
