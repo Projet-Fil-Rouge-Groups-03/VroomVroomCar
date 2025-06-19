@@ -98,7 +98,6 @@ public class UserServiceTest {
 
         assertNotNull(result);
         verify(userRepository, times(1)).save(any(User.class));
-
     }
 
     @Test
