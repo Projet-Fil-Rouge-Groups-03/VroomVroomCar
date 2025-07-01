@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalTime;
@@ -20,12 +17,15 @@ import java.util.Set;
  * y compris les dates, les horaires, les lieux, les participants et le véhicule utilisé.
  *
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "trajet")
+@ToString(exclude = {"car", "subscribes", "organisateur"})
+@EqualsAndHashCode(of = "id")
 public class Trip {
 
     /**
@@ -119,10 +119,7 @@ public class Trip {
      */
     @OneToMany(
             mappedBy = "trip",
-            // CascadeType.ALL inclut PERSIST, MERGE, et surtout REMOVE
             cascade = CascadeType.ALL,
-            // orphanRemoval=true est une bonne pratique : si on retire une inscription
-            // de la collection 'subscribes', elle sera supprimée de la BDD.
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )

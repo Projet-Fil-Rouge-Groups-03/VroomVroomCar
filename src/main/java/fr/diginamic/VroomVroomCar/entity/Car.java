@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,12 +14,15 @@ import java.util.Set;
  * Elle contient les informations relatives à une voiture, telles que la marque,
  * le modèle, le nombre de places, etc.
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "voiture")
+@ToString(exclude = {"user", "trips"})
+@EqualsAndHashCode(of = "id")
 public class Car {
 
     /**

@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.service;
 
+import fr.diginamic.VroomVroomCar.dto.TripNotificationDetailsDto;
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.*;
 import fr.diginamic.VroomVroomCar.entity.*;
@@ -151,7 +152,7 @@ public class TripService implements ITripService {
 
         Trip updatedTrip = tripRepository.save(existingTrip);
         // Envoi notifications aux participants
-        notificationService.sendNotificationToParticipantsOnModification(updatedTrip, updatedTrip.getOrganisateur());
+        notificationService.sendNotificationToParticipantsOnModification(updatedTrip);
         return tripMapper.toResponse(updatedTrip);
     }
 
@@ -164,20 +165,14 @@ public class TripService implements ITripService {
         Trip trip = tripRepository.findById(id)
                 .orElseThrow(() -> new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas."));
 
-        // 2. IMPORTANT : Copier les informations nécessaires dans de NOUVELLES collections
-        // pour se découpler du PersistentSet d'Hibernate.
+        // 2. Copier les listes et les DÉTAILS nécessaires AVANT toute suppression
         List<Subscribe> subscriptions = new ArrayList<>(trip.getSubscribes());
-        User organisateur = trip.getOrganisateur();
+        TripNotificationDetailsDto detailsDto = new TripNotificationDetailsDto(trip);
 
-        // 3. Envoyer les notifications en utilisant la copie.
-        // Votre service de notification peut maintenant travailler tranquillement.
-        // Je suppose qu'il parcourt la liste des inscriptions pour trouver les utilisateurs.
-        notificationService.sendNotificationToParticipantsOnAnnulation(subscriptions, organisateur);
-        // (Vous devrez peut-être adapter la signature de la méthode dans NotificationService
-        // pour qu'elle accepte List<Subscribe> au lieu de Trip)
+        // 3. Envoyer les notifications en utilisant la copie et le DTO
+        notificationService.sendNotificationToParticipantsOnAnnulation(subscriptions, detailsDto);
 
-        // 4. Supprimer le trajet. Grâce à CascadeType.ALL, Hibernate va maintenant
-        // supprimer proprement le Trip ET toutes les inscriptions associées sans conflit.
+        // 4. Supprimer le trajet
         tripRepository.delete(trip);
     }
 

@@ -2,8 +2,7 @@ package fr.diginamic.VroomVroomCar.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 
@@ -11,10 +10,14 @@ import java.sql.Date;
  * Entité représentant une réservation d'un véhicule de service par un utilisateur sur une période donnée.
  * Chaque réservation est associée à un utilisateur et à un véhicule spécifique.
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "réservation")
+@ToString(exclude = {"user", "companyCar"})
+@EqualsAndHashCode(of = "id")
 public class Reservation {
 
     /**

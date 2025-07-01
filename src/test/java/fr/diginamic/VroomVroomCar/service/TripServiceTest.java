@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.service;
 
+import fr.diginamic.VroomVroomCar.dto.TripNotificationDetailsDto;
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
@@ -23,6 +24,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,6 +73,7 @@ public class TripServiceTest {
         user.setId(id);
         user.setNom(nom);
         user.setMail(email);
+        user.setPrenom("Prenom");
         return user;
     }
 
@@ -110,7 +113,7 @@ public class TripServiceTest {
     private Trip createTrip(Integer id, Date dateDebut, Date dateFin, LocalTime heureDepart,
                             String lieuDepart, String lieuArrivee, String villeDepart,
                             String villeArrivee, User organisateur, Car car) {
-        return Trip.builder()
+        Trip trip = Trip.builder()
                 .id(id)
                 .dateDebut(dateDebut)
                 .dateFin(dateFin)
@@ -122,6 +125,18 @@ public class TripServiceTest {
                 .organisateur(organisateur)
                 .car(car)
                 .build();
+
+        trip.setSubscribes(new HashSet<>());
+        return trip;
+    }
+
+    private Subscribe createSubscribe(User user, Trip trip) {
+        SubscribeKey key = new SubscribeKey(user.getId(), trip.getId());
+        Subscribe subscribe = new Subscribe();
+        subscribe.setId(key);
+        subscribe.setUser(user);
+        subscribe.setTrip(trip);
+        return subscribe;
     }
 
     // ============ TESTS ============
@@ -319,7 +334,7 @@ public class TripServiceTest {
         requestDto.setHeureDepart(LocalTime.of(8, 0));
         requestDto.setLieuArrivee("Paris");
         User organisateur = createUser(1, "Jean", "jean@test.com");
-        Car car = createCar(1, 5); // Assurez-vous que l'ID de la voiture est 1
+        Car car = createCar(1, 5);
 
         Trip existingTrip = createTrip(
                 tripId,
@@ -340,7 +355,7 @@ public class TripServiceTest {
         when(tripRepository.findById(tripId)).thenReturn(Optional.of(existingTrip));
         doNothing().when(validationUtil).validateEndDateBeforeStartDate(any(), any());
         when(userRepository.findById(1)).thenReturn(Optional.of(organisateur));
-        when(carRepository.findById(1)).thenReturn(Optional.of(car)); // Utilisez le même ID ici
+        when(carRepository.findById(1)).thenReturn(Optional.of(car));
         doAnswer(invocation -> {
             Trip tripToUpdate = invocation.getArgument(0);
             TripRequestDto dto = invocation.getArgument(1);
@@ -354,6 +369,8 @@ public class TripServiceTest {
         when(tripRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(tripMapper.toResponse(any())).thenReturn(updatedResponseDto);
 
+        doNothing().when(notificationService).sendNotificationToParticipantsOnModification(any(Trip.class));
+
         // Act
         TripResponseDto result = tripService.updateTrip(tripId, requestDto);
 
@@ -363,7 +380,11 @@ public class TripServiceTest {
         verify(validationUtil).validateEndDateBeforeStartDate(any(), any());
         verify(tripMapper).updateEntity(eq(existingTrip), eq(requestDto), eq(organisateur), eq(car));
         verify(tripRepository).save(existingTrip);
-        verify(notificationService).sendNotificationToParticipantsOnModification(existingTrip, organisateur);
+
+        // --- CORRECTION ---
+        // La méthode a changé, elle ne prend plus l'organisateur en second paramètre.
+        verify(notificationService).sendNotificationToParticipantsOnModification(existingTrip);
+
         verify(tripMapper).toResponse(existingTrip);
     }
 
@@ -374,20 +395,36 @@ public class TripServiceTest {
     void testDeleteTrip() throws FunctionnalException {
         // Arrange
         User user = createUser(1, "Jean", "jean@test.com");
+        User participant = createUser(2, "Paul", "paul@test.com");
         Car car = createCar(1, 5);
         Trip trip = createTrip(1, new java.sql.Date(System.currentTimeMillis()), new java.sql.Date(System.currentTimeMillis()), LocalTime.now(),
                 "A", "B", "Paris", "Lyon", user, car);
 
+        trip.getSubscribes().add(createSubscribe(participant, trip));
+
         when(tripRepository.findById(1)).thenReturn(Optional.of(trip));
-        doNothing().when(tripRepository).deleteById(1);
+        doNothing().when(notificationService).sendNotificationToParticipantsOnAnnulation(any(), any());
+        // La méthode du service appelle delete(objet), pas deleteById(id)
+        doNothing().when(tripRepository).delete(any(Trip.class));
+
 
         // Act
         tripService.deleteTrip(1);
 
         // Assert
         verify(tripRepository, times(1)).findById(1);
-        verify(notificationService).sendNotificationToParticipantsOnAnnulation(trip, user);
-        verify(tripRepository, times(1)).deleteById(1);
+        ArgumentCaptor<List<Subscribe>> listCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<TripNotificationDetailsDto> dtoCaptor = ArgumentCaptor.forClass(TripNotificationDetailsDto.class);
+
+        // On vérifie que la bonne méthode de notification a été appelée
+        verify(notificationService).sendNotificationToParticipantsOnAnnulation(listCaptor.capture(), dtoCaptor.capture());
+
+        // On vérifie le contenu des arguments capturés
+        assertEquals(1, listCaptor.getValue().size()); // Il y avait bien 1 participant
+        assertEquals("Paris", dtoCaptor.getValue().getVilleDepart()); // Le DTO contient les bonnes infos
+
+        // On vérifie que la méthode de suppression a été appelée avec le bon objet
+        verify(tripRepository, times(1)).delete(trip);
     }
 
     /**
