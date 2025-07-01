@@ -100,7 +100,7 @@ public interface ITripController {
             @ApiResponse(responseCode = "400", description = "Paramètres invalides ou erreur fonctionnelle")
     })
     @GetMapping("/search")
-    ResponseEntity<List<Trip>> searchTrips(
+    ResponseEntity<List<TripResponseDto>> searchTrips(
             @Parameter(description = "Ville de départ")
             @RequestParam(required = false) String villeDepart,
 
@@ -108,8 +108,7 @@ public interface ITripController {
             @RequestParam(required = false) String villeArrivee,
 
             @Parameter(description = "Date de début (format: yyyy-MM-dd)")
-            @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateDebut,
+            @RequestParam(required = false) String dateDebutStr,
 
             @Parameter(description = "Heure de départ (format: HH:mm:ss)")
             @RequestParam(required = false)

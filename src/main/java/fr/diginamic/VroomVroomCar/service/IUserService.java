@@ -44,6 +44,17 @@ public interface IUserService {
     UserResponseDto getByEmail(String nom) throws ResourceNotFoundException;
 
     /**
+     * Recherche les utilisateurs dont le nom contient une chaîne donnée, sans tenir compte de la casse.
+     * La recherche est limitée à un nombre maximal de résultats défini par limit.
+     *
+     * @param nom   la chaîne à rechercher dans les noms des utilisateurs (ne doit pas être vide ou null)
+     * @param limit le nombre maximum de résultats à retourner (doit être strictement positif)
+     * @return une liste de UserResponseDto correspondant aux critères
+     */
+    @Transactional(readOnly = true)
+    List<UserResponseDto> searchUserByNom(String nom, int limit);
+
+    /**
      * Crée un nouvel utilisateur à partir des données fournies.
      *
      * @param userRequestDto les données de l'utilisateur à créer.

@@ -59,7 +59,7 @@ public interface ITripService {
      * @return une liste de trajets correspondant aux critères spécifiés
      * @throws FunctionnalException si une erreur fonctionnelle survient lors de la recherche
      */
-    List<Trip> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
+    List<TripResponseDto> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
                            LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException;
 
     /**

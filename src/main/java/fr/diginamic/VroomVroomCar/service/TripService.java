@@ -81,15 +81,18 @@ public class TripService implements ITripService {
     }
 
     @Transactional(readOnly = true)
-    public List<Trip> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
+    public List<TripResponseDto> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
                                   LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException {
-        return tripRepository.findTripsWithFilters(
+        List<Trip> trips = tripRepository.findTripsWithFilters(
                 villeDepart,
                 villeArrivee,
                 dateDebut,
                 heureDepart,
                 vehiculeType.name()
         );
+        return trips.stream()
+                .map(tripMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

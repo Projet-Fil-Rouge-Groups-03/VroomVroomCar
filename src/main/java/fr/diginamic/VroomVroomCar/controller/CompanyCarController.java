@@ -7,6 +7,7 @@ import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.service.CompanyCarService;
+import fr.diginamic.VroomVroomCar.util.DateUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,7 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -109,15 +112,17 @@ public class CompanyCarController implements ICompanyCarController {
             @RequestParam(required = false) String marque,
             @RequestParam(required = false) String modele,
             @RequestParam(required = false, defaultValue = "0") int nbDePlaces,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateDebut,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFin
-    ){
+            @RequestParam(required = false) String dateDebutStr,
+            @RequestParam(required = false) String dateFinStr) {
         try {
+            Date dateDebut = DateUtil.convertStringToDate(dateDebutStr);
+            Date dateFin = DateUtil.convertStringToDate(dateFinStr);
             List<CompanyCarResponseDto> companyCars = companyCarService.searchCompanyCar(
                     marque, modele, nbDePlaces, dateDebut, dateFin);
             return ResponseEntity.ok(companyCars);
-        } catch (IllegalArgumentException | FunctionnalException e){
+        } catch (IllegalArgumentException | FunctionnalException e) {
             return ResponseEntity.badRequest().build();
         }
     }
+
 }

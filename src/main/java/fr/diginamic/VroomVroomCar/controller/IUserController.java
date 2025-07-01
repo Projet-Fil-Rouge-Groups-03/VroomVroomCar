@@ -40,11 +40,23 @@ public interface IUserController {
      * Recherche un utilisateur par son nom.
      *
      * @param nom le nom de l'utilisateur à rechercher.
-     * @return une {@link ResponseEntity} contenant un objet {@link UserResponseDto}.
+     * @return une ResponseEntity contenant un objet UserResponseDto.
      * @throws ResourceNotFoundException si aucun utilisateur avec ce nom n'est trouvé.
      */
     @Operation(summary = "Rechercher un utilisateur par nom", description = "Renvoie les informations d'un utilisateur à partir de son nom.")
     public ResponseEntity<UserResponseDto> findByNom(@RequestParam String nom) throws ResourceNotFoundException;
+
+    /**
+     * Recherche les utilisateurs dont le nom contient une chaîne donnée (sans tenir compte de la casse),
+     * avec un nombre maximum de résultats défini par size.
+     *
+     * @param nom  la chaîne à rechercher dans les noms d'utilisateurs (obligatoire)
+     * @param size le nombre maximum de résultats à retourner (valeur par défaut : 5)
+     * @return une ResponseEntity contenant la liste des UserResponseDto correspondant aux critères
+     */
+    @Operation(summary = "Filtrer une liste d'utilisateurs par le nom", description = "Renvoie une liste d'utilisateurs correspondant au nom.")
+    ResponseEntity<List<UserResponseDto>> searchUserByNom(@RequestParam String nom, @RequestParam(defaultValue = "5") int size);
+
     /**
      * Ajoute un nouvel utilisateur.
      *

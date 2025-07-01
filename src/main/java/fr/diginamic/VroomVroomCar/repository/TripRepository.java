@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.repository;
 
+import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -153,8 +153,8 @@ public interface ICompanyCarController {
      * @param marque      la marque du véhicule (optionnel)
      * @param modele      le modèle du véhicule (optionnel)
      * @param nbDePlaces  le nombre de places minimum (optionnel, 0 par défaut)
-     * @param dateDebut   la date de début de la période de réservation (optionnelle)
-     * @param dateFin     la date de fin de la période de réservation (optionnelle)
+     * @param dateDebutStr   la date de début de la période de réservation (optionnelle)
+     * @param dateFinStr     la date de fin de la période de réservation (optionnelle)
      * @return une liste de DTOs de réponse correspondant aux critères de recherche (liste vide si aucun résultat)
      */
     @Operation(summary = "Rechercher des voitures de société avec un filtre")
@@ -163,7 +163,7 @@ public interface ICompanyCarController {
             @RequestParam(required = false) String marque,
             @RequestParam(required = false) String modele,
             @RequestParam(required = false) int nbDePlaces,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateDebut,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFin
+            @RequestParam String dateDebutStr,
+            @RequestParam String dateFinStr
     );
 }

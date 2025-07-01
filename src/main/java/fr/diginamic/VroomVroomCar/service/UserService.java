@@ -10,6 +10,8 @@ import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +64,17 @@ public class UserService implements IUserService {
         User user = userRepository.findByMail(mail)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé avec l'email: " + mail));
         return userMapper.toResponseDto(user);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<UserResponseDto> searchUserByNom(String nom, int limit){
+        ValidationUtil.validateStringNotEmpty(nom, "nom");
+        ValidationUtil.validateLimit(limit);
+        Pageable pageable = PageRequest.of(0, limit);
+        return userRepository.findByNomContainingIgnoreCase(nom, pageable).stream()
+                .map(userMapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
