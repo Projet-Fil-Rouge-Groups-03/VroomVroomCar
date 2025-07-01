@@ -3,19 +3,19 @@ package fr.diginamic.VroomVroomCar.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "notification")
+@ToString(exclude = {"user"})
+@EqualsAndHashCode(of = "id")
 public class Notification {
 
     @Id

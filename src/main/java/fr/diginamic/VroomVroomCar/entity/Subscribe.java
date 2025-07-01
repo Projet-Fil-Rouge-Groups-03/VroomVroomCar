@@ -1,17 +1,19 @@
 package fr.diginamic.VroomVroomCar.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
+@Getter
+@Setter
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "inscription")
+@ToString(exclude = {"user","trip"})
+@EqualsAndHashCode(of = "id")
 public class Subscribe {
     @EmbeddedId
     SubscribeKey id;
