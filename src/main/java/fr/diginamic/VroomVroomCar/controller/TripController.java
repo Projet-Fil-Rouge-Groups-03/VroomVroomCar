@@ -51,7 +51,7 @@ public class TripController implements ITripController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Trip>> searchTrips(
+    public ResponseEntity<List<TripResponseDto>> searchTrips(
             @RequestParam(required = false) String villeDepart,
             @RequestParam(required = false) String villeArrivee,
             @RequestParam(required = false) String dateDebutStr,
@@ -60,7 +60,7 @@ public class TripController implements ITripController {
 
         try {
             Date dateDebut = DateUtil.convertStringToDate(dateDebutStr);
-            List<Trip> trips = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType);
+            List<TripResponseDto> trips = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType);
             return ResponseEntity.ok(trips);
         } catch (IllegalArgumentException | FunctionnalException e) {
             return ResponseEntity.badRequest().build();

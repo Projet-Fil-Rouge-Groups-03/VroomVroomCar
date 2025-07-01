@@ -100,7 +100,7 @@ public interface ITripController {
             @ApiResponse(responseCode = "400", description = "Paramètres invalides ou erreur fonctionnelle")
     })
     @GetMapping("/search")
-    ResponseEntity<List<Trip>> searchTrips(
+    ResponseEntity<List<TripResponseDto>> searchTrips(
             @Parameter(description = "Ville de départ")
             @RequestParam(required = false) String villeDepart,
 
