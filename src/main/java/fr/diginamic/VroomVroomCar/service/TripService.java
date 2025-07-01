@@ -96,13 +96,19 @@ public class TripService implements ITripService {
     }
 
     @Transactional(readOnly = true)
-    public List<Trip> getUpcomingUserTrips(Integer userId) {
-        return tripRepository.findUpcomingUserTrips(userId);
+    public List<TripResponseDto> getUpcomingUserTrips(Integer userId) {
+        List<Trip> trips = tripRepository.findUpcomingUserTrips(userId);
+        return trips.stream()
+                .map(tripMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<Trip> getPastUserTrips(Integer userId) {
-        return tripRepository.findPastUserTrips(userId);
+    public List<TripResponseDto> getPastUserTrips(Integer userId) {
+        List<Trip> trips = tripRepository.findPastUserTrips(userId);
+        return trips.stream()
+                .map(tripMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     // Update Trip
@@ -164,23 +170,19 @@ public class TripService implements ITripService {
 
     @Transactional
     public void deleteTrip(Integer id) throws FunctionnalException {
-        // 1. Récupérer le trajet
         Trip trip = tripRepository.findById(id)
                 .orElseThrow(() -> new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas."));
 
-        // 2. Copier les listes et les DÉTAILS nécessaires AVANT toute suppression
         List<Subscribe> subscriptions = new ArrayList<>(trip.getSubscribes());
         TripNotificationDetailsDto detailsDto = new TripNotificationDetailsDto(trip);
 
-        // 3. Envoyer les notifications en utilisant la copie et le DTO
         notificationService.sendNotificationToParticipantsOnAnnulation(subscriptions, detailsDto);
 
-        // 4. Supprimer le trajet
         tripRepository.delete(trip);
     }
 
     // Calcule l'heure d'arrivée estimée
-    public LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) {
+    public LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) throws FunctionnalException {
         String fromAddress = lieuDepart + ", " + villeDepart;
         String toAddress = lieuArrivee + ", " + villeArrivee;
 

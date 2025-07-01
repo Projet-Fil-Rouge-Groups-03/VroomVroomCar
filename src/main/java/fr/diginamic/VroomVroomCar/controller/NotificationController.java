@@ -1,10 +1,7 @@
 package fr.diginamic.VroomVroomCar.controller;
 
-import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.NotificationRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.NotificationResponseDto;
-import fr.diginamic.VroomVroomCar.entity.Categorie;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.service.NotificationService;
 import jakarta.validation.Valid;

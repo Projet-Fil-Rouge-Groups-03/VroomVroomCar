@@ -93,15 +93,12 @@ public class NotificationService implements INotificationService {
         );
         String type = "Annulation de trajet";
 
-        // On parcourt la liste des inscriptions (la copie) qu'on a reçue
         for (Subscribe inscription : subscriptions) {
-            // On utilise votre méthode utilitaire existante ! Parfait !
             notificationUtil.createAndSaveNotification(contenu, type, inscription.getUser());
         }
     }
 
     public void sendNotificationToParticipantsOnModification(Trip updatedTrip) {
-        // On peut utiliser directement l'objet 'updatedTrip'
         String date = DateUtil.formatToFrench(updatedTrip.getDateDebut().toLocalDate());
         String contenu = String.format(
                 "Le trajet du %s de %s à %s a été modifié. Veuillez consulter les détails.",
@@ -111,7 +108,6 @@ public class NotificationService implements INotificationService {
         );
         String type = "Modification de trajet";
 
-        // On utilise votre méthode utilitaire existante en lui passant les infos
         for (Subscribe inscription : updatedTrip.getSubscribes()) {
             notificationUtil.createAndSaveNotification(contenu, type, inscription.getUser());
         }

@@ -24,7 +24,6 @@ public class NotificationMapper {
         Notification notification = new Notification();
         notification.setContenu(dto.getContenu());
         notification.setNom(dto.getNom());
-        notification.setDate(dto.getDate());
         notification.setUser(user);
         return notification;
     }
@@ -40,7 +39,6 @@ public class NotificationMapper {
         dto.setId(notification.getId());
         dto.setContenu(notification.getContenu());
         dto.setNom(notification.getNom());
-        dto.setDate(notification.getDate());
         dto.setUserId(notification.getUser().getId());
         dto.setUserName(notification.getUser().getPrenom() +  " " + notification.getUser().getNom());
         return dto;
@@ -56,7 +54,6 @@ public class NotificationMapper {
     public void updateEntity(Notification notification, NotificationRequestDto dto, User user) {
         notification.setContenu(dto.getContenu());
         notification.setNom(dto.getNom());
-        notification.setDate(dto.getDate());
         notification.setUser(user);
     }
 }

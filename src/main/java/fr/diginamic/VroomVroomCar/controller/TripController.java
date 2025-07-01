@@ -1,10 +1,7 @@
 package fr.diginamic.VroomVroomCar.controller;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
-import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
@@ -12,13 +9,11 @@ import fr.diginamic.VroomVroomCar.service.TripService;
 import fr.diginamic.VroomVroomCar.util.DateUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.sql.Date;
 import java.time.LocalTime;
 import java.util.List;
@@ -68,14 +63,14 @@ public class TripController implements ITripController {
     }
 
     @GetMapping("/upcoming/{userId}")
-    public ResponseEntity<List<Trip>> getUpcomingTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
-        List<Trip> trips = tripService.getUpcomingUserTrips(userId);
+    public ResponseEntity<List<TripResponseDto>> getUpcomingTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
+        List<TripResponseDto> trips = tripService.getUpcomingUserTrips(userId);
         return ResponseEntity.ok(trips);
     }
 
     @GetMapping("/past/{userId}")
-    public ResponseEntity<List<Trip>> getPastTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
-        List<Trip> trips = tripService.getPastUserTrips(userId);
+    public ResponseEntity<List<TripResponseDto>> getPastTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
+        List<TripResponseDto> trips = tripService.getPastUserTrips(userId);
         return ResponseEntity.ok(trips);
     }
 

@@ -132,7 +132,7 @@ public interface ITripController {
             @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
     })
     @GetMapping("/upcoming/{userId}")
-    ResponseEntity<List<Trip>> getUpcomingTrip(
+    ResponseEntity<List<TripResponseDto>> getUpcomingTrip(
             @Parameter(description = "ID de l'utilisateur", required = true) @PathVariable Integer userId
     ) throws ResourceNotFoundException;
 
@@ -151,7 +151,7 @@ public interface ITripController {
             @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
     })
     @GetMapping("/past/{userId}")
-    ResponseEntity<List<Trip>> getPastTrip(
+    ResponseEntity<List<TripResponseDto>> getPastTrip(
             @Parameter(description = "ID de l'utilisateur", required = true) @PathVariable Integer userId
     ) throws ResourceNotFoundException;
 
