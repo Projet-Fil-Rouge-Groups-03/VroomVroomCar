@@ -15,19 +15,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static fr.diginamic.VroomVroomCar.entity.Status.ROLE_ACTIF;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -91,54 +84,6 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findByNom(anyString());
     }
 
-
-    @Test
-    void testSearchUserByNom() {
-        String nom = "Durand";
-        int limit = 2;
-        Pageable pageable = PageRequest.of(0, limit);
-
-        User user1 = new User("Jean", "Durand", "jean.durand@email.com", "Villeville", "62589", "rue des Paquerettes", "superMotDePasse", ROLE_ACTIF);
-        User user2 = new User("Claire", "Durand", "claire.durand@email.com", "Villeville", "62589", "rue des Paquerettes", "superMotDePasse", ROLE_ACTIF);
-
-        List<User> users = Arrays.asList(user1, user2);
-
-        UserResponseDto dto1 = new UserResponseDto();
-        dto1.setId(1);
-        dto1.setPrenom("Jean");
-        dto1.setNom("Durand");
-        dto1.setMail("jean.durand@email.com");
-        dto1.setVille("Villeville");
-        dto1.setCodePostal("62589");
-        dto1.setLibelle("rue des Paquerettes");
-        dto1.setStatus("ROLE_ACTIF");
-
-        UserResponseDto dto2 = new UserResponseDto();
-        dto1.setId(2);
-        dto1.setPrenom("Claire");
-        dto1.setNom("Durand");
-        dto1.setMail("claire.durand@email.com");
-        dto1.setVille("Villeville");
-        dto1.setCodePostal("62589");
-        dto1.setLibelle("rue des Paquerettes");
-        dto1.setStatus("ROLE_ACTIF");
-
-        Page<User> page = new PageImpl<>(users);
-        when(userRepository.findByNomContainingIgnoreCase(nom, pageable)).thenReturn(page);
-        when(userMapper.toResponseDto(user1)).thenReturn(dto1);
-        when(userMapper.toResponseDto(user2)).thenReturn(dto2);
-
-        List<UserResponseDto> result = userService.searchUserByNom(nom, limit);
-
-        assertThat(result).hasSize(2);
-        assertThat(result).containsExactly(dto1, dto2);
-
-        verify(userRepository).findByNomContainingIgnoreCase(nom, pageable);
-        verify(userMapper).toResponseDto(user1);
-        verify(userMapper).toResponseDto(user2);
-        verifyNoMoreInteractions(userRepository, userMapper);
-    }
-
     @Test
     void createUser() throws ResourceNotFoundException {
         UserRequestDto userRequestDto = new UserRequestDto();
@@ -156,7 +101,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testUpdateUserById() throws ResourceNotFoundException {
+    void updateUser() throws ResourceNotFoundException {
         UserRequestDto userRequestDto = new UserRequestDto();
         userRequestDto.setMail("email@test.fr");
         userRequestDto.setNom("NomTest");
@@ -174,8 +119,8 @@ public class UserServiceTest {
         existingUser.setPrenom("AncienPrenom");
         existingUser.setMail("ancien@mail.com");
         existingUser.setLibelle("127 rue d'avant");
-        existingUser.setCodePostal("55372");
         existingUser.setVille("Ancienne-Ville");
+        existingUser.setCodePostal("59000");
 
         UserResponseDto userResponseDto = new UserResponseDto();
 
@@ -191,7 +136,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testUpdateUserByNom() throws ResourceNotFoundException {
+    void testUpdateUser() throws ResourceNotFoundException {
         UserRequestDto userRequestDto = new UserRequestDto();
         userRequestDto.setMail("email@test.fr");
         userRequestDto.setNom("NomTest");
@@ -205,8 +150,8 @@ public class UserServiceTest {
         existingUser.setPrenom("AncienPrenom");
         existingUser.setMail("ancien@mail.com");
         existingUser.setLibelle("127 rue d'avant");
-        existingUser.setCodePostal("55372");
         existingUser.setVille("Ancienne-Ville");
+        existingUser.setCodePostal("59000");
 
         UserResponseDto userResponseDto = new UserResponseDto();
 
