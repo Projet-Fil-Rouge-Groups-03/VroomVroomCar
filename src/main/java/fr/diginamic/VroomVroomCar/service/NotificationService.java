@@ -89,12 +89,24 @@ public class NotificationService implements INotificationService {
         notificationUtil.sendNotificationToAllParticipants(trip, contenu, "Modification Covoit");
     }
 
-    public void sendNotificationToParticipantsOnAnnulation(Trip trip, User organisateur) {
-        String contenu = String.format("%s a annulé votre covoiturage du %s",
-                NotificationUtil.getFullName(organisateur),
-                NotificationUtil.formatTripDate(trip));
+//    public void sendNotificationToParticipantsOnAnnulation(Trip trip, User organisateur) {
+//        String contenu = String.format("%s a annulé votre covoiturage du %s",
+//                NotificationUtil.getFullName(organisateur),
+//                NotificationUtil.formatTripDate(trip));
+//
+//        notificationUtil.sendNotificationToAllParticipants(trip, contenu, "Annulation Covoit");
+//    }
 
-        notificationUtil.sendNotificationToAllParticipants(trip, contenu, "Annulation Covoit");
+    // Dans NotificationService.java
+
+    public void sendNotificationToParticipantsOnAnnulation(List<Subscribe> subscriptions, User organisateur) {
+        String contenu = "Le trajet ... a été annulé.";
+        String type = "Annulation de trajet";
+
+        // Envoyer la notification à chaque participant
+        for (Subscribe inscription : subscriptions) {
+            notificationUtil.createAndSaveNotification(contenu, type, inscription.getUser());
+        }
     }
 
     public void sendNotificationToUsersOnCarStatusUpdate(Car car, String newStatus, User user) {

@@ -117,9 +117,16 @@ public class Trip {
      * Relation One-to-Many avec l'entité Subscribe.
      * Chargement paresseux et suppression en cascade.
      */
-    @OneToMany(mappedBy = "trip", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "trip",
+            // CascadeType.ALL inclut PERSIST, MERGE, et surtout REMOVE
+            cascade = CascadeType.ALL,
+            // orphanRemoval=true est une bonne pratique : si on retire une inscription
+            // de la collection 'subscribes', elle sera supprimée de la BDD.
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
     private Set<Subscribe> subscribes;
-
     /**
      * Constructeur complet.
      */
