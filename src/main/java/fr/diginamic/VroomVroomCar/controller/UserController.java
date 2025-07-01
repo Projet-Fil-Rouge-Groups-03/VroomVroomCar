@@ -32,6 +32,12 @@ public class UserController implements IUserController {
         return ResponseEntity.ok(userService.getByNom(nom));
     }
 
+    @GetMapping("/search/name")
+    public ResponseEntity<List<UserResponseDto>> searchUserByNom(@RequestParam String nom, @RequestParam(defaultValue = "5") int size){
+        List<UserResponseDto> users = userService.searchUserByNom(nom, size);
+        return ResponseEntity.ok(users);
+    }
+
     @PostMapping("/create-user")
     //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> addUser(@RequestBody UserRequestDto user) throws ResourceNotFoundException {

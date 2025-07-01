@@ -9,6 +9,7 @@ import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.service.TripService;
+import fr.diginamic.VroomVroomCar.util.DateUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,15 +51,16 @@ public class TripController implements ITripController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Trip>> searchTrips(
+    public ResponseEntity<List<TripResponseDto>> searchTrips(
             @RequestParam(required = false) String villeDepart,
             @RequestParam(required = false) String villeArrivee,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateDebut,
+            @RequestParam(required = false) String dateDebutStr,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heureDepart,
             @RequestParam(defaultValue = "TOUS") VehiculeType vehiculeType) {
 
         try {
-            List<Trip> trips = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType);
+            Date dateDebut = DateUtil.convertStringToDate(dateDebutStr);
+            List<TripResponseDto> trips = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType);
             return ResponseEntity.ok(trips);
         } catch (IllegalArgumentException | FunctionnalException e) {
             return ResponseEntity.badRequest().build();

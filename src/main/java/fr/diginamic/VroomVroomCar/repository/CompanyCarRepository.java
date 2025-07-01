@@ -99,9 +99,8 @@ public interface CompanyCarRepository extends JpaRepository<CompanyCar, Integer>
             "         SELECT 1 FROM Reservation r " +
             "         WHERE r.companyCar.id = cc.id " +
             "         AND r.dateFin >= :dateDebut " +
-            "         AND r.dateDebut <= :dateFin" +
-            "     ))")
-    List<CompanyCarResponseDto> findCompanyCarWithFilters(
+            "         AND r.dateDebut <= :dateFin))")
+    List<CompanyCar> findCompanyCarWithFilters(
             @Param("marque") String marque,
             @Param("modele") String modele,
             @Param("nbDePlaces") int nbDePlaces,

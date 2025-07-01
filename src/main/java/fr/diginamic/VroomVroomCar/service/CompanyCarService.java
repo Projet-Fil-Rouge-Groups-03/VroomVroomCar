@@ -180,13 +180,17 @@ public class CompanyCarService implements ICompanyCarService {
     public List<CompanyCarResponseDto> searchCompanyCar(String marque, String modele, int nbDePlaces, Date dateDebut, Date dateFin) throws FunctionnalException {
         ValidationUtil.validateEndDateBeforeStartDate(dateDebut, dateFin);
 
-        return companyCarRepository.findCompanyCarWithFilters(
+        List<CompanyCar> companyCars = companyCarRepository.findCompanyCarWithFilters(
                 marque,
                 modele,
                 nbDePlaces,
                 dateDebut,
                 dateFin
         );
+
+        return companyCars.stream()
+                .map(companyCarMapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 
 }
