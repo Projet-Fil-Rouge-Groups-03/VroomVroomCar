@@ -3,14 +3,15 @@ package fr.diginamic.VroomVroomCar.service;
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
+import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.CompanyCarMapper;
 import fr.diginamic.VroomVroomCar.mapper.ReservationMapper;
 import fr.diginamic.VroomVroomCar.repository.CompanyCarRepository;
 import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
+import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +45,9 @@ class ReservationServiceTest {
     private ReservationMapper reservationMapper;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private CompanyCarRepository companyCarRepository;
     @Mock
     private CompanyCarMapper companyCarMapper;
@@ -61,16 +65,16 @@ class ReservationServiceTest {
         return requestDto;
     }
 
-    private UserResponseDto createUserResponseDto() {
-        UserResponseDto userResponseDto = new UserResponseDto();
-        userResponseDto.setId(1);
-        return userResponseDto;
+    private User createUser() {
+        User user = new User();
+        user.setId(1);
+        return user;
     }
 
-    private CompanyCarResponseDto createCompanyCarResponseDto() {
-        CompanyCarResponseDto carResponseDto = new CompanyCarResponseDto();
-        carResponseDto.setId(1);
-        return carResponseDto;
+    private CompanyCar createCompanyCar() {
+        CompanyCar car = new CompanyCar();
+        car.setId(1);
+        return car;
     }
 
     private Reservation createReservation() {
@@ -83,21 +87,35 @@ class ReservationServiceTest {
 
     @Test
     void testCreateReservation() throws FunctionnalException {
+        // Arrange
         ReservationRequestDto requestDto = createReservationRequestDto();
-        UserResponseDto userResponseDto = createUserResponseDto();
-        CompanyCarResponseDto carResponseDto = createCompanyCarResponseDto();
+        requestDto.setUserId(1);
+        requestDto.setCarId(1);
 
+        User user = createUser();
+        CompanyCar car = createCompanyCar();
         Reservation reservation = createReservation();
         ReservationResponseDto responseDto = new ReservationResponseDto();
 
-        when(reservationMapper.toEntity(any(ReservationRequestDto.class), any(UserResponseDto.class), any(CompanyCarResponseDto.class))).thenReturn(reservation);
+        when(userRepository.findById(requestDto.getUserId())).thenReturn(Optional.of(user));
+        when(companyCarRepository.findById(requestDto.getCarId())).thenReturn(Optional.of(car));
+
+        when(reservationMapper.toEntity(any(ReservationRequestDto.class), any(User.class), any(CompanyCar.class)))
+                .thenReturn(reservation);
+
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
         when(reservationMapper.toResponse(any(Reservation.class))).thenReturn(responseDto);
 
-        ReservationResponseDto result = reservationService.createReservation(requestDto, userResponseDto, carResponseDto);
+        // Act
+        ReservationResponseDto result = reservationService.createReservation(requestDto);
 
+        // Assert
         assertNotNull(result);
+        verify(userRepository, times(1)).findById(requestDto.getUserId());
+        verify(companyCarRepository, times(1)).findById(requestDto.getCarId());
+        verify(reservationMapper, times(1)).toEntity(any(ReservationRequestDto.class), any(User.class), any(CompanyCar.class));
         verify(reservationRepository, times(1)).save(any(Reservation.class));
+        verify(reservationMapper, times(1)).toResponse(any(Reservation.class));
     }
 
     @Test
@@ -147,28 +165,41 @@ class ReservationServiceTest {
         Page<ReservationResponseDto> result = reservationService.getReservationsByCarId(carId, page, size);
 
         assertFalse(result.isEmpty());
+        verify(companyCarRepository, times(1)).existsById(carId);
         verify(reservationRepository, times(1)).findByCompanyCar_Id(eq(carId), any(Pageable.class));
+        verify(reservationMapper, times(1)).toResponse(any(Reservation.class));
     }
+
 
     @Test
     void testUpdateReservation() throws FunctionnalException {
         int reservationId = 1;
         ReservationRequestDto requestDto = createReservationRequestDto();
-        UserResponseDto userResponseDto = createUserResponseDto();
-        CompanyCarResponseDto carResponseDto = createCompanyCarResponseDto();
+        requestDto.setUserId(1);
+        requestDto.setCarId(1);
 
         Reservation existingReservation = createReservation();
+        User user = createUser();
+        CompanyCar car = createCompanyCar();
         ReservationResponseDto responseDto = new ReservationResponseDto();
 
         when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(existingReservation));
-        when(reservationRepository.save(any(Reservation.class))).thenReturn(existingReservation);
-        when(reservationMapper.toResponse(any(Reservation.class))).thenReturn(responseDto);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(companyCarRepository.findById(1)).thenReturn(Optional.of(car));
+        doNothing().when(validationUtil).validateEndDateBeforeStartDate(any(), any());
+        doNothing().when(reservationMapper).updateEntity(existingReservation, requestDto, user, car);
+        when(reservationRepository.save(existingReservation)).thenReturn(existingReservation);
+        when(reservationMapper.toResponse(existingReservation)).thenReturn(responseDto);
 
-        ReservationResponseDto result = reservationService.updateReservation(reservationId, requestDto, userResponseDto, carResponseDto);
+        ReservationResponseDto result = reservationService.updateReservation(reservationId, requestDto);
 
         assertNotNull(result);
         verify(reservationRepository, times(1)).findById(reservationId);
+        verify(userRepository, times(1)).findById(1);
+        verify(companyCarRepository, times(1)).findById(1);
+        verify(reservationMapper, times(1)).updateEntity(existingReservation, requestDto, user, car);
         verify(reservationRepository, times(1)).save(existingReservation);
+        verify(reservationMapper, times(1)).toResponse(existingReservation);
     }
 
     @Test
@@ -182,6 +213,7 @@ class ReservationServiceTest {
 
         verify(reservationRepository, times(1)).deleteById(reservationId);
     }
+
     @Test
     void getAvailableCars() {
         CompanyCar car1 = new CompanyCar();

@@ -3,7 +3,6 @@ package fr.diginamic.VroomVroomCar.controller;
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.service.ReservationService;
 import jakarta.validation.Valid;
@@ -24,8 +23,8 @@ public class ReservationController implements IReservationController {
 
     // Create Reservation (POST)
     @PostMapping("/create")
-    public ResponseEntity<ReservationResponseDto> createReservation(@Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
-        ReservationResponseDto reservationCreate = reservationService.createReservation(requestDto, userResponseDto, carResponseDto);
+    public ResponseEntity<ReservationResponseDto> createReservation(@Valid @RequestBody ReservationRequestDto requestDto) throws FunctionnalException {
+        ReservationResponseDto reservationCreate = reservationService.createReservation(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservationCreate);
     }
 
@@ -56,8 +55,8 @@ public class ReservationController implements IReservationController {
 
     // Update Reservation (PUT)
     @PutMapping("/update/{id}")
-    public ResponseEntity<ReservationResponseDto> updateReservation(@PathVariable Integer id, @Valid @RequestBody ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
-        ReservationResponseDto reservationEdit = reservationService.updateReservation(id, requestDto, userResponseDto, carResponseDto);
+    public ResponseEntity<ReservationResponseDto> updateReservation(@PathVariable Integer id, @Valid @RequestBody ReservationRequestDto requestDto) throws FunctionnalException {
+        ReservationResponseDto reservationEdit = reservationService.updateReservation(id, requestDto);
         return ResponseEntity.ok(reservationEdit);
     }
 

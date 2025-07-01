@@ -3,15 +3,15 @@ package fr.diginamic.VroomVroomCar.service;
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
+import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.CompanyCarMapper;
 import fr.diginamic.VroomVroomCar.mapper.ReservationMapper;
-import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.CompanyCarRepository;
 import fr.diginamic.VroomVroomCar.repository.ReservationRepository;
+import fr.diginamic.VroomVroomCar.repository.UserRepository;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,17 +37,24 @@ public class ReservationService implements IReservationService {
     private final ReservationMapper reservationMapper;
     private final CompanyCarMapper companyCarMapper;
 
+    private final UserRepository userRepository;
     private final CompanyCarRepository companyCarRepository;
 
     private final ValidationUtil validationUtil;
 
     // Create Reservation
     @Transactional
-    public ReservationResponseDto createReservation(ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
+    public ReservationResponseDto createReservation(ReservationRequestDto requestDto) throws FunctionnalException {
         // Validité des dates
         validationUtil.validateEndDateBeforeStartDate(requestDto.getDateDebut(), requestDto.getDateFin());
 
-        Reservation reservation = reservationMapper.toEntity(requestDto, userResponseDto, carResponseDto);
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new FunctionnalException("Utilisateur non trouvé"));
+
+        CompanyCar car = companyCarRepository.findById(requestDto.getCarId())
+                .orElseThrow(() -> new FunctionnalException("Véhicule non trouvé"));
+
+        Reservation reservation = reservationMapper.toEntity(requestDto, user, car);
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
@@ -85,7 +92,7 @@ public class ReservationService implements IReservationService {
 
     // Update Reservation
     @Transactional
-    public ReservationResponseDto updateReservation(Integer id, ReservationRequestDto requestDto, UserResponseDto userResponseDto, CompanyCarResponseDto carResponseDto) throws FunctionnalException {
+    public ReservationResponseDto updateReservation(Integer id, ReservationRequestDto requestDto) throws FunctionnalException {
         // Verification de l'existence
         Reservation existingReservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new FunctionnalException("La reservation avec l'ID " + id + " n'existe pas."));
@@ -93,8 +100,20 @@ public class ReservationService implements IReservationService {
         // Validité des dates
         validationUtil.validateEndDateBeforeStartDate(requestDto.getDateDebut(), requestDto.getDateFin());
 
+        User user = null;
+        if (requestDto.getUserId() != null) {
+            user = userRepository.findById(requestDto.getUserId())
+                    .orElseThrow(() -> new FunctionnalException("Utilisateur avec l'ID " + requestDto.getUserId() + " non trouvé."));
+        }
+
+        CompanyCar car = null;
+        if (requestDto.getCarId() != null) {
+            car = companyCarRepository.findById(requestDto.getCarId())
+                    .orElseThrow(() -> new FunctionnalException("Véhicule avec l'ID " + requestDto.getCarId() + " non trouvé."));
+        }
+
         // MAJ des données
-        reservationMapper.updateEntity(existingReservation, requestDto, userResponseDto, carResponseDto);
+        reservationMapper.updateEntity(existingReservation, requestDto, user, car);
         Reservation updatedReservation = reservationRepository.save(existingReservation);
 
         return reservationMapper.toResponse(updatedReservation);
@@ -124,4 +143,5 @@ public class ReservationService implements IReservationService {
                 .map(companyCarMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
+
 }

@@ -1,10 +1,8 @@
 package fr.diginamic.VroomVroomCar.controller;
 
 import fr.diginamic.VroomVroomCar.dto.request.ReservationRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -33,8 +31,6 @@ public interface IReservationController {
      * Crée une nouvelle réservation.
      *
      * @param requestDto       Détails de la réservation à créer
-     * @param userResponseDto  Informations de l'utilisateur
-     * @param carResponseDto   Informations du véhicule concerné
      * @return Réponse contenant la réservation créée
      */
     @Operation(summary = "Créer une réservation")
@@ -45,9 +41,7 @@ public interface IReservationController {
     })
     @PostMapping("/create")
     ResponseEntity<ReservationResponseDto> createReservation (
-            @Valid @RequestBody ReservationRequestDto requestDto,
-            @RequestBody UserResponseDto userResponseDto,
-            @RequestBody CompanyCarResponseDto carResponseDto
+            @Valid @RequestBody ReservationRequestDto requestDto
     ) throws FunctionnalException;
 
     /**
@@ -119,8 +113,6 @@ public interface IReservationController {
      *
      * @param id               Identifiant de la réservation à mettre à jour
      * @param requestDto       Données de mise à jour
-     * @param userResponseDto  Informations utilisateur
-     * @param carResponseDto   Informations véhicule
      * @return Réservation mise à jour
      */
     @Operation(summary = "Mettre à jour une réservation")
@@ -131,9 +123,7 @@ public interface IReservationController {
     @PutMapping("/update/{id}")
     ResponseEntity<ReservationResponseDto> updateReservation(
             @Parameter(description = "ID de la réservation") @PathVariable Integer id,
-            @Valid @RequestBody ReservationRequestDto requestDto,
-            @RequestBody UserResponseDto userResponseDto,
-            @RequestBody CompanyCarResponseDto carResponseDto
+            @Valid @RequestBody ReservationRequestDto requestDto
     ) throws FunctionnalException;
 
     /**

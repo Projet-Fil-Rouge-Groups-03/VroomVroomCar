@@ -3,6 +3,7 @@ package fr.diginamic.VroomVroomCar.mapper;
 import fr.diginamic.VroomVroomCar.dto.request.SubscribeRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.SubscribeResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Subscribe;
+import fr.diginamic.VroomVroomCar.entity.SubscribeKey;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
@@ -24,11 +25,16 @@ public class SubscribeMapper {
      * @return Une nouvelle instance de Subscribe initialisée avec les données du DTO et de l'inscription.
      */
     public Subscribe toEntity(SubscribeRequestDto subscribeRequestDto) throws ResourceNotFoundException {
-        return new Subscribe(
-                userIdToUser(subscribeRequestDto.getUserId()),
-                tripIdToTrip(subscribeRequestDto.getTripId()),
-                subscribeRequestDto.getDateInscription()
-                );
+        User user = userIdToUser(subscribeRequestDto.getUserId());
+        Trip trip = tripIdToTrip(subscribeRequestDto.getTripId());
+
+        Subscribe subscribe = new Subscribe();
+        subscribe.setId(new SubscribeKey(subscribeRequestDto.getUserId(), subscribeRequestDto.getTripId()));
+        subscribe.setUser(user);
+        subscribe.setTrip(trip);
+        subscribe.setDateInscription(subscribeRequestDto.getDateInscription());
+
+        return subscribe;
     }
 
     /**
@@ -39,8 +45,8 @@ public class SubscribeMapper {
      */
     public SubscribeResponseDto toResponseDto(Subscribe subscribe){
         return new SubscribeResponseDto(
-                subscribe.getUser(),
-                subscribe.getTrip(),
+                subscribe.getUser().getId(),
+                subscribe.getTrip().getId(),
                 subscribe.getDateInscription());
     }
 

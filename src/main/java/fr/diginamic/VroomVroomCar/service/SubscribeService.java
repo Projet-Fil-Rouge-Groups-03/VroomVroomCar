@@ -3,6 +3,7 @@ package fr.diginamic.VroomVroomCar.service;
 import fr.diginamic.VroomVroomCar.dto.request.SubscribeRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.SubscribeResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Subscribe;
+import fr.diginamic.VroomVroomCar.entity.SubscribeKey;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
@@ -40,10 +41,14 @@ public class SubscribeService implements ISubscribeService {
 
     @Transactional(readOnly = true)
     @Override
-    public SubscribeResponseDto getSubscribeById(int id) throws ResourceNotFoundException {
-        ValidationUtil.validateIdNotNull(id, "l'inscription");
-        Subscribe subscribe = subscribeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("inscription non trouvée avec l'ID: " + id));
+    public SubscribeResponseDto getSubscribeById(Integer userId, Integer tripId) throws ResourceNotFoundException {
+        ValidationUtil.validateIdNotNull(userId, "l'utilisateur");
+        ValidationUtil.validateIdNotNull(tripId, "le trajet");
+
+        SubscribeKey key = new SubscribeKey(userId, tripId);
+        Subscribe subscribe = subscribeRepository.findById(key)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "inscription non trouvée pour userId: " + userId + " et tripId: " + tripId));
         return subscribeMapper.toResponseDto(subscribe);
     }
 
@@ -62,40 +67,48 @@ public class SubscribeService implements ISubscribeService {
     }
 
     @Override
-    public SubscribeResponseDto editSubscribe(int id, SubscribeRequestDto subscribe) throws ResourceNotFoundException {
-        ValidationUtil.validateIdNotNull(id, "l'inscription");
-        ValidationUtil.validateSubscribeRequestDto(subscribe);
+    public SubscribeResponseDto editSubscribe(Integer userId, Integer tripId, SubscribeRequestDto subscribeDto) throws ResourceNotFoundException {
+        ValidationUtil.validateIdNotNull(userId, "l'utilisateur");
+        ValidationUtil.validateIdNotNull(tripId, "le trajet");
+        ValidationUtil.validateSubscribeRequestDto(subscribeDto);
 
-        Subscribe existingSubscribe = subscribeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("inscription non trouvée avec l'ID: " + id));
+        SubscribeKey key = new SubscribeKey(userId, tripId);
+        Subscribe existingSubscribe = subscribeRepository.findById(key)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "inscription non trouvée pour userId: " + userId + " et tripId: " + tripId));
 
-        subscribeMapper.updateEntity(existingSubscribe, subscribe);
+        subscribeMapper.updateEntity(existingSubscribe, subscribeDto);
         return subscribeMapper.toResponseDto(subscribeRepository.save(existingSubscribe));
     }
 
     @Override
-    public String deleteSubscribe(int id) throws ResourceNotFoundException {
-        ValidationUtil.validateIdNotNull(id, "l'inscription");
-        Subscribe subscribe = subscribeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("inscription non trouvée avec l'ID: " + id));
+    public String deleteSubscribe(Integer userId, Integer tripId) throws ResourceNotFoundException {
+        ValidationUtil.validateIdNotNull(userId, "l'utilisateur");
+        ValidationUtil.validateIdNotNull(tripId, "le trajet");
+
+        SubscribeKey key = new SubscribeKey(userId, tripId);
+        Subscribe subscribe = subscribeRepository.findById(key)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "inscription non trouvée pour userId: " + userId + " et tripId: " + tripId));
 
         Trip trip = subscribe.getTrip();
         User participant = subscribe.getUser();
         notificationService.sendNotificationToOrganisateurOnUnsubscribe(trip, participant);
 
-        subscribeRepository.deleteById(id);
+        subscribeRepository.deleteById(key);
         return "inscription supprimée";
     }
+
     @Transactional(readOnly = true)
     @Override
-    public List<SubscribeResponseDto> findSubscribesByTrip(int id) {
+    public List<SubscribeResponseDto> findSubscribesByTrip(Integer id) {
         return subscribeRepository.findByTripId(id).stream()
                 .map(subscribeMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<SubscribeResponseDto> findSubscribesByUser(int id) {
+    public List<SubscribeResponseDto> findSubscribesByUser(Integer id) {
         return subscribeRepository.findByUserId(id).stream()
                 .map(subscribeMapper::toResponseDto)
                 .collect(Collectors.toList());

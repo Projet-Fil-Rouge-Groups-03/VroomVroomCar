@@ -63,12 +63,8 @@ class SubscribeServiceTest {
 
     private SubscribeResponseDto createSubscribeResponseDto() {
         SubscribeResponseDto responseDto = new SubscribeResponseDto();
-        Trip trip = new Trip();
-        trip.setId(1);
-        User user = new User();
-        user.setId(1);
-        responseDto.setTrip(trip);
-        responseDto.setUser(user);
+        responseDto.setUserId(1);
+        responseDto.setTripId(1);
         responseDto.setDateInscription(new Date());
         return responseDto;
     }
@@ -89,16 +85,19 @@ class SubscribeServiceTest {
 
     @Test
     void testGetSubscribeById() throws ResourceNotFoundException {
+        Integer userId = 1;
+        Integer tripId = 1;
+        SubscribeKey subscribeKey = new SubscribeKey(userId, tripId);
         Subscribe subscribe = createSubscribe();
         SubscribeResponseDto responseDto = createSubscribeResponseDto();
 
-        when(subscribeRepository.findById(anyInt())).thenReturn(Optional.of(subscribe));
+        when(subscribeRepository.findById(subscribeKey)).thenReturn(Optional.of(subscribe));
         when(subscribeMapper.toResponseDto(any(Subscribe.class))).thenReturn(responseDto);
 
-        SubscribeResponseDto result = subscribeService.getSubscribeById(1);
+        SubscribeResponseDto result = subscribeService.getSubscribeById(userId, tripId);
 
         assertNotNull(result);
-        verify(subscribeRepository, times(1)).findById(anyInt());
+        verify(subscribeRepository, times(1)).findById(subscribeKey);
     }
 
     @Test
@@ -121,36 +120,44 @@ class SubscribeServiceTest {
 
     @Test
     void testEditSubscribe() throws ResourceNotFoundException {
-        int subscribeId = 1;
+        Integer userId = 1;
+        Integer tripId = 1;
+        SubscribeKey subscribeKey = new SubscribeKey(userId, tripId);
         SubscribeRequestDto requestDto = createSubscribeRequestDto();
         Subscribe existingSubscribe = createSubscribe();
         SubscribeResponseDto responseDto = createSubscribeResponseDto();
 
-        when(subscribeRepository.findById(subscribeId)).thenReturn(Optional.of(existingSubscribe));
+        when(subscribeRepository.findById(subscribeKey)).thenReturn(Optional.of(existingSubscribe));
         when(subscribeRepository.save(any(Subscribe.class))).thenReturn(existingSubscribe);
         when(subscribeMapper.toResponseDto(any(Subscribe.class))).thenReturn(responseDto);
+        doNothing().when(subscribeMapper).updateEntity(any(Subscribe.class), any(SubscribeRequestDto.class));
 
-        SubscribeResponseDto result = subscribeService.editSubscribe(subscribeId, requestDto);
+        SubscribeResponseDto result = subscribeService.editSubscribe(userId, tripId, requestDto);
 
         assertNotNull(result);
-        verify(subscribeRepository, times(1)).findById(subscribeId);
+        verify(subscribeRepository, times(1)).findById(subscribeKey);
+        verify(subscribeMapper, times(1)).updateEntity(existingSubscribe, requestDto);
         verify(subscribeRepository, times(1)).save(existingSubscribe);
     }
 
     @Test
     void testDeleteSubscribe() throws ResourceNotFoundException {
-        int subscribeId = 1;
+        Integer userId = 1;
+        Integer tripId = 1;
+        SubscribeKey subscribeKey = new SubscribeKey(userId, tripId);
         Subscribe subscribe = createSubscribe();
 
-        when(subscribeRepository.findById(subscribeId)).thenReturn(Optional.of(subscribe));
+        when(subscribeRepository.findById(subscribeKey)).thenReturn(Optional.of(subscribe));
         doNothing().when(notificationService).sendNotificationToOrganisateurOnUnsubscribe(any(Trip.class), any(User.class));
-        doNothing().when(subscribeRepository).deleteById(subscribeId);
+        doNothing().when(subscribeRepository).deleteById(subscribeKey);
 
-        String result = subscribeService.deleteSubscribe(subscribeId);
+        String result = subscribeService.deleteSubscribe(userId, tripId);
 
         assertEquals("inscription supprimée", result);
-        verify(subscribeRepository, times(1)).deleteById(subscribeId);
+        verify(subscribeRepository, times(1)).findById(subscribeKey);
+        verify(subscribeRepository, times(1)).deleteById(subscribeKey);
         verify(notificationService, times(1)).sendNotificationToOrganisateurOnUnsubscribe(any(Trip.class), any(User.class));
+
     }
 
     @Test

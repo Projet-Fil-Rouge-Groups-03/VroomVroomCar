@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -34,7 +35,7 @@ public interface IUserController {
      * @throws ResourceNotFoundException si aucun utilisateur avec ce nom n'est trouvé.
      */
     @Operation(summary = "Rechercher un utilisateur par id", description = "Renvoie les informations d'un utilisateur à partir de son id.")
-    public ResponseEntity<UserResponseDto> findById(@RequestParam int id) throws ResourceNotFoundException;
+    public ResponseEntity<UserResponseDto> findById(@PathVariable Integer id) throws ResourceNotFoundException;
     /**
      * Recherche un utilisateur par son nom.
      *
@@ -43,7 +44,7 @@ public interface IUserController {
      * @throws ResourceNotFoundException si aucun utilisateur avec ce nom n'est trouvé.
      */
     @Operation(summary = "Rechercher un utilisateur par nom", description = "Renvoie les informations d'un utilisateur à partir de son nom.")
-    public ResponseEntity<UserResponseDto> findByNom(String nom) throws ResourceNotFoundException;
+    public ResponseEntity<UserResponseDto> findByNom(@RequestParam String nom) throws ResourceNotFoundException;
     /**
      * Ajoute un nouvel utilisateur.
      *
@@ -65,7 +66,7 @@ public interface IUserController {
      */
     @Operation(summary = "Modifier un utilisateur par ID", description = "Met à jour un utilisateur existant à partir de son identifiant.")
     ResponseEntity<UserResponseDto> editUser(
-            @Parameter(description = "ID de l'utilisateur à modifier") @RequestParam int id,
+            @Parameter(description = "ID de l'utilisateur à modifier") @PathVariable Integer id,
             @Parameter(description = "Nouvelles données de l'utilisateur") @RequestBody UserRequestDto user
     ) throws ResourceNotFoundException;
     /**
@@ -91,7 +92,7 @@ public interface IUserController {
      */
     @Operation(summary = "Supprimer un utilisateur", description = "Supprime un utilisateur existant à partir de son identifiant.")
     ResponseEntity<String> deleteUser(
-            @Parameter(description = "ID de l'utilisateur à supprimer") @RequestParam int id
+            @Parameter(description = "ID de l'utilisateur à supprimer") @PathVariable Integer id
     ) throws ResourceNotFoundException;
 
 

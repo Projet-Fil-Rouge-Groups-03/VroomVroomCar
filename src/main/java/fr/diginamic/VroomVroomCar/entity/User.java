@@ -19,7 +19,9 @@ public class User {
     private String nom;
     private String prenom;
     private String mail;
-    private String adresse;
+    private String ville;
+    private String codePostal;
+    private String libelle;
     private String motDePasse;
 
     @Enumerated(EnumType.STRING)
@@ -40,11 +42,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Reservation> reservations;
 
-    public User(String nom, String prenom, String mail, String adresse, String motDePasse, Status status) {
+    public User(String nom, String prenom, String mail, String ville, String codePostal, String libelle, String motDePasse, Status status) {
         this.nom = nom;
         this.prenom = prenom;
         this.mail = mail;
-        this.adresse = adresse;
+        this.ville = ville;
+        this.codePostal = codePostal;
+        this.libelle = libelle;
         this.motDePasse = motDePasse;
         this.status = status;
     }

@@ -7,9 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -31,12 +30,13 @@ public interface ISubscribeController {
     /**
      * Recherche une inscription par son identifiant.
      *
-     * @param id l'identifiant de l'inscription à rechercher.
+     * @param userId l'identifiant du User inscrit.
+     * @param tripId l'identifiant du trajet concerné.
      * @return une {@link ResponseEntity} contenant un objet {@link SubscribeResponseDto}.
      * @throws ResourceNotFoundException si aucune inscription avec cet ID n'est trouvé.
      */
     @Operation(summary = "Rechercher une inscription par ID", description = "Renvoie les informations d'une inscription à partir de son identifiant.")
-    ResponseEntity<SubscribeResponseDto> findById(@RequestParam int id) throws ResourceNotFoundException;
+    ResponseEntity<SubscribeResponseDto> findById(@PathVariable Integer userId, @PathVariable Integer tripId) throws ResourceNotFoundException;
 
 
     /**
@@ -46,7 +46,7 @@ public interface ISubscribeController {
      * @return une {@link ResponseEntity} contenant une liste d'objets {@link SubscribeResponseDto}.
      */
     @Operation(summary = "Récupérer toutes les inscriptions pour un trajet donné", description = "Renvoie une liste de tous les inscriptions enregistrés.")
-    ResponseEntity<List<SubscribeResponseDto>> findByTrip(int id);
+    ResponseEntity<List<SubscribeResponseDto>> findByTrip(Integer id);
 
     /**
      * Recherche la liste de toutes les inscriptions pour un utilisateur donné.
@@ -55,7 +55,7 @@ public interface ISubscribeController {
      * @return une {@link ResponseEntity} contenant une liste d'objets {@link SubscribeResponseDto}.
      */
     @Operation(summary = "Récupérer toutes les inscriptions pour un utilisateur donné", description = "Renvoie une liste de tous les inscriptions enregistrés.")
-    ResponseEntity<List<SubscribeResponseDto>> findByUser(int id);
+    ResponseEntity<List<SubscribeResponseDto>> findByUser(Integer id);
     /**
      * Ajoute une nouvelle inscription.
      *
@@ -71,14 +71,15 @@ public interface ISubscribeController {
     /**
      * Modifie une inscription existante en se basant sur son identifiant.
      *
-     * @param id l'identifiant de l'inscription à modifier.
+     * @param userId l'identifiant du User inscrit.
+     * @param tripId l'identifiant du trajet concerné.
      * @param subscribe les nouvelles données de l'inscription, encapsulées dans un {@link SubscribeRequestDto}.
      * @return une {@link ResponseEntity} contenant l'objet {@link SubscribeResponseDto} mis à jour.
      * @throws ResourceNotFoundException si aucune inscription avec cet identifiant n'est trouvé.
      */
     @Operation(summary = "Modifier une inscription par ID", description = "Met à jour une inscription existant à partir de son identifiant.")
     ResponseEntity<SubscribeResponseDto> editSubscribe(
-            @Parameter(description = "ID de l'inscription à modifier") @RequestParam int id,
+            @Parameter(description = "ID de l'inscription à modifier") @PathVariable Integer userId, @PathVariable Integer tripId,
             @Parameter(description = "Nouvelles données de l'inscription") @RequestBody SubscribeRequestDto subscribe
     ) throws ResourceNotFoundException;
 
@@ -86,12 +87,13 @@ public interface ISubscribeController {
     /**
      * Supprime une inscription existant à partir de son identifiant.
      *
-     * @param id l'identifiant de l'inscription à supprimer.
+     * @param userId l'identifiant du User inscrit.
+     * @param tripId l'identifiant du trajet concerné.
      * @return une {@link ResponseEntity} contenant un message de confirmation.
      * @throws ResourceNotFoundException si aucune inscription avec cet identifiant n'est trouvé.
      */
     @Operation(summary = "Supprimer une inscription", description = "Supprime une inscription existant à partir de son identifiant.")
     ResponseEntity<String> deleteSubscribe(
-            @Parameter(description = "ID de l'inscription à supprimer") @RequestParam int id
+            @Parameter(description = "ID de l'inscription à supprimer") @PathVariable Integer userId, @PathVariable Integer tripId
     ) throws ResourceNotFoundException;
 }

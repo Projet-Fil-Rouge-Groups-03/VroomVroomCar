@@ -22,21 +22,21 @@ public class SubscribeController implements ISubscribeController{
         return ResponseEntity.ok(subscribeService.getAllSubscribes());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{userId}/{tripId}")
     @Override
-    public ResponseEntity<SubscribeResponseDto> findById(@RequestParam int id) throws ResourceNotFoundException {
-        return ResponseEntity.ok(subscribeService.getSubscribeById(id));
+    public ResponseEntity<SubscribeResponseDto> findById(@PathVariable Integer userId, @PathVariable Integer tripId) throws ResourceNotFoundException {
+        return ResponseEntity.ok(subscribeService.getSubscribeById(userId, tripId));
     }
 
     @GetMapping("/find-by-trip/{id}")
     @Override
-    public ResponseEntity<List<SubscribeResponseDto>> findByTrip(@RequestParam int id) {
+    public ResponseEntity<List<SubscribeResponseDto>> findByTrip(@PathVariable Integer id) {
         return ResponseEntity.ok(subscribeService.findSubscribesByTrip(id));
     }
 
     @GetMapping("/ind-by-user/{id}")
     @Override
-    public ResponseEntity<List<SubscribeResponseDto>> findByUser(@RequestParam int id){
+    public ResponseEntity<List<SubscribeResponseDto>> findByUser(@PathVariable Integer id){
         return ResponseEntity.ok(subscribeService.findSubscribesByUser(id));
     }
 
@@ -46,16 +46,16 @@ public class SubscribeController implements ISubscribeController{
         return ResponseEntity.ok(subscribeService.createSubscribe(subscribe));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update/{userId}/{tripId}")
     @Override
-    public ResponseEntity<SubscribeResponseDto> editSubscribe(@RequestParam int id, @RequestBody SubscribeRequestDto subscribe) throws ResourceNotFoundException {
-        return ResponseEntity.ok(subscribeService.editSubscribe(id, subscribe));
+    public ResponseEntity<SubscribeResponseDto> editSubscribe(@PathVariable Integer userId, @PathVariable Integer tripId, @RequestBody SubscribeRequestDto subscribe) throws ResourceNotFoundException {
+        return ResponseEntity.ok(subscribeService.editSubscribe(userId, tripId, subscribe));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/{userId}/{tripId}")
     @Override
-    public ResponseEntity<String> deleteSubscribe(@RequestParam int id) throws ResourceNotFoundException {
-        return ResponseEntity.ok(subscribeService.deleteSubscribe(id));
+    public ResponseEntity<String> deleteSubscribe(@PathVariable Integer userId, @PathVariable Integer tripId) throws ResourceNotFoundException {
+        return ResponseEntity.ok(subscribeService.deleteSubscribe(userId, tripId));
     }
 
 }

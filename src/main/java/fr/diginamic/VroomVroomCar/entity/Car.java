@@ -99,7 +99,7 @@ public class Car {
      * Les trajets sont chargés de manière paresseuse et toutes les opérations de persistance
      * sont cascadées depuis la voiture.
      */
-    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "car", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Trip> trips = new HashSet<>();
 
     /**

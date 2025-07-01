@@ -33,30 +33,11 @@ public class UserMapper {
                 dto.getNom(),
                 dto.getPrenom(),
                 dto.getMail(),
-                convertLibelleCpVilleToAdresse(dto.getLibelle(), dto.getCodePostal(), dto.getVille()),
+                dto.getLibelle(),
+                dto.getCodePostal(),
+                dto.getVille(),
                 password,
                 status);
-    }
-
-    /**
-     * Convertit les trois String d'entrée en un String adresse séparé par des ";"
-     * @param libelle Le numéro et nom de rue, le numéro d'appartement etc..
-     * @param codePostal Le code postal.
-     * @param ville La ville.
-     * @return
-     */
-    private String convertLibelleCpVilleToAdresse(String libelle, String codePostal, String ville){
-        return Stream.of(libelle, codePostal, ville)
-                .map(s -> s.replace(";", ",")) // sécurité
-                .collect(Collectors.joining(";"));
-    }
-
-    public List<String> convertAdresseToLibelleCpVille(String adresse) throws IllegalArgumentException {
-        String[] parts = adresse.split(";");
-        if (parts.length != 3) {
-            throw new IllegalArgumentException("L'adresse doit contenir exactement 3 parties séparées par ';'");
-        }
-        return Arrays.asList(parts[0].trim(), parts[1].trim(), parts[2].trim());
     }
 
     /**
@@ -66,15 +47,14 @@ public class UserMapper {
      * @return Une nouvelle instance de USerResponseDto initialisée avec les données de l'entité User.
      */
     public UserResponseDto toResponseDto(User user){
-        List<String> adresse = convertAdresseToLibelleCpVille(user.getAdresse());
         return new UserResponseDto(
                 user.getId(),
                 user.getNom(),
                 user.getPrenom(),
                 user.getMail(),
-                adresse.get(0),
-                adresse.get(1),
-                adresse.get(2),
+                user.getLibelle(),
+                user.getCodePostal(),
+                user.getVille(),
                 statusUtil.convertStatusToString(user.getStatus())
         );
     }
@@ -89,8 +69,9 @@ public class UserMapper {
         user.setNom(userRequestDto.getNom());
         user.setPrenom(userRequestDto.getPrenom());
         user.setMail(userRequestDto.getMail());
-        user.setAdresse(convertLibelleCpVilleToAdresse
-                (userRequestDto.getLibelle(), userRequestDto.getCodePostal(), userRequestDto.getVille()));
+        user.setLibelle(userRequestDto.getLibelle());
+        user.setCodePostal(userRequestDto.getCodePostal());
+        user.setVille(userRequestDto.getVille());
     }
 
 }

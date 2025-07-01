@@ -200,7 +200,7 @@ public interface ICarController {
     /**
      * Récupère les voitures par catégorie.
      *
-     * @param categorie La catégorie à rechercher.
+     * @param categories La catégorie à rechercher.
      * @param size Le nombre maximum de voitures à retourner.
      * @return Réponse contenant la liste des voitures de la catégorie spécifiée.
      */
