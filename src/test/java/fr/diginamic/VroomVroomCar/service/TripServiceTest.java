@@ -2,22 +2,18 @@ package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.TripNotificationDetailsDto;
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.*;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.TripMapper;
 import fr.diginamic.VroomVroomCar.repository.*;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Date;
@@ -146,7 +142,6 @@ public class TripServiceTest {
      */
     @Test
     void testCreateTrip() throws FunctionnalException {
-        // Arrange
         TripRequestDto requestDto = createTripRequestDto();
         User user = createUser(1, "Jean Dupont", "jean@test.com");
         Car car = createCar(1, 5);
@@ -166,7 +161,6 @@ public class TripServiceTest {
 
         TripResponseDto tripResponseDto = new TripResponseDto();
 
-        // Mocks
         doNothing().when(validationUtil).validateEndDateBeforeStartDate(any(), any());
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
         when(carRepository.findById(1)).thenReturn(Optional.of(car));
@@ -186,10 +180,8 @@ public class TripServiceTest {
         });
         when(tripMapper.toResponse(any())).thenReturn(tripResponseDto);
 
-        // Act
         TripResponseDto result = tripService.createTrip(requestDto);
 
-        // Assert
         assertNotNull(result);
         Trip savedTrip = tripCaptor.getValue();
         assertNotNull(savedTrip.getHeureArrivee());
@@ -207,7 +199,6 @@ public class TripServiceTest {
      */
     @Test
     void testGetAllTrips() {
-        // Arrange
         User user = createUser(1, "Jean", "jean@test.com");
         Car car = createCar(1, 5);
         Trip trip = createTrip(1, new java.sql.Date(System.currentTimeMillis()), new java.sql.Date(System.currentTimeMillis()), LocalTime.now(),
@@ -217,10 +208,8 @@ public class TripServiceTest {
         when(tripRepository.findAll()).thenReturn(Collections.singletonList(trip));
         when(tripMapper.toResponse(any(Trip.class))).thenReturn(tripResponseDto);
 
-        // Act
         List<TripResponseDto> result = tripService.getAllTrips();
 
-        // Assert
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
         verify(tripRepository, times(1)).findAll();
@@ -231,7 +220,6 @@ public class TripServiceTest {
      */
     @Test
     void testGetTripById() throws FunctionnalException {
-        // Arrange
         User user = createUser(1, "Jean", "jean@test.com");
         Car car = createCar(1, 5);
         Trip trip = createTrip(1, new java.sql.Date(System.currentTimeMillis()), new java.sql.Date(System.currentTimeMillis()), LocalTime.now(),
@@ -241,17 +229,14 @@ public class TripServiceTest {
         when(tripRepository.findById(1)).thenReturn(Optional.of(trip));
         when(tripMapper.toResponse(any(Trip.class))).thenReturn(tripResponseDto);
 
-        // Act
         TripResponseDto result = tripService.getTripById(1);
 
-        // Assert
         assertNotNull(result);
         verify(tripRepository, times(1)).findById(1);
     }
 
     @Test
     void testSearchTrips() throws FunctionnalException {
-        // Arrange
         String villeDepart = "Toulouse";
         String villeArrivee = "Paris";
         Date dateDebut = Date.valueOf(LocalDate.now());
@@ -269,10 +254,8 @@ public class TripServiceTest {
                 villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name())
         ).thenReturn(expectedTrips);
 
-        // Act
-        List<Trip> result = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType);
+        List<TripResponseDto> result = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(villeDepart, result.get(0).getVilleDepart());
@@ -283,7 +266,6 @@ public class TripServiceTest {
 
     @Test
     void testGetUpcomingUserTrips() {
-        // Arrange
         Integer userId = 1;
         User user = createUser(userId, "Jean", "jean@test.com");
         Car car = createCar(1, 5);
@@ -294,17 +276,14 @@ public class TripServiceTest {
 
         when(tripRepository.findUpcomingUserTrips(userId)).thenReturn(mockTrips);
 
-        // Act
         List<TripResponseDto> result = tripService.getUpcomingUserTrips(userId);
 
-        // Assert
         assertEquals(2, result.size());
         verify(tripRepository).findUpcomingUserTrips(userId);
     }
 
     @Test
     void testGetPastUserTrips() {
-        // Arrange
         Integer userId = 2;
         User user = createUser(userId, "Marie", "marie@test.com");
         Car car = createCar(1, 5);
@@ -314,10 +293,8 @@ public class TripServiceTest {
 
         when(tripRepository.findPastUserTrips(userId)).thenReturn(mockTrips);
 
-        // Act
         List<TripResponseDto> result = tripService.getPastUserTrips(userId);
 
-        // Assert
         assertEquals(1, result.size());
         verify(tripRepository).findPastUserTrips(userId);
     }
@@ -327,7 +304,6 @@ public class TripServiceTest {
      */
     @Test
     void testUpdateTrip() throws FunctionnalException {
-        // Arrange
         Integer tripId = 42;
         TripRequestDto requestDto = createTripRequestDto();
         requestDto.setId(tripId);
@@ -351,7 +327,6 @@ public class TripServiceTest {
         existingTrip.setNbPlacesRestantes(4);
         TripResponseDto updatedResponseDto = new TripResponseDto();
 
-        // Mocks
         when(tripRepository.findById(tripId)).thenReturn(Optional.of(existingTrip));
         doNothing().when(validationUtil).validateEndDateBeforeStartDate(any(), any());
         when(userRepository.findById(1)).thenReturn(Optional.of(organisateur));
@@ -371,18 +346,14 @@ public class TripServiceTest {
 
         doNothing().when(notificationService).sendNotificationToParticipantsOnModification(any(Trip.class));
 
-        // Act
         TripResponseDto result = tripService.updateTrip(tripId, requestDto);
 
-        // Assert
         assertNotNull(result);
         verify(tripRepository).findById(tripId);
         verify(validationUtil).validateEndDateBeforeStartDate(any(), any());
         verify(tripMapper).updateEntity(eq(existingTrip), eq(requestDto), eq(organisateur), eq(car));
         verify(tripRepository).save(existingTrip);
 
-        // --- CORRECTION ---
-        // La méthode a changé, elle ne prend plus l'organisateur en second paramètre.
         verify(notificationService).sendNotificationToParticipantsOnModification(existingTrip);
 
         verify(tripMapper).toResponse(existingTrip);
@@ -393,7 +364,6 @@ public class TripServiceTest {
      */
     @Test
     void testDeleteTrip() throws FunctionnalException {
-        // Arrange
         User user = createUser(1, "Jean", "jean@test.com");
         User participant = createUser(2, "Paul", "paul@test.com");
         Car car = createCar(1, 5);
@@ -404,26 +374,20 @@ public class TripServiceTest {
 
         when(tripRepository.findById(1)).thenReturn(Optional.of(trip));
         doNothing().when(notificationService).sendNotificationToParticipantsOnAnnulation(any(), any());
-        // La méthode du service appelle delete(objet), pas deleteById(id)
         doNothing().when(tripRepository).delete(any(Trip.class));
 
 
-        // Act
         tripService.deleteTrip(1);
 
-        // Assert
         verify(tripRepository, times(1)).findById(1);
         ArgumentCaptor<List<Subscribe>> listCaptor = ArgumentCaptor.forClass(List.class);
         ArgumentCaptor<TripNotificationDetailsDto> dtoCaptor = ArgumentCaptor.forClass(TripNotificationDetailsDto.class);
 
-        // On vérifie que la bonne méthode de notification a été appelée
         verify(notificationService).sendNotificationToParticipantsOnAnnulation(listCaptor.capture(), dtoCaptor.capture());
 
-        // On vérifie le contenu des arguments capturés
-        assertEquals(1, listCaptor.getValue().size()); // Il y avait bien 1 participant
-        assertEquals("Paris", dtoCaptor.getValue().getVilleDepart()); // Le DTO contient les bonnes infos
+        assertEquals(1, listCaptor.getValue().size());
+        assertEquals("Paris", dtoCaptor.getValue().getVilleDepart());
 
-        // On vérifie que la méthode de suppression a été appelée avec le bon objet
         verify(tripRepository, times(1)).delete(trip);
     }
 
@@ -432,7 +396,6 @@ public class TripServiceTest {
      */
     @Test
     void testCalculateArrivalTime() throws FunctionnalException{
-        // Arrange
         LocalTime heureDepart = LocalTime.of(9, 0);
         String lieuDepart = "Centre-ville";
         String lieuArrivee = "Aéroport";
@@ -441,7 +404,7 @@ public class TripServiceTest {
 
         when(openRouteService.getTravelDurationInSeconds(
                 "Centre-ville, Toulouse", "Aéroport, Paris"
-        )).thenReturn(7200.0); // 2 heures
+        )).thenReturn(7200.0);
 
         // Act
         LocalTime result = tripService.calculateArrivalTime(
@@ -458,18 +421,15 @@ public class TripServiceTest {
      */
     @Test
     void testCalculatePlaceRest() throws FunctionnalException {
-        // Arrange
         TripRequestDto requestDto = createTripRequestDto();
         Car car = createCar(1, 5);
 
         when(validationUtil.estVehiculeDeService(eq(1), any())).thenReturn(false);
         when(subscribeRepository.countByTrip_Id(any())).thenReturn(2);
 
-        // Act
         int result = tripService.calculatePlaceRest(requestDto, car);
 
-        // Assert
-        assertEquals(3, result); // 5 places - 2 souscriptions = 3 places restantes
+        assertEquals(3, result);
         verify(subscribeRepository).countByTrip_Id(requestDto.getId());
     }
 
@@ -478,7 +438,6 @@ public class TripServiceTest {
      */
     @Test
     void testCalculatePlaceRestWithServiceVehicle() throws FunctionnalException {
-        // Arrange
         TripRequestDto requestDto = createTripRequestDto();
         Car car = createCar(1, 5);
 
@@ -488,11 +447,9 @@ public class TripServiceTest {
         )).thenReturn(true);
         when(subscribeRepository.countByTrip_Id(any())).thenReturn(1);
 
-        // Act
         int result = tripService.calculatePlaceRest(requestDto, car);
 
-        // Assert
-        assertEquals(3, result); // 5 places - 1 organisateur - 1 souscription = 3 places restantes
+        assertEquals(3, result);
         verify(validationUtil).estVehiculeDeService(eq(1), any());
         verify(reservationRepository).existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
                 eq(1), eq(1), eq(requestDto.getDateDebut()), eq(requestDto.getDateFin())

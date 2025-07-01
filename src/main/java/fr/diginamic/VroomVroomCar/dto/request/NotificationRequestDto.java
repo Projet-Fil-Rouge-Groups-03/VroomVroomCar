@@ -27,10 +27,6 @@ public class NotificationRequestDto {
     @Schema(description = "Le nom de la notification", example = "Annulation")
     private String nom;
 
-    @Schema(description = "Date de la notification", example = "2025-07-15")
-    @NotNull(message = "La date de la notification est obligatoire.")
-    private LocalDateTime date;
-
     @NotNull(message = "L'ID utilisateur est obligatoire")
     @Schema(description = "L'identifiant de l'utilisateur associé à cette notification", example = "1", required = true)
     private Integer userId;

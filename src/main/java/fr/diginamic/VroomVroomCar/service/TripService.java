@@ -170,18 +170,14 @@ public class TripService implements ITripService {
 
     @Transactional
     public void deleteTrip(Integer id) throws FunctionnalException {
-        // 1. Récupérer le trajet
         Trip trip = tripRepository.findById(id)
                 .orElseThrow(() -> new FunctionnalException("Le trajet avec l'ID " + id + " n'existe pas."));
 
-        // 2. Copier les listes et les DÉTAILS nécessaires AVANT toute suppression
         List<Subscribe> subscriptions = new ArrayList<>(trip.getSubscribes());
         TripNotificationDetailsDto detailsDto = new TripNotificationDetailsDto(trip);
 
-        // 3. Envoyer les notifications en utilisant la copie et le DTO
         notificationService.sendNotificationToParticipantsOnAnnulation(subscriptions, detailsDto);
 
-        // 4. Supprimer le trajet
         tripRepository.delete(trip);
     }
 
