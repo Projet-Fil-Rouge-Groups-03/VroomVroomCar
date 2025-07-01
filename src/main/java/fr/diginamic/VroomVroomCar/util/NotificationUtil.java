@@ -46,12 +46,12 @@ public class NotificationUtil {
      * @param contenu Le contenu de la notification à envoyer.
      * @param type Le type ou le titre de la notification.
      */
-    public void sendNotificationToAllParticipants(Trip trip, String contenu, String type) {
-        List<Subscribe> inscriptions = subscribeRepository.findByTrip(trip);
-        inscriptions.forEach(inscription ->
-                createAndSaveNotification(contenu, type, inscription.getUser())
-        );
-    }
+//    public void sendNotificationToAllParticipants(Trip trip, String contenu, String type) {
+//        List<Subscribe> inscriptions = subscribeRepository.findByTrip(trip);
+//        inscriptions.forEach(inscription ->
+//                createAndSaveNotification(contenu, type, inscription.getUser())
+//        );
+//    }
 
     /**
      * Génère le nom complet d'un utilisateur à partir de son prénom et de son nom.

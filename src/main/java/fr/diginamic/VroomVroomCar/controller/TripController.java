@@ -10,6 +10,7 @@ import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.service.TripService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -23,15 +24,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/trips")
+@RequiredArgsConstructor
 public class TripController implements ITripController {
 
-    @Autowired
-    private TripService tripService;
+    private final TripService tripService;
 
     // Create Trip (POST)
     @PostMapping("/create")
-    public ResponseEntity<TripResponseDto> createTrip(@Valid @RequestBody TripRequestDto tripRequestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws ResourceNotFoundException, FunctionnalException {
-        TripResponseDto tripCreate = tripService.createTrip(tripRequestDto, userResponseDto, carResponseDto);
+    public ResponseEntity<TripResponseDto> createTrip(@Valid @RequestBody TripRequestDto tripRequestDto) throws ResourceNotFoundException, FunctionnalException {
+        TripResponseDto tripCreate = tripService.createTrip(tripRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(tripCreate);
     }
 
@@ -41,11 +42,13 @@ public class TripController implements ITripController {
         List<TripResponseDto> trips = tripService.getAllTrips();
         return ResponseEntity.ok(trips);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<TripResponseDto> getTripById(@PathVariable Integer id) throws FunctionnalException {
         TripResponseDto trip = tripService.getTripById(id);
         return ResponseEntity.ok(trip);
     }
+
     @GetMapping("/search")
     public ResponseEntity<List<Trip>> searchTrips(
             @RequestParam(required = false) String villeDepart,
@@ -61,19 +64,23 @@ public class TripController implements ITripController {
             return ResponseEntity.badRequest().build();
         }
     }
+
     @GetMapping("/upcoming/{userId}")
-    public List<Trip> getUpcomingTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
-        return tripService.getUpcomingUserTrips(userId);
+    public ResponseEntity<List<Trip>> getUpcomingTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
+        List<Trip> trips = tripService.getUpcomingUserTrips(userId);
+        return ResponseEntity.ok(trips);
     }
+
     @GetMapping("/past/{userId}")
-    public List<Trip> getPastTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
-        return tripService.getPastUserTrips(userId);
+    public ResponseEntity<List<Trip>> getPastTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
+        List<Trip> trips = tripService.getPastUserTrips(userId);
+        return ResponseEntity.ok(trips);
     }
 
     // Update Trip (PUT)
     @PutMapping("/update/{id}")
-    public ResponseEntity<TripResponseDto> updateTrip(@PathVariable Integer id, @Valid @RequestBody TripRequestDto tripRequestDto,  UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException {
-        TripResponseDto tripEdit = tripService.updateTrip(id, tripRequestDto, userResponseDto, carResponseDto);
+    public ResponseEntity<TripResponseDto> updateTrip(@PathVariable Integer id, @Valid @RequestBody TripRequestDto tripRequestDto) throws FunctionnalException {
+        TripResponseDto tripEdit = tripService.updateTrip(id, tripRequestDto);
         return ResponseEntity.ok(tripEdit);
     }
 

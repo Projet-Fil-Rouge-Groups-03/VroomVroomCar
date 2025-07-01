@@ -96,13 +96,36 @@ public class OpenRouteService {
      */
     public double getTravelDurationInSeconds(String adresseDepart, String adresseArrivee) {
         JsonNode root = getRouteResponse(adresseDepart, adresseArrivee);
-        return root.path("features")
-                .get(0)
-                .path("properties")
-                .path("summary")
-                .path("duration")
-                .asDouble();
+
+        // Vérifiez que root n'est pas null
+        if (root == null) {
+            throw new RuntimeException("La réponse JSON est null.");
+        }
+
+        JsonNode featuresNode = root.path("features");
+        if (featuresNode == null || featuresNode.isMissingNode() || featuresNode.size() == 0) {
+            throw new RuntimeException("Le nœud 'features' est manquant ou vide dans la réponse JSON.");
+        }
+
+        JsonNode propertiesNode = featuresNode.get(0).path("properties");
+        if (propertiesNode == null || propertiesNode.isMissingNode()) {
+            throw new RuntimeException("Le nœud 'properties' est manquant dans la réponse JSON.");
+        }
+
+        JsonNode summaryNode = propertiesNode.path("summary");
+        if (summaryNode == null || summaryNode.isMissingNode()) {
+            throw new RuntimeException("Le nœud 'summary' est manquant dans la réponse JSON.");
+        }
+
+        JsonNode durationNode = summaryNode.path("duration");
+        if (durationNode == null || durationNode.isMissingNode()) {
+            throw new RuntimeException("Le nœud 'duration' est manquant dans la réponse JSON.");
+        }
+        System.out.println("Réponse JSON complète : " + root.toPrettyString());
+        return durationNode.asDouble();
     }
+
+
 
     /**
      * Récupère la distance du trajet entre deux adresses, en kilomètres.

@@ -34,10 +34,10 @@ public interface ITripController {
 
     /**
      * Crée un nouveau trajet à partir des données reçues.
+     * Les entités User et Car sont automatiquement récupérées par le service
+     * à partir des identifiants fournis dans le TripRequestDto.
      *
-     * @param tripRequestDto les données du trajet à créer
-     * @param userResponseDto les données de l'organisateur
-     * @param carResponseDto les données du véhicule utilisé
+     * @param tripRequestDto les données du trajet à créer (incluant organisateurId et carId)
      * @return le trajet créé avec son identifiant
      * @throws ResourceNotFoundException si une ressource liée (véhicule, utilisateur...) est introuvable
      * @throws FunctionnalException en cas d'erreur métier (ex : réservation en conflit)
@@ -50,8 +50,7 @@ public interface ITripController {
     })
     @PostMapping("/create")
     ResponseEntity<TripResponseDto> createTrip(
-            @Valid @RequestBody TripRequestDto tripRequestDto,
-            UserResponseDto userResponseDto, CarResponseDto carResponseDto
+            @Valid @RequestBody TripRequestDto tripRequestDto
     ) throws ResourceNotFoundException, FunctionnalException;
 
     /**
@@ -125,6 +124,7 @@ public interface ITripController {
      *
      * @param userId l'identifiant de l'utilisateur
      * @return liste des trajets futurs triés par date croissante
+     * @throws ResourceNotFoundException si l'utilisateur n'existe pas
      */
     @Operation(summary = "Récupérer les trajets à venir d'un utilisateur",
             description = "Retourne la liste des trajets futurs auxquels un utilisateur participe ou qu'il organise.")
@@ -132,29 +132,39 @@ public interface ITripController {
             @ApiResponse(responseCode = "200", description = "Liste des trajets récupérée avec succès"),
             @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
     })
-    List<Trip> getUpcomingTrip(@PathVariable Integer userId) throws ResourceNotFoundException;
+    @GetMapping("/upcoming/{userId}")
+    ResponseEntity<List<Trip>> getUpcomingTrip(
+            @Parameter(description = "ID de l'utilisateur", required = true) @PathVariable Integer userId
+    ) throws ResourceNotFoundException;
+
     /**
      * Récupère la liste des trajets passés pour un utilisateur donné.
      * L'utilisateur peut être organisateur ou simple passager (abonné).
      *
      * @param userId l'identifiant de l'utilisateur
      * @return liste des trajets passés triés par date décroissante
+     * @throws ResourceNotFoundException si l'utilisateur n'existe pas
      */
     @Operation(summary = "Récupérer les trajets passés d'un utilisateur",
-            description = "Retourne la liste des trajets déjà effectués par un utilisateur, qu’il soit organisateur ou passager.")
+            description = "Retourne la liste des trajets déjà effectués par un utilisateur, qu'il soit organisateur ou passager.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Liste des trajets récupérée avec succès"),
             @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
     })
-    List<Trip> getPastTrip(@PathVariable Integer userId) throws ResourceNotFoundException;
+    @GetMapping("/past/{userId}")
+    ResponseEntity<List<Trip>> getPastTrip(
+            @Parameter(description = "ID de l'utilisateur", required = true) @PathVariable Integer userId
+    ) throws ResourceNotFoundException;
 
     /**
      * Met à jour un trajet existant avec de nouvelles données.
+     * Les entités User et Car sont automatiquement récupérées par le service
+     * si les identifiants sont modifiés dans le TripRequestDto.
      *
      * @param id l'identifiant du trajet à modifier
      * @param tripRequestDto les nouvelles données du trajet
      * @return le trajet mis à jour
-     * @throws FunctionnalException si le trajet n'existe pas ou en cas d’erreur métier
+     * @throws FunctionnalException si le trajet n'existe pas ou en cas d'erreur métier
      */
     @Operation(summary = "Mettre à jour un trajet existant")
     @ApiResponses(value = {
@@ -164,8 +174,7 @@ public interface ITripController {
     @PutMapping("/update/{id}")
     ResponseEntity<TripResponseDto> updateTrip(
             @Parameter(description = "ID du trajet", required = true) @PathVariable Integer id,
-            @Valid @RequestBody TripRequestDto tripRequestDto,
-            UserResponseDto userResponseDto, CarResponseDto carResponseDto
+            @Valid @RequestBody TripRequestDto tripRequestDto
     ) throws FunctionnalException;
 
     /**

@@ -2,10 +2,8 @@ package fr.diginamic.VroomVroomCar.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,12 +11,14 @@ import java.util.Set;
  * Cette classe représente une voiture de société dans le système.
  * Elle étend la classe Car pour inclure des informations spécifiques aux voitures de société.
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "voiture_de_service")
+@ToString(exclude = {"reservations"})
 public class CompanyCar extends Car {
 
     /**

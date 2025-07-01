@@ -4,6 +4,7 @@ import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
+import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
@@ -21,14 +22,14 @@ public interface ITripService {
 
     /**
      * Crée un nouveau trajet à partir des données fournies.
+     * Le service récupère automatiquement les entités User et Car depuis la base de données
+     * à partir des identifiants fournis dans le DTO.
      *
      * @param tripRequestDto les informations nécessaires à la création du trajet
-     * @param userResponseDto les informations nécessaires de l'organisateur du trajet
-     * @param carResponseDto les informations nécessaires du véhicule pour la création du trajet
      * @return le trajet créé sous forme de DTO
-     * @throws FunctionnalException si les données sont invalides ou si une règle métier est violée
+     * @throws FunctionnalException si les données sont invalides, si l'utilisateur ou le véhicule n'existe pas, ou si une règle métier est violée
      */
-    TripResponseDto createTrip(TripRequestDto tripRequestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException;
+    TripResponseDto createTrip(TripRequestDto tripRequestDto) throws FunctionnalException;
 
     /**
      * Récupère la liste de tous les trajets existants.
@@ -59,36 +60,37 @@ public interface ITripService {
      * @throws FunctionnalException si une erreur fonctionnelle survient lors de la recherche
      */
     List<Trip> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
-                                      LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException;
+                           LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException;
 
     /**
-     * Service permettant de récupérer les trajets futurs (à venir) d’un utilisateur,
-     * qu’il en soit l’organisateur ou un participant inscrit.
+     * Service permettant de récupérer les trajets futurs (à venir) d'un utilisateur,
+     * qu'il en soit l'organisateur ou un participant inscrit.
      *
-     * @param userId l’identifiant de l’utilisateur concerné
+     * @param userId l'identifiant de l'utilisateur concerné
      * @return la liste des trajets futurs
      */
     List<Trip> getUpcomingUserTrips(Integer userId);
 
     /**
-     * Service permettant de récupérer les trajets passés d’un utilisateur,
-     * qu’il en soit l’organisateur ou un participant inscrit.
+     * Service permettant de récupérer les trajets passés d'un utilisateur,
+     * qu'il en soit l'organisateur ou un participant inscrit.
      *
-     * @param userId l’identifiant de l’utilisateur concerné
+     * @param userId l'identifiant de l'utilisateur concerné
      * @return la liste des trajets passés
      */
     List<Trip> getPastUserTrips(Integer userId);
 
     /**
      * Met à jour un trajet existant avec les nouvelles données fournies.
+     * Le service récupère automatiquement les entités User et Car depuis la base de données
+     * si les identifiants sont modifiés dans le DTO.
      *
      * @param id l'identifiant du trajet à mettre à jour
      * @param tripRequestDto les nouvelles données du trajet
-     * @param carResponseDto pour recalculer les places au besoin
      * @return le trajet mis à jour sous forme de DTO
-     * @throws FunctionnalException si le trajet n'existe pas ou si une règle métier est enfreinte
+     * @throws FunctionnalException si le trajet n'existe pas, si l'utilisateur ou le véhicule n'existe pas, ou si une règle métier est enfreinte
      */
-    TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto, UserResponseDto userResponseDto, CarResponseDto carResponseDto) throws FunctionnalException;
+    TripResponseDto updateTrip(Integer id, TripRequestDto tripRequestDto) throws FunctionnalException;
 
     /**
      * Supprime un trajet à partir de son identifiant.
@@ -119,10 +121,9 @@ public interface ITripService {
      * inscriptions existantes sont également décomptées du nombre total de places disponibles.
      *
      * @param tripRequestDto les informations du trajet (dates, identifiant, etc.)
-     * @param carResponseDto les informations du véhicule utilisé pour le trajet
+     * @param car l'entité véhicule utilisé pour le trajet
      * @return le nombre de places restantes disponibles, toujours ≥ 0
      * @throws FunctionnalException en cas d'erreur de logique métier (véhicule introuvable, etc.)
      */
-    int calculatePlaceRest(TripRequestDto tripRequestDto, CarResponseDto carResponseDto) throws FunctionnalException;
-
+    int calculatePlaceRest(TripRequestDto tripRequestDto, Car car) throws FunctionnalException;
 }

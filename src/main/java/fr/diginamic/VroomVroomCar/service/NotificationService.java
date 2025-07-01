@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.service;
 
+import fr.diginamic.VroomVroomCar.dto.TripNotificationDetailsDto;
 import fr.diginamic.VroomVroomCar.dto.request.NotificationRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.NotificationResponseDto;
 import fr.diginamic.VroomVroomCar.entity.*;
@@ -7,6 +8,7 @@ import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import fr.diginamic.VroomVroomCar.mapper.NotificationMapper;
 import fr.diginamic.VroomVroomCar.repository.NotificationRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
+import fr.diginamic.VroomVroomCar.util.DateUtil;
 import fr.diginamic.VroomVroomCar.util.NotificationUtil;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -81,20 +83,38 @@ public class NotificationService implements INotificationService {
         notificationUtil.createAndSaveNotification(contenu, "Désinscription", trip.getOrganisateur());
     }
 
-    public void sendNotificationToParticipantsOnModification(Trip trip, User organisateur) {
-        String contenu = String.format("%s à fait une modification sur votre covoiturage du %s",
-                NotificationUtil.getFullName(organisateur),
-                NotificationUtil.formatTripDate(trip));
+    public void sendNotificationToParticipantsOnAnnulation(List<Subscribe> subscriptions, TripNotificationDetailsDto details) {
+        String contenu = String.format(
+                "Le trajet du %s de %s à %s, organisé par %s, a été annulé.",
+                details.getFormattedDate(),
+                details.getVilleDepart(),
+                details.getVilleArrivee(),
+                details.getOrganisateurFullName()
+        );
+        String type = "Annulation de trajet";
 
-        notificationUtil.sendNotificationToAllParticipants(trip, contenu, "Modification Covoit");
+        // On parcourt la liste des inscriptions (la copie) qu'on a reçue
+        for (Subscribe inscription : subscriptions) {
+            // On utilise votre méthode utilitaire existante ! Parfait !
+            notificationUtil.createAndSaveNotification(contenu, type, inscription.getUser());
+        }
     }
 
-    public void sendNotificationToParticipantsOnAnnulation(Trip trip, User organisateur) {
-        String contenu = String.format("%s a annulé votre covoiturage du %s",
-                NotificationUtil.getFullName(organisateur),
-                NotificationUtil.formatTripDate(trip));
+    public void sendNotificationToParticipantsOnModification(Trip updatedTrip) {
+        // On peut utiliser directement l'objet 'updatedTrip'
+        String date = DateUtil.formatToFrench(updatedTrip.getDateDebut().toLocalDate());
+        String contenu = String.format(
+                "Le trajet du %s de %s à %s a été modifié. Veuillez consulter les détails.",
+                date,
+                updatedTrip.getVilleDepart(),
+                updatedTrip.getVilleArrivee()
+        );
+        String type = "Modification de trajet";
 
-        notificationUtil.sendNotificationToAllParticipants(trip, contenu, "Annulation Covoit");
+        // On utilise votre méthode utilitaire existante en lui passant les infos
+        for (Subscribe inscription : updatedTrip.getSubscribes()) {
+            notificationUtil.createAndSaveNotification(contenu, type, inscription.getUser());
+        }
     }
 
     public void sendNotificationToUsersOnCarStatusUpdate(Car car, String newStatus, User user) {

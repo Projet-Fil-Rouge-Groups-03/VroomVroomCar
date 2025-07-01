@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalTime;
@@ -20,12 +17,15 @@ import java.util.Set;
  * y compris les dates, les horaires, les lieux, les participants et le véhicule utilisé.
  *
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "trajet")
+@ToString(exclude = {"car", "subscribes", "organisateur"})
+@EqualsAndHashCode(of = "id")
 public class Trip {
 
     /**
@@ -117,9 +117,13 @@ public class Trip {
      * Relation One-to-Many avec l'entité Subscribe.
      * Chargement paresseux et suppression en cascade.
      */
-    @OneToMany(mappedBy = "trip", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "trip",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
     private Set<Subscribe> subscribes;
-
     /**
      * Constructeur complet.
      */
