@@ -118,7 +118,9 @@ public class UserServiceTest {
         existingUser.setNom("AncienNom");
         existingUser.setPrenom("AncienPrenom");
         existingUser.setMail("ancien@mail.com");
-        existingUser.setAdresse("127 rue d'avant, Ancienne-Ville");
+        existingUser.setLibelle("127 rue d'avant");
+        existingUser.setVille("Ancienne-Ville");
+        existingUser.setCodePostal("59000");
 
         UserResponseDto userResponseDto = new UserResponseDto();
 
@@ -147,7 +149,9 @@ public class UserServiceTest {
         existingUser.setNom("AncienNom");
         existingUser.setPrenom("AncienPrenom");
         existingUser.setMail("ancien@mail.com");
-        existingUser.setAdresse("127 rue d'avant, Ancienne-Ville");
+        existingUser.setLibelle("127 rue d'avant");
+        existingUser.setVille("Ancienne-Ville");
+        existingUser.setCodePostal("59000");
 
         UserResponseDto userResponseDto = new UserResponseDto();
 
