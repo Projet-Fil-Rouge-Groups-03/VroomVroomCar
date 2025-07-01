@@ -101,6 +101,17 @@ public interface ICompanyCarService {
     @Transactional(readOnly = true)
     List<CompanyCarResponseDto> searchCarsByImmatriculation(String immatriculation,int limit);
 
+
+    /**
+     * Recherche les véhicules d'entreprise disponibles selon les critères spécifiés.
+     *
+     * @param marque      la marque du véhicule à rechercher (optionnel, peut être {@code null})
+     * @param modele      le modèle du véhicule à rechercher (optionnel, peut être {@code null})
+     * @param nbDePlaces  le nombre minimum de places assises (mettre 0 pour ignorer ce filtre)
+     * @param dateDebut   la date de début de la période de recherche (optionnelle, peut être {@code null})
+     * @param dateFin     la date de fin de la période de recherche (optionnelle, peut être {@code null})
+     * @return une liste de DTOs de réponse correspondant aux critères de recherche (liste vide si aucun résultat)
+     */
     @Transactional(readOnly = true)
     List<CompanyCarResponseDto> searchCompanyCar(String marque, String modele, int nbDePlaces, Date dateDebut, Date dateFin) throws FunctionnalException;
 }

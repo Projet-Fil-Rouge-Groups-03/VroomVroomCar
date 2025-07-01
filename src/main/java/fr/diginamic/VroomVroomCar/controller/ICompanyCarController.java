@@ -147,6 +147,17 @@ public interface ICompanyCarController {
             @Parameter(description = "Nombre maximum de résultats à retourner")
             @RequestParam(defaultValue = "5") int size);
 
+    /**
+     * Recherche des véhicules d'entreprise disponibles selon différents filtres.
+     *
+     * @param marque      la marque du véhicule (optionnel)
+     * @param modele      le modèle du véhicule (optionnel)
+     * @param nbDePlaces  le nombre de places minimum (optionnel, 0 par défaut)
+     * @param dateDebut   la date de début de la période de réservation (optionnelle)
+     * @param dateFin     la date de fin de la période de réservation (optionnelle)
+     * @return une liste de DTOs de réponse correspondant aux critères de recherche (liste vide si aucun résultat)
+     */
+    @Operation(summary = "Rechercher des voitures de société avec un filtre")
     @GetMapping("/search")
     ResponseEntity<List<CompanyCarResponseDto>> searchCompanyCar(
             @RequestParam(required = false) String marque,

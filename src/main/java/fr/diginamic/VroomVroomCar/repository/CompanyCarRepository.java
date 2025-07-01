@@ -78,6 +78,18 @@ public interface CompanyCarRepository extends JpaRepository<CompanyCar, Integer>
      */
     boolean existsByImmatriculation(String immatriculation);
 
+
+    /**
+     * Recherche les véhicules d'entreprise disponibles en appliquant des filtres dynamiques sur la marque,
+     * le modèle, le nombre de places et la disponibilité sur une période donnée.
+     *
+     * @param marque      la marque à filtrer (optionnelle)
+     * @param modele      le modèle à filtrer (optionnelle)
+     * @param nbDePlaces  le nombre minimum de places à respecter (0 pour ignorer le filtre)
+     * @param dateDebut   la date de début de la période de réservation (optionnelle)
+     * @param dateFin     la date de fin de la période de réservation (optionnelle)
+     * @return une liste de DTOs de réponse correspondant aux critères de recherche (liste vide si aucun résultat)
+     */
     @Query("SELECT cc FROM CompanyCar cc " +
             "WHERE (:marque IS NULL OR cc.marque = :marque) " +
             "AND (:modele IS NULL OR cc.modele = :modele) " +
