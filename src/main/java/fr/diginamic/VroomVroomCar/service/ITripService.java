@@ -111,7 +111,7 @@ public interface ITripService {
      * @return l'heure estimée d'arrivée
      */
     LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart,
-                                   String lieuArrivee, String villeDepart, String villeArrivee);
+                                   String lieuArrivee, String villeDepart, String villeArrivee) throws FunctionnalException;
 
     /**
      * Calcule le nombre de places restantes pour un trajet donné.

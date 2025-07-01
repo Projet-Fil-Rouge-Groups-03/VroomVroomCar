@@ -183,7 +183,7 @@ public class TripService implements ITripService {
     }
 
     // Calcule l'heure d'arrivée estimée
-    public LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) {
+    public LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart, String lieuArrivee, String villeDepart, String villeArrivee) throws FunctionnalException {
         String fromAddress = lieuDepart + ", " + villeDepart;
         String toAddress = lieuArrivee + ", " + villeArrivee;
 

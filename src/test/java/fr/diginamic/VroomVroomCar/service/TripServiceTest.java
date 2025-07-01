@@ -431,7 +431,7 @@ public class TripServiceTest {
      * Teste le calcul de l'heure d'arrivée.
      */
     @Test
-    void testCalculateArrivalTime() {
+    void testCalculateArrivalTime() throws FunctionnalException{
         // Arrange
         LocalTime heureDepart = LocalTime.of(9, 0);
         String lieuDepart = "Centre-ville";

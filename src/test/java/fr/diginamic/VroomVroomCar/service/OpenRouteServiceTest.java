@@ -1,12 +1,14 @@
 package fr.diginamic.VroomVroomCar.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
@@ -48,13 +50,15 @@ class OpenRouteServiceTest {
     }
 
     @Test
-    void testGetTravelDurationInSeconds() {
+    void testGetTravelDurationInSeconds() throws FunctionnalException {
         // Mock géocodage (appelé 2 fois)
-        String mockGeocodeResponse = "{\"features\":[{\"geometry\":{\"coordinates\":[2.3522,48.8566]}}]}";
-        when(restTemplate.getForEntity(anyString(), eq(String.class)))
-                .thenReturn(ResponseEntity.ok(mockGeocodeResponse));
+        String mockGeocodeResponseStart = "{\"features\":[{\"geometry\":{\"coordinates\":[2.3522,48.8566]}}]}";
+        String mockGeocodeResponseEnd = "{\"features\":[{\"geometry\":{\"coordinates\":[4.8357,45.7640]}}]}";
 
-        String mockRouteResponse = "{\"features\":[{\"properties\":{\"summary\":{\"duration\":3600}}}]}";
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
+                .thenReturn(ResponseEntity.ok(mockGeocodeResponseStart))
+                .thenReturn(ResponseEntity.ok(mockGeocodeResponseEnd));
+        String mockRouteResponse = "{\"routes\":[{\"summary\":{\"duration\":3600.0}}]}";
         when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
                 .thenReturn(ResponseEntity.ok(mockRouteResponse));
 
@@ -62,7 +66,7 @@ class OpenRouteServiceTest {
 
         assertEquals(3600, duration, 0.001);
 
-        verify(restTemplate, times(2)).getForEntity(anyString(), eq(String.class));
+        verify(restTemplate, times(2)).exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class));
         verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(String.class));
     }
 }

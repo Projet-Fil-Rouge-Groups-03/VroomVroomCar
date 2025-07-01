@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.service;
 
+import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -67,8 +68,15 @@ public class OpenRouteService {
      * @throws RuntimeException si la requête échoue ou le parsing JSON échoue
      */
     private JsonNode getRouteResponse(String adresseDepart, String adresseArrivee) {
+        System.out.println("--- OpenRouteService DEBUG ---");
+        System.out.println("Adresse de départ demandée : " + adresseDepart);
+        System.out.println("Adresse d'arrivée demandée : " + adresseArrivee);
+
         double[] start = getCoordinatesFromAddress(adresseDepart);
         double[] end = getCoordinatesFromAddress(adresseArrivee);
+
+        System.out.println("Coordonnées de départ trouvées : " + Arrays.toString(start));
+        System.out.println("Coordonnées d'arrivée trouvées : " + Arrays.toString(end));
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", API_KEY);
@@ -79,6 +87,9 @@ public class OpenRouteService {
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(ROUTE_URL, request, String.class);
+
+        System.out.println("Réponse BRUTE de l'API Directions : " + response.getBody());
+        System.out.println("----------------------------");
 
         try {
             return objectMapper.readTree(response.getBody());
@@ -94,38 +105,26 @@ public class OpenRouteService {
      * @param adresseArrivee   adresse d'arrivée complète (ex : "1 place Bellecour, Lyon")
      * @return la durée estimée du trajet en secondes
      */
-    public double getTravelDurationInSeconds(String adresseDepart, String adresseArrivee) {
+    public double getTravelDurationInSeconds(String adresseDepart, String adresseArrivee) throws FunctionnalException {
         JsonNode root = getRouteResponse(adresseDepart, adresseArrivee);
 
-        // Vérifiez que root n'est pas null
-        if (root == null) {
-            throw new RuntimeException("La réponse JSON est null.");
+        // GESTION D'ERREUR : Vérifier si l'API a retourné une erreur explicite
+        if (root.has("error")) {
+            String errorMessage = root.path("error").path("message").asText("Erreur inconnue de l'API de routage.");
+            throw new FunctionnalException("Impossible de calculer l'itinéraire : " + errorMessage);
         }
 
-        JsonNode featuresNode = root.path("features");
-        if (featuresNode == null || featuresNode.isMissingNode() || featuresNode.size() == 0) {
-            throw new RuntimeException("Le nœud 'features' est manquant ou vide dans la réponse JSON.");
+        // --- CORRECTION DU CHEMIN DE PARSING ---
+        // Le chemin correct est : routes -> premier élément ([0]) -> summary -> duration
+        JsonNode durationNode = root.path("routes").path(0).path("summary").path("duration");
+
+        // GESTION D'ERREUR : Vérifier que le chemin a bien été trouvé
+        if (durationNode.isMissingNode()) {
+            throw new FunctionnalException("La durée du trajet est manquante dans la réponse de l'API. Réponse reçue: " + root.toPrettyString());
         }
 
-        JsonNode propertiesNode = featuresNode.get(0).path("properties");
-        if (propertiesNode == null || propertiesNode.isMissingNode()) {
-            throw new RuntimeException("Le nœud 'properties' est manquant dans la réponse JSON.");
-        }
-
-        JsonNode summaryNode = propertiesNode.path("summary");
-        if (summaryNode == null || summaryNode.isMissingNode()) {
-            throw new RuntimeException("Le nœud 'summary' est manquant dans la réponse JSON.");
-        }
-
-        JsonNode durationNode = summaryNode.path("duration");
-        if (durationNode == null || durationNode.isMissingNode()) {
-            throw new RuntimeException("Le nœud 'duration' est manquant dans la réponse JSON.");
-        }
-        System.out.println("Réponse JSON complète : " + root.toPrettyString());
         return durationNode.asDouble();
     }
-
-
 
     /**
      * Récupère la distance du trajet entre deux adresses, en kilomètres.
