@@ -45,6 +45,10 @@ public interface IUserController {
      */
     @Operation(summary = "Rechercher un utilisateur par nom", description = "Renvoie les informations d'un utilisateur à partir de son nom.")
     public ResponseEntity<UserResponseDto> findByNom(@RequestParam String nom) throws ResourceNotFoundException;
+
+    @Operation(summary = "Filtrer une liste d'utilisateurs par le nom", description = "Renvoie une liste d'utilisateurs correspondant au nom.")
+    ResponseEntity<List<UserResponseDto>> searchUserByNom(@RequestParam String nom, @RequestParam(defaultValue = "5") int size);
+
     /**
      * Ajoute un nouvel utilisateur.
      *

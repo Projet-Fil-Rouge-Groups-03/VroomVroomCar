@@ -43,6 +43,9 @@ public interface IUserService {
     @Transactional(readOnly = true)
     UserResponseDto getByEmail(String nom) throws ResourceNotFoundException;
 
+    @Transactional(readOnly = true)
+    List<UserResponseDto> searchUserByNom(String nom, int limit);
+
     /**
      * Crée un nouvel utilisateur à partir des données fournies.
      *
