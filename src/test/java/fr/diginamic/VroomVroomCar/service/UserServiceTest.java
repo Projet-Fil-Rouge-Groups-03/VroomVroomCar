@@ -156,7 +156,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void updateUser() throws ResourceNotFoundException {
+    void testUpdateUserById() throws ResourceNotFoundException {
         UserRequestDto userRequestDto = new UserRequestDto();
         userRequestDto.setMail("email@test.fr");
         userRequestDto.setNom("NomTest");
@@ -191,7 +191,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testUpdateUser() throws ResourceNotFoundException {
+    void testUpdateUserByNom() throws ResourceNotFoundException {
         UserRequestDto userRequestDto = new UserRequestDto();
         userRequestDto.setMail("email@test.fr");
         userRequestDto.setNom("NomTest");
