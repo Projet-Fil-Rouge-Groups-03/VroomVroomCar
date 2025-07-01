@@ -108,8 +108,7 @@ public interface ITripController {
             @RequestParam(required = false) String villeArrivee,
 
             @Parameter(description = "Date de début (format: yyyy-MM-dd)")
-            @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateDebut,
+            @RequestParam(required = false) String dateDebutStr,
 
             @Parameter(description = "Heure de départ (format: HH:mm:ss)")
             @RequestParam(required = false)
