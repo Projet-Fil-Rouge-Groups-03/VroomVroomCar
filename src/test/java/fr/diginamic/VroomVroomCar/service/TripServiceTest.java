@@ -295,7 +295,7 @@ public class TripServiceTest {
         when(tripRepository.findUpcomingUserTrips(userId)).thenReturn(mockTrips);
 
         // Act
-        List<Trip> result = tripService.getUpcomingUserTrips(userId);
+        List<TripResponseDto> result = tripService.getUpcomingUserTrips(userId);
 
         // Assert
         assertEquals(2, result.size());
@@ -315,7 +315,7 @@ public class TripServiceTest {
         when(tripRepository.findPastUserTrips(userId)).thenReturn(mockTrips);
 
         // Act
-        List<Trip> result = tripService.getPastUserTrips(userId);
+        List<TripResponseDto> result = tripService.getPastUserTrips(userId);
 
         // Assert
         assertEquals(1, result.size());

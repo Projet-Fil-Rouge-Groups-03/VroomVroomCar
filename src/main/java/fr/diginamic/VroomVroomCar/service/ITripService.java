@@ -69,7 +69,7 @@ public interface ITripService {
      * @param userId l'identifiant de l'utilisateur concerné
      * @return la liste des trajets futurs
      */
-    List<Trip> getUpcomingUserTrips(Integer userId);
+    List<TripResponseDto> getUpcomingUserTrips(Integer userId);
 
     /**
      * Service permettant de récupérer les trajets passés d'un utilisateur,
@@ -78,7 +78,7 @@ public interface ITripService {
      * @param userId l'identifiant de l'utilisateur concerné
      * @return la liste des trajets passés
      */
-    List<Trip> getPastUserTrips(Integer userId);
+    List<TripResponseDto> getPastUserTrips(Integer userId);
 
     /**
      * Met à jour un trajet existant avec les nouvelles données fournies.

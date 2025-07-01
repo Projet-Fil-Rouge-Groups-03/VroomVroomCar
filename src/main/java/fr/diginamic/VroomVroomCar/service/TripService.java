@@ -93,13 +93,19 @@ public class TripService implements ITripService {
     }
 
     @Transactional(readOnly = true)
-    public List<Trip> getUpcomingUserTrips(Integer userId) {
-        return tripRepository.findUpcomingUserTrips(userId);
+    public List<TripResponseDto> getUpcomingUserTrips(Integer userId) {
+        List<Trip> trips = tripRepository.findUpcomingUserTrips(userId);
+        return trips.stream()
+                .map(tripMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<Trip> getPastUserTrips(Integer userId) {
-        return tripRepository.findPastUserTrips(userId);
+    public List<TripResponseDto> getPastUserTrips(Integer userId) {
+        List<Trip> trips = tripRepository.findPastUserTrips(userId);
+        return trips.stream()
+                .map(tripMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     // Update Trip

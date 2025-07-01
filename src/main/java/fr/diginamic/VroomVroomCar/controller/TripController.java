@@ -66,14 +66,14 @@ public class TripController implements ITripController {
     }
 
     @GetMapping("/upcoming/{userId}")
-    public ResponseEntity<List<Trip>> getUpcomingTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
-        List<Trip> trips = tripService.getUpcomingUserTrips(userId);
+    public ResponseEntity<List<TripResponseDto>> getUpcomingTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
+        List<TripResponseDto> trips = tripService.getUpcomingUserTrips(userId);
         return ResponseEntity.ok(trips);
     }
 
     @GetMapping("/past/{userId}")
-    public ResponseEntity<List<Trip>> getPastTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
-        List<Trip> trips = tripService.getPastUserTrips(userId);
+    public ResponseEntity<List<TripResponseDto>> getPastTrip(@PathVariable Integer userId) throws ResourceNotFoundException {
+        List<TripResponseDto> trips = tripService.getPastUserTrips(userId);
         return ResponseEntity.ok(trips);
     }
 
