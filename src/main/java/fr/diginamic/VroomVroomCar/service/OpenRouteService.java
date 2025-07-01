@@ -68,15 +68,8 @@ public class OpenRouteService {
      * @throws RuntimeException si la requête échoue ou le parsing JSON échoue
      */
     private JsonNode getRouteResponse(String adresseDepart, String adresseArrivee) {
-        System.out.println("--- OpenRouteService DEBUG ---");
-        System.out.println("Adresse de départ demandée : " + adresseDepart);
-        System.out.println("Adresse d'arrivée demandée : " + adresseArrivee);
-
         double[] start = getCoordinatesFromAddress(adresseDepart);
         double[] end = getCoordinatesFromAddress(adresseArrivee);
-
-        System.out.println("Coordonnées de départ trouvées : " + Arrays.toString(start));
-        System.out.println("Coordonnées d'arrivée trouvées : " + Arrays.toString(end));
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", API_KEY);
@@ -87,9 +80,6 @@ public class OpenRouteService {
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(ROUTE_URL, request, String.class);
-
-        System.out.println("Réponse BRUTE de l'API Directions : " + response.getBody());
-        System.out.println("----------------------------");
 
         try {
             return objectMapper.readTree(response.getBody());
@@ -108,17 +98,13 @@ public class OpenRouteService {
     public double getTravelDurationInSeconds(String adresseDepart, String adresseArrivee) throws FunctionnalException {
         JsonNode root = getRouteResponse(adresseDepart, adresseArrivee);
 
-        // GESTION D'ERREUR : Vérifier si l'API a retourné une erreur explicite
         if (root.has("error")) {
             String errorMessage = root.path("error").path("message").asText("Erreur inconnue de l'API de routage.");
             throw new FunctionnalException("Impossible de calculer l'itinéraire : " + errorMessage);
         }
 
-        // --- CORRECTION DU CHEMIN DE PARSING ---
-        // Le chemin correct est : routes -> premier élément ([0]) -> summary -> duration
         JsonNode durationNode = root.path("routes").path(0).path("summary").path("duration");
 
-        // GESTION D'ERREUR : Vérifier que le chemin a bien été trouvé
         if (durationNode.isMissingNode()) {
             throw new FunctionnalException("La durée du trajet est manquante dans la réponse de l'API. Réponse reçue: " + root.toPrettyString());
         }
