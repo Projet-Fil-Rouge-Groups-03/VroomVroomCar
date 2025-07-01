@@ -19,11 +19,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -319,6 +322,109 @@ class CompanyCarServiceTest {
 
         assertFalse(result.isEmpty());
         verify(companyCarRepository, times(1)).findByImmatriculationContainingIgnoreCase(anyString(), any(Pageable.class));
+    }
+
+    @Test
+    void testSearchCompanyCars() throws FunctionnalException {
+        String marque = "Renault";
+        String modele = "Twingo";
+        int nbDePlaces = 5;
+        Date dateDebut = Date.valueOf(LocalDate.now().plusDays(1)); // Demain
+        Date dateFin = Date.valueOf(LocalDate.now().plusDays(3));   // Dans 3 jours
+
+        // Création des DTOs de réponse attendus
+        List<CompanyCarResponseDto> expectedCars = Arrays.asList(
+                createCarDto(1L, "Renault", "Twingo", 5),
+                createCarDto(2L, "Renault", "Twingo", 7),
+                createCarDto(3L, "Renault", "Twingo", 5)
+        );
+
+        // Mock du repository
+        when(companyCarRepository.findCompanyCarWithFilters(
+                eq(marque), eq(modele), eq(nbDePlaces), eq(dateDebut), eq(dateFin)))
+                .thenReturn(expectedCars);
+
+        List<CompanyCarResponseDto> result = companyCarService.searchCompanyCar(
+                marque, modele, nbDePlaces, dateDebut, dateFin);
+
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(3);
+        assertThat(result.get(0).getMarque()).isEqualTo("Renault");
+        assertThat(result.get(0).getModele()).isEqualTo("Twingo");
+        assertThat(result.get(0).getNbDePlaces()).isEqualTo(5);
+
+        // Vérification que le repository a été appelé avec les bons paramètres
+        verify(companyCarRepository, times(1)).findCompanyCarWithFilters(
+                marque, modele, nbDePlaces, dateDebut, dateFin);
+
+        // Test avec paramètres NULL (filtres optionnels)
+        List<CompanyCarResponseDto> allCars = Arrays.asList(
+                createCarDto(4L, "Peugeot", "308", 5),
+                createCarDto(5L, "Citroën", "C3", 5)
+        );
+
+        when(companyCarRepository.findCompanyCarWithFilters(
+                isNull(), isNull(), eq(0), isNull(), isNull()))
+                .thenReturn(allCars);
+
+        List<CompanyCarResponseDto> resultAll = companyCarService.searchCompanyCar(
+                null, null, 0, null, null);
+
+        assertThat(resultAll).hasSize(2);
+
+        verify(companyCarRepository, times(1)).findCompanyCarWithFilters(
+                null, null, 0, null, null);
+
+        // Test avec liste vide (aucune voiture trouvée)
+        when(companyCarRepository.findCompanyCarWithFilters(
+                eq("Toyota"), eq("Prius"), eq(4), any(Date.class), any(Date.class)))
+                .thenReturn(Collections.emptyList());
+
+        List<CompanyCarResponseDto> resultEmpty = companyCarService.searchCompanyCar(
+                "Toyota", "Prius", 4, dateDebut, dateFin);
+
+        assertThat(resultEmpty).isEmpty();
+
+        // Test de validation des dates (dates inversées)
+        Date dateFinPassee = Date.valueOf(LocalDate.now().minusDays(1));
+
+        assertThatThrownBy(() ->
+                companyCarService.searchCompanyCar(marque, modele, nbDePlaces, dateDebut, dateFinPassee))
+                .isInstanceOf(FunctionnalException.class)
+                .hasMessageContaining("La date de fin doit être postérieure à la date de début.");
+
+        // Test avec dates identiques (même jour)
+        Date memeDate = Date.valueOf(LocalDate.now().plusDays(5));
+        List<CompanyCarResponseDto> sameDayResult = Arrays.asList(
+                createCarDto(6L, "Renault", "Twingo", 5)
+        );
+
+        when(companyCarRepository.findCompanyCarWithFilters(
+                eq(marque), eq(modele), eq(nbDePlaces), eq(memeDate), eq(memeDate)))
+                .thenReturn(sameDayResult);
+
+        List<CompanyCarResponseDto> resultSameDay = companyCarService.searchCompanyCar(
+                marque, modele, nbDePlaces, memeDate, memeDate);
+
+        assertThat(resultSameDay).hasSize(1);
+
+        // Vérifier le nombre total d'appels au repository
+        verify(companyCarRepository, times(4)).findCompanyCarWithFilters(
+                any(), any(), anyInt(), any(), any());
+
+        // Vérifier qu'aucune autre méthode du repository n'a été appelée
+        verifyNoMoreInteractions(companyCarRepository);
+
+        System.out.println("✅ Tous les scénarios de test sont passés avec succès !");
+    }
+
+    private CompanyCarResponseDto createCarDto(Long id, String marque, String modele, int nbDePlaces) {
+        CompanyCarResponseDto dto = new CompanyCarResponseDto();
+        dto.setId(Math.toIntExact(id));
+        dto.setMarque(marque);
+        dto.setModele(modele);
+        dto.setNbDePlaces(nbDePlaces);
+        return dto;
     }
 
 }

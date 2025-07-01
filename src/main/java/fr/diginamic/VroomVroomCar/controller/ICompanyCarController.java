@@ -6,12 +6,14 @@ import fr.diginamic.VroomVroomCar.entity.Categorie;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -144,4 +146,24 @@ public interface ICompanyCarController {
             @RequestParam String immatriculation,
             @Parameter(description = "Nombre maximum de résultats à retourner")
             @RequestParam(defaultValue = "5") int size);
+
+    /**
+     * Recherche des véhicules d'entreprise disponibles selon différents filtres.
+     *
+     * @param marque      la marque du véhicule (optionnel)
+     * @param modele      le modèle du véhicule (optionnel)
+     * @param nbDePlaces  le nombre de places minimum (optionnel, 0 par défaut)
+     * @param dateDebut   la date de début de la période de réservation (optionnelle)
+     * @param dateFin     la date de fin de la période de réservation (optionnelle)
+     * @return une liste de DTOs de réponse correspondant aux critères de recherche (liste vide si aucun résultat)
+     */
+    @Operation(summary = "Rechercher des voitures de société avec un filtre")
+    @GetMapping("/search")
+    ResponseEntity<List<CompanyCarResponseDto>> searchCompanyCar(
+            @RequestParam(required = false) String marque,
+            @RequestParam(required = false) String modele,
+            @RequestParam(required = false) int nbDePlaces,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateDebut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFin
+    );
 }
