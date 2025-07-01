@@ -23,34 +23,34 @@ public class UserController implements IUserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> findById(@RequestParam int id) throws ResourceNotFoundException {
+    public ResponseEntity<UserResponseDto> findById(@PathVariable Integer id) throws ResourceNotFoundException {
             return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @GetMapping("/find-by-nom/{nom}")
-    public ResponseEntity<UserResponseDto> findByNom(String nom) throws ResourceNotFoundException {
+    @GetMapping("/find-by-nom")
+    public ResponseEntity<UserResponseDto> findByNom(@RequestParam String nom) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.getByNom(nom));
     }
 
     @PostMapping("/create-user")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> addUser(@RequestBody UserRequestDto user) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.createUser(user));
     }
     @PutMapping("/edit-user/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<UserResponseDto> editUser(@RequestParam int id ,@RequestBody UserRequestDto user) throws ResourceNotFoundException {
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<UserResponseDto> editUser(@PathVariable Integer id ,@RequestBody UserRequestDto user) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.updateUser(id,user));
     }
 
-    @PutMapping("/edit-user-by-nom/{nom}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/edit-user-by-nom")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> editUser(@RequestParam String nom ,@RequestBody UserRequestDto user) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.updateUser(nom,user));
     }
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> deleteUser(@RequestParam int id) throws ResourceNotFoundException {
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> deleteUser(@PathVariable Integer id) throws ResourceNotFoundException {
         userService.deleteUser(id);
         return ResponseEntity.ok("L'utilisateur à l'id : " + id + " à bien été supprimé");
     }
