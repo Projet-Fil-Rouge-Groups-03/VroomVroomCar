@@ -3,13 +3,12 @@ package fr.diginamic.VroomVroomCar.service;
 import fr.diginamic.VroomVroomCar.dto.request.CompanyCarRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Categorie;
+import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -101,4 +100,7 @@ public interface ICompanyCarService {
      */
     @Transactional(readOnly = true)
     List<CompanyCarResponseDto> searchCarsByImmatriculation(String immatriculation,int limit);
+
+    @Transactional(readOnly = true)
+    List<CompanyCarResponseDto> searchCompanyCar(String marque, String modele, int nbDePlaces, Date dateDebut, Date dateFin) throws FunctionnalException;
 }

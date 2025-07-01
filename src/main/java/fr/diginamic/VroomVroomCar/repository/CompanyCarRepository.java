@@ -1,14 +1,17 @@
 package fr.diginamic.VroomVroomCar.repository;
 
+import fr.diginamic.VroomVroomCar.dto.response.CompanyCarResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Categorie;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Cette interface est un dépôt Spring Data JPA pour l'entité CompanyCar.
@@ -74,4 +77,23 @@ public interface CompanyCarRepository extends JpaRepository<CompanyCar, Integer>
      * @return true si une voiture avec cette immatriculation existe, sinon false.
      */
     boolean existsByImmatriculation(String immatriculation);
+
+    @Query("SELECT cc FROM CompanyCar cc " +
+            "WHERE (:marque IS NULL OR cc.marque = :marque) " +
+            "AND (:modele IS NULL OR cc.modele = :modele) " +
+            "AND (:nbDePlaces = 0 OR cc.nbDePlaces >= :nbDePlaces) " +
+            "AND (:dateDebut IS NULL OR :dateFin IS NULL OR " +
+            "     NOT EXISTS (" +
+            "         SELECT 1 FROM Reservation r " +
+            "         WHERE r.companyCar.id = cc.id " +
+            "         AND r.dateFin >= :dateDebut " +
+            "         AND r.dateDebut <= :dateFin" +
+            "     ))")
+    List<CompanyCarResponseDto> findCompanyCarWithFilters(
+            @Param("marque") String marque,
+            @Param("modele") String modele,
+            @Param("nbDePlaces") int nbDePlaces,
+            @Param("dateDebut") Date dateDebut,
+            @Param("dateFin") Date dateFin
+    );
 }

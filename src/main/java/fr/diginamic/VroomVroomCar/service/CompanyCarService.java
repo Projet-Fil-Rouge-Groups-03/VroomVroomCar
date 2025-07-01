@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -174,6 +173,20 @@ public class CompanyCarService implements ICompanyCarService {
         return companyCarRepository.findByImmatriculationContainingIgnoreCase(immatriculation, pageable).stream()
                 .map(companyCarMapper::toResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<CompanyCarResponseDto> searchCompanyCar(String marque, String modele, int nbDePlaces, Date dateDebut, Date dateFin) throws FunctionnalException {
+        ValidationUtil.validateEndDateBeforeStartDate(dateDebut, dateFin);
+
+        return companyCarRepository.findCompanyCarWithFilters(
+                marque,
+                modele,
+                nbDePlaces,
+                dateDebut,
+                dateFin
+        );
     }
 
 }
