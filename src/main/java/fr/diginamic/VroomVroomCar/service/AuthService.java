@@ -2,8 +2,11 @@ package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.AuthLoginRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.LoginResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Status;
 import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.exception.AuthenticationException;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.mapper.UserMapper;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
@@ -26,14 +29,22 @@ public class AuthService implements IAuthService {
     private UserRepository userRepository;
     @Autowired
     private JwtAuthentificationService jwtAuthentificationService;
-    public ResponseCookie logUser(AuthLoginRequestDto user) throws Exception {
-        Optional<User> userOptional = userRepository.findByMail(user.getMail());
-        if(userOptional.isPresent() && bcrypt.matches( user.getMotDePasse(),userOptional.get().getMotDePasse()) ){
-            String role = userOptional.get().getStatus().name();
-            return jwtAuthentificationService.generateToken(user.getMail(), role);
-        }
-        throw new Exception();
+
+    @Override
+    public LoginResponseDto logUser(AuthLoginRequestDto loginRequest) throws AuthenticationException {
+        User user = userRepository.findByMail(loginRequest.getMail())
+                .filter(u -> bcrypt.matches(loginRequest.getMotDePasse(), u.getMotDePasse()))
+                .orElseThrow(() -> new AuthenticationException("Identifiants invalides"));
+
+        String role = user.getStatus().name();
+        ResponseCookie jwtCookie = jwtAuthentificationService.generateToken(user.getMail(), role);
+
+        UserResponseDto userDto = userMapper.toResponseDto(user);
+
+        return new LoginResponseDto(jwtCookie, userDto);
     }
+
+    @Override
     public void logoutUser(HttpServletResponse http) throws Exception {
         try {
             jwtAuthentificationService.invalidateToken(http);
@@ -42,6 +53,7 @@ public class AuthService implements IAuthService {
         }
     }
 
+    @Override
     public void register(UserRequestDto userRequestDto) throws FunctionnalException {
         ValidationUtil.validateUserMail(userRequestDto.getMail());
         ValidationUtil.validateUserPassword(userRequestDto.getMotDePasse());
