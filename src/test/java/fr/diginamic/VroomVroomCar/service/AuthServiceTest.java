@@ -2,6 +2,7 @@ package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.AuthLoginRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.LoginResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Status;
 import fr.diginamic.VroomVroomCar.entity.User;
@@ -39,33 +40,50 @@ public class AuthServiceTest {
     private AuthService authService;
 
     @Test
-    void logUser() throws Exception {
-        AuthLoginRequestDto loginDto = new AuthLoginRequestDto();
-        loginDto.setMail("test@example.com");
-        loginDto.setMotDePasse("plainPassword");
+    void logUser_shouldReturnLoginResultDto_whenCredentialsAreValid() throws Exception {
+        AuthLoginRequestDto loginRequest = new AuthLoginRequestDto();
+        loginRequest.setMail("test@example.com");
+        loginRequest.setMotDePasse("plainPassword123*");
 
-        User user = new User();
-        user.setMail("test@example.com");
-        user.setMotDePasse("hashedPassword");
-        user.setStatus(Status.ROLE_ACTIF);
+        User userInDb = new User();
+        userInDb.setId(1);
+        userInDb.setMail("test@example.com");
+        userInDb.setNom("Test");
+        userInDb.setPrenom("User");
+        userInDb.setMotDePasse("hashedPassword123*");
+        userInDb.setStatus(Status.ROLE_ACTIF);
 
-        ResponseCookie fakeCookie = ResponseCookie.from("jwt", "fake-token").build();
+        UserResponseDto userDto = new UserResponseDto();
+        userDto.setId(1);
+        userDto.setMail("test@example.com");
+        userDto.setNom("Test");
+        userDto.setPrenom("User");
+        userDto.setStatus("ROLE_ACTIF");
 
-        //Soulève une exception car l'email n'existe pas dans la base
-        //when(userRepository.findByMail("test@example.com")).thenReturn(Optional.empty());
-        when(userRepository.findByMail("test@example.com")).thenReturn(Optional.of(user));
-        //Soulève un exception car les passwords ne correspondent pas
-        //when(bcrypt.matches("plainPassword", "hashedPassword")).thenReturn(false);
-        when(bcrypt.matches("plainPassword", "hashedPassword")).thenReturn(true);
+        ResponseCookie fakeCookie = ResponseCookie.from("jwt-token", "fake-token-value").build();
+
+        when(userRepository.findByMail("test@example.com")).thenReturn(Optional.of(userInDb));
+        when(bcrypt.matches("plainPassword123*", "hashedPassword123*")).thenReturn(true);
         when(jwtAuthentificationService.generateToken("test@example.com", "ROLE_ACTIF")).thenReturn(fakeCookie);
+        when(userMapper.toResponseDto(userInDb)).thenReturn(userDto);
 
-        ResponseCookie result = authService.logUser(loginDto);
+        LoginResponseDto result = authService.logUser(loginRequest);
 
         assertNotNull(result);
-        assertEquals("fake-token", result.getValue());
+
+        assertNotNull(result.getUserDto());
+        assertEquals(1, result.getUserDto().getId());
+        assertEquals("Test", result.getUserDto().getNom());
+        assertEquals("ROLE_ACTIF", result.getUserDto().getStatus());
+
+        assertNotNull(result.getCookie());
+        assertEquals("jwt-token", result.getCookie().getName());
+        assertEquals("fake-token-value", result.getCookie().getValue());
+
         verify(userRepository).findByMail("test@example.com");
-        verify(bcrypt).matches("plainPassword", "hashedPassword");
+        verify(bcrypt).matches("plainPassword123*", "hashedPassword123*");
         verify(jwtAuthentificationService).generateToken("test@example.com", "ROLE_ACTIF");
+        verify(userMapper).toResponseDto(userInDb);
     }
 
     @Test
