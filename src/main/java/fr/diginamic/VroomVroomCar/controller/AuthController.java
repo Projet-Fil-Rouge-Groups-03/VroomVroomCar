@@ -13,15 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class AuthController {
+public class AuthController implements IAuthController {
 
     @Autowired
     private AuthService authService;
 
     @PostMapping("/login")
+    @Override
     public ResponseEntity<UserResponseDto> login(@RequestBody AuthLoginRequestDto loginRequest)  throws AuthenticationException {
         try {
             LoginResponseDto result = authService.logUser(loginRequest);
@@ -36,13 +38,26 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @Override
     public ResponseEntity<?> logout(HttpServletResponse http) throws Exception {
         authService.logoutUser(http);
         return ResponseEntity.ok().body("vous êtes déconnecté");
     }
     @PostMapping("/register")
+    @Override
     public ResponseEntity<?> register(@RequestBody UserRequestDto userRequestDto) throws FunctionnalException {
         authService.register(userRequestDto);
         return ResponseEntity.ok("Utilisateur ajouté");
+    }
+
+    @GetMapping("/api/auth/me")
+    @Override
+    public ResponseEntity<UserResponseDto> getCurrentUser(Authentication authentication) {
+        UserResponseDto userDto = authService.getCurrentAuthenticatedUser(authentication);
+
+        if (userDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(userDto);
     }
 }
