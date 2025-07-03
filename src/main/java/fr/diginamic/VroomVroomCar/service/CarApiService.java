@@ -19,10 +19,10 @@ import java.util.Optional;
 public class CarApiService {
     private final RestTemplate restTemplate;
 
-    @Value("${app.api.ademe.url:https://public.opendatasoft.com/api/records/1.0/search/}")
+    @Value("${app.api.ademe.url:https://public.opendatasoft.com/api/explore/v2.1/catalog/}")
     private String ademeApiUrl;
 
-    @Value("${app.api.ademe.dataset:vehicules-commercialises}")
+    @Value("${app.api.ademe.dataset:datasets/vehicules-commercialises/records}")
     private String ademeDataset;
 
     public CarApiService(RestTemplate restTemplate) {
@@ -43,7 +43,7 @@ public class CarApiService {
                     .queryParam("dataset", ademeDataset)
                     .queryParam("q", query)
                     .queryParam("rows", 1)
-                    .queryParam("sort", "-co2_g_km") // Prendre le plus récent/fiable
+                    .queryParam("sort", "-co2_g_km")
                     .build()
                     .toUriString();
 
@@ -84,7 +84,6 @@ public class CarApiService {
             return false;
         }
 
-        // Ne pas écraser une valeur existante valide
         if (car.getPollution() != null && !car.getPollution().trim().isEmpty() &&
                 !car.getPollution().equals("0")) {
             log.debug("Valeur pollution déjà présente pour {} {} : {}",
@@ -99,7 +98,6 @@ public class CarApiService {
             return true;
         }
 
-        // Fallback : utiliser les valeurs par défaut de la motorisation
         if (car.getMotorisation() != null) {
             double defaultCo2 = getDefaultCO2ForMotorisation(car.getMotorisation());
             car.setPollution(String.valueOf(defaultCo2));
@@ -115,7 +113,6 @@ public class CarApiService {
         StringBuilder query = new StringBuilder();
         query.append(marque.trim()).append(" ").append(modele.trim());
 
-        // Mapping enum vers termes API
         if (motorisation != null) {
             switch (motorisation) {
                 case ESSENCE -> query.append(" essence");
