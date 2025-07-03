@@ -34,7 +34,7 @@ public class SubscribeController implements ISubscribeController{
         return ResponseEntity.ok(subscribeService.findSubscribesByTrip(id));
     }
 
-    @GetMapping("/ind-by-user/{id}")
+    @GetMapping("/find-by-user/{id}")
     @Override
     public ResponseEntity<List<SubscribeResponseDto>> findByUser(@PathVariable Integer id){
         return ResponseEntity.ok(subscribeService.findSubscribesByUser(id));
