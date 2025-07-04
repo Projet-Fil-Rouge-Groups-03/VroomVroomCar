@@ -4,6 +4,7 @@ import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserSummaryDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.User;
@@ -17,8 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TripMapper {
 
-    private UserRepository userRepository;
-    private CarRepository carRepository;
+    private final CarMapper carMapper;
 
     public Trip toEntity(TripRequestDto request, User organisateur, Car car) {
         Trip trip = new Trip();
@@ -49,11 +49,15 @@ public class TripMapper {
         response.setNbPlacesRestantes(trip.getNbPlacesRestantes());
 
         if (trip.getOrganisateur() != null) {
-            response.setOrganisateurId(trip.getOrganisateur().getId());
+            User organisateurEntity = trip.getOrganisateur();
+            response.setOrganisateurId(organisateurEntity.getId());
+            response.setOrganisateur(new UserSummaryDto(organisateurEntity.getNom(), organisateurEntity.getPrenom()));
         }
 
         if (trip.getCar() != null) {
-            response.setCarId(trip.getCar().getId());
+            Car carEntity = trip.getCar();
+            response.setCarId(carEntity.getId());
+            response.setCar(carMapper.toResponseDto(carEntity));
         }
 
         return response;
