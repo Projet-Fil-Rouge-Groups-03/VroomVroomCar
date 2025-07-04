@@ -56,12 +56,13 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public void register(UserRequestDto userRequestDto) throws FunctionnalException {
+    public User register(UserRequestDto userRequestDto) throws FunctionnalException {
         ValidationUtil.validateUserMail(userRequestDto.getMail());
         ValidationUtil.validateUserPassword(userRequestDto.getMotDePasse());
         if(userRepository.findByMail(userRequestDto.getMail()).isPresent()) throw new FunctionnalException("Cet utilisateur existe déjà");
         User user = userMapper.toEntity(userRequestDto, bcrypt.encode(userRequestDto.getMotDePasse()),Status.ROLE_ACTIF);
-        userRepository.save(user);
+
+        return userRepository.save(user);
     }
 
     @Override

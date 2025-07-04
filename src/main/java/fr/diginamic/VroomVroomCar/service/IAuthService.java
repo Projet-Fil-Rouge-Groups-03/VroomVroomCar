@@ -4,6 +4,7 @@ import fr.diginamic.VroomVroomCar.dto.request.AuthLoginRequestDto;
 import fr.diginamic.VroomVroomCar.dto.request.UserRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.LoginResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
+import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.exception.AuthenticationException;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +16,7 @@ public interface IAuthService {
 
     void logoutUser(HttpServletResponse http) throws Exception;
 
-    void register(UserRequestDto userRequestDto) throws FunctionnalException;
+    User register(UserRequestDto userRequestDto) throws FunctionnalException;
 
     /**
      * Récupère les informations de l'utilisateur actuellement authentifié.
