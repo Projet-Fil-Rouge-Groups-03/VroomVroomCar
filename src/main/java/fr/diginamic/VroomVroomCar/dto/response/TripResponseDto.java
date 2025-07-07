@@ -85,5 +85,19 @@ public class TripResponseDto {
          */
         @Schema(description = "Identifiant du véhicule associé", example = "44")
         private Integer carId;
+
+        /**
+         * Objet contenant les détails du véhicule associé.
+         * Renseigné pour les listes de recherche.
+         */
+        @Schema(description = "Infos du véhicule associé")
+        private CarResponseDto car;
+
+        /**
+         * Objet contenant le nom et prénom de l'organisateur.
+         * Renseigné pour les listes de recherche.
+         */
+        @Schema(description = "Infos de l'organisateur du trajet", example = "Didier Mazier")
+        private UserSummaryDto organisateur;
 }
 

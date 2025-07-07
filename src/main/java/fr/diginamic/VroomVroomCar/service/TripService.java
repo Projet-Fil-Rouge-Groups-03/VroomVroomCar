@@ -166,8 +166,6 @@ public class TripService implements ITripService {
     }
 
     // Delete Trip
-// Dans TripService.java
-
     @Transactional
     public void deleteTrip(Integer id) throws FunctionnalException {
         Trip trip = tripRepository.findById(id)
