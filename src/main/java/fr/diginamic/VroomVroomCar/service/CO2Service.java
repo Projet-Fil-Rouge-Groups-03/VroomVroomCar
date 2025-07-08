@@ -2,6 +2,7 @@ package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Trip;
+import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.util.CO2Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class CO2Service {
      * @param trip le trajet à analyser, avec lieux et villes de départ/arrivée
      * @return les émissions de CO₂ estimées pour ce trajet (en kilogrammes)
      */
-    public double calculerCo2TrajetAvecOSM(Car car, Trip trip) {
+    public double calculerCo2TrajetAvecOSM(Car car, Trip trip) throws FunctionnalException {
         String adresseDepart = trip.getLieuDepart() + ", " + trip.getVilleDepart();
         String adresseArrivee = trip.getLieuArrivee() + ", " + trip.getVilleArrivee();
         double distanceKm = openRouteService.getTravelDistanceInKilometers(adresseDepart, adresseArrivee);
