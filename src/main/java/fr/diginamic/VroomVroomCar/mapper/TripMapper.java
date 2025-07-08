@@ -8,8 +8,11 @@ import fr.diginamic.VroomVroomCar.dto.response.UserSummaryDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
+import fr.diginamic.VroomVroomCar.service.OpenRouteService;
+import fr.diginamic.VroomVroomCar.util.TimeTravelUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,6 +22,8 @@ import org.springframework.stereotype.Component;
 public class TripMapper {
 
     private final CarMapper carMapper;
+    private final OpenRouteService openRouteService;
+    private final TimeTravelUtil timeTravelUtil;
 
     public Trip toEntity(TripRequestDto request, User organisateur, Car car) {
         Trip trip = new Trip();
@@ -58,6 +63,39 @@ public class TripMapper {
             Car carEntity = trip.getCar();
             response.setCarId(carEntity.getId());
             response.setCar(carMapper.toResponseDto(carEntity));
+        }
+
+        // === Estimations ===
+        String adresseDepart = trip.getLieuDepart() + ", " + trip.getVilleDepart();
+        String adresseArrivee = trip.getLieuArrivee() + ", " + trip.getVilleArrivee();
+        System.out.println("Départ : " + adresseDepart);
+        System.out.println("Arrivée : " + adresseArrivee);
+
+        // Initialisation des valeurs par défaut
+        response.setTimeTravel("Inconnue");
+        response.setDistanceInKm(0.0);
+
+        try {
+            // Appel pour la durée
+            double durationInSeconds = openRouteService.getTravelDurationInSeconds(adresseDepart, adresseArrivee);
+            response.setTimeTravel(timeTravelUtil.formatDuration(durationInSeconds));
+            System.out.println("Durée calculée : " + durationInSeconds + " secondes");
+
+        } catch (FunctionnalException e) {
+            System.err.println("Erreur fonctionnelle pour la durée : " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Erreur technique pour la durée : " + e.getMessage());
+        }
+        try {
+            // Appel pour la distance
+            double distanceKm = openRouteService.getTravelDistanceInKilometers(adresseDepart, adresseArrivee);
+            response.setDistanceInKm(distanceKm);
+            System.out.println("Distance calculée : " + distanceKm + " km");
+
+        } catch (FunctionnalException e) {
+            System.err.println("Erreur fonctionnelle pour la distance : " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Erreur technique pour la distance : " + e.getMessage());
         }
 
         return response;

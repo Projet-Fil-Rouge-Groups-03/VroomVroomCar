@@ -118,16 +118,24 @@ public class OpenRouteService {
      * @param adresseDepart adresse de départ (ex. : "10 rue de la paix, Paris")
      * @param adresseArrivee   adresse d'arrivée (ex. : "1 place Bellecour, Lyon")
      * @return la distance en kilomètres (double)
+     * @throws FunctionnalException si la distance ne peut pas être calculée
      */
-    public double getTravelDistanceInKilometers(String adresseDepart, String adresseArrivee) {
+    public double getTravelDistanceInKilometers(String adresseDepart, String adresseArrivee) throws FunctionnalException {
         JsonNode root = getRouteResponse(adresseDepart, adresseArrivee);
-        double distanceInMeters = root.path("features")
-                .get(0)
-                .path("properties")
-                .path("summary")
-                .path("distance")
-                .asDouble();
-        return distanceInMeters / 1000.0;
+
+        if (root.has("error")) {
+            String errorMessage = root.path("error").path("message").asText("Erreur inconnue de l'API de routage.");
+            throw new FunctionnalException("Impossible de calculer la distance : " + errorMessage);
+        }
+
+        // Utilisation de la même structure que pour la durée
+        JsonNode distanceNode = root.path("routes").path(0).path("summary").path("distance");
+
+        if (distanceNode.isMissingNode()) {
+            throw new FunctionnalException("La distance du trajet est manquante dans la réponse de l'API. Réponse reçue: " + root.toPrettyString());
+        }
+
+        return distanceNode.asDouble() / 1000.0; // Conversion en kilomètres
     }
 
 }
