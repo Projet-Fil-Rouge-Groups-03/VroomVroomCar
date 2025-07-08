@@ -2,6 +2,7 @@ package fr.diginamic.VroomVroomCar.dto.response;
 
 import fr.diginamic.VroomVroomCar.entity.Categorie;
 import fr.diginamic.VroomVroomCar.entity.Motorisation;
+import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,4 +50,7 @@ public class CarResponseDto {
 
     @Schema(description = "Émissions de CO2 par kilomètre", example = "120.5")
     private Double co2ParKm;
+
+    @Schema(description = "Le type de véhicule", example = "VOITURE_SERVICE ou VOITURE_COVOIT")
+    private VehiculeType type;
 }

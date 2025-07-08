@@ -89,6 +89,12 @@ public class ReservationService implements IReservationService {
         return reservations.map(reservationMapper::toResponse);
     }
 
+    public List<ReservationResponseDto> getReservationsByUserId(Integer userId) {
+        List<Reservation> reservations = reservationRepository.findByUserId(userId);
+        return reservations.stream()
+                .map(reservationMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
     // Update Reservation
     @Transactional

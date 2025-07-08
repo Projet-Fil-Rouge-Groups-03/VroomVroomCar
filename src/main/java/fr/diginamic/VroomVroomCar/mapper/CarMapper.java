@@ -3,7 +3,9 @@ package fr.diginamic.VroomVroomCar.mapper;
 import fr.diginamic.VroomVroomCar.dto.request.CarRequestDto;
 import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
+import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.User;
+import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import org.springframework.stereotype.Component;
 
 
@@ -52,6 +54,13 @@ public class CarMapper {
         dto.setUtilisateurNom(car.getUser().getNom());
         dto.setMotorisation(car.getMotorisation());
         dto.setCategorie(car.getCategories());
+
+        if (car instanceof CompanyCar) {
+            dto.setType(VehiculeType.VOITURE_SERVICE);
+        } else {
+            dto.setType(VehiculeType.VOITURE_COVOIT);
+        }
+
         return dto;
     }
 

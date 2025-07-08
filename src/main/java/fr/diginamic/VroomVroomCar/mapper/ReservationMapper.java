@@ -5,10 +5,14 @@ import fr.diginamic.VroomVroomCar.dto.response.ReservationResponseDto;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.Reservation;
 import fr.diginamic.VroomVroomCar.entity.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class ReservationMapper {
+
+    private final CarMapper carMapper;
 
     public Reservation toEntity(ReservationRequestDto request, User user, CompanyCar car) {
         Reservation reservation = new Reservation();
@@ -30,7 +34,9 @@ public class ReservationMapper {
         }
 
         if (reservation.getCompanyCar() != null) {
-            response.setCarId(reservation.getCompanyCar().getId());
+            CompanyCar carEntity = reservation.getCompanyCar();
+            response.setCarId(carEntity.getId());
+            response.setCar(carMapper.toResponseDto(carEntity));
         }
 
         return response;

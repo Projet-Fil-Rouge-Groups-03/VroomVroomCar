@@ -53,6 +53,13 @@ public class ReservationController implements IReservationController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ReservationResponseDto>> getReservationsByUserId(@PathVariable Integer userId) {
+        List<ReservationResponseDto> reservations = reservationService.getReservationsByUserId(userId);
+        return ResponseEntity.ok(reservations);
+    }
+
+
     // Update Reservation (PUT)
     @PutMapping("/update/{id}")
     public ResponseEntity<ReservationResponseDto> updateReservation(@PathVariable Integer id, @Valid @RequestBody ReservationRequestDto requestDto) throws FunctionnalException {

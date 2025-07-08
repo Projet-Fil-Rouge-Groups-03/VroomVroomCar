@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,12 +39,14 @@ public class TripResponseDto {
         /**
          * Heure de départ prévue
          */
-        @Schema(description = "Heure de départ du trajet", example = "10:00:00")
+        @Schema(description = "Heure de départ du trajet", example = "10:00")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime heureDepart;
         /**
          * Heure d'arrivée estimée, calculée automatiquement
          */
-        @Schema(description = "Heure estimée d'arrivée", example = "13:00:00")
+        @Schema(description = "Heure estimée d'arrivée", example = "13:00")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime heureArrivee;
 
         /**
