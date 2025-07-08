@@ -90,12 +90,9 @@ public class ReservationService implements IReservationService {
     }
 
     public List<ReservationResponseDto> getReservationsByUserId(Integer userId) {
-        // On demande au repository de trouver toutes les réservations pour cet utilisateur.
         List<Reservation> reservations = reservationRepository.findByUserId(userId);
-
-        // On transforme la liste d'entités en une liste de DTOs pour la réponse.
         return reservations.stream()
-                .map(reservationMapper::toResponse) // Utilise ton mapper
+                .map(reservationMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
