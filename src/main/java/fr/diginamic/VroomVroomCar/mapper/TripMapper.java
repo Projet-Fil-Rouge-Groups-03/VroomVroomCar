@@ -68,18 +68,12 @@ public class TripMapper {
         // === Estimations ===
         String adresseDepart = trip.getLieuDepart() + ", " + trip.getVilleDepart();
         String adresseArrivee = trip.getLieuArrivee() + ", " + trip.getVilleArrivee();
-        System.out.println("Départ : " + adresseDepart);
-        System.out.println("Arrivée : " + adresseArrivee);
-
-        // Initialisation des valeurs par défaut
-        response.setTimeTravel("Inconnue");
-        response.setDistanceInKm(0.0);
-
+        response.setTimeTravel("Inconnue"); // Valeur par défaut
+        response.setDistanceInKm(0.0); // Valeur par défaut
         try {
             // Appel pour la durée
             double durationInSeconds = openRouteService.getTravelDurationInSeconds(adresseDepart, adresseArrivee);
             response.setTimeTravel(timeTravelUtil.formatDuration(durationInSeconds));
-            System.out.println("Durée calculée : " + durationInSeconds + " secondes");
 
         } catch (FunctionnalException e) {
             System.err.println("Erreur fonctionnelle pour la durée : " + e.getMessage());
@@ -90,7 +84,6 @@ public class TripMapper {
             // Appel pour la distance
             double distanceKm = openRouteService.getTravelDistanceInKilometers(adresseDepart, adresseArrivee);
             response.setDistanceInKm(distanceKm);
-            System.out.println("Distance calculée : " + distanceKm + " km");
 
         } catch (FunctionnalException e) {
             System.err.println("Erreur fonctionnelle pour la distance : " + e.getMessage());

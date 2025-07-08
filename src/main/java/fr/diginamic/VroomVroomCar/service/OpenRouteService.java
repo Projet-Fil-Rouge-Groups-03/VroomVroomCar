@@ -97,14 +97,12 @@ public class OpenRouteService {
      */
     public double getTravelDurationInSeconds(String adresseDepart, String adresseArrivee) throws FunctionnalException {
         JsonNode root = getRouteResponse(adresseDepart, adresseArrivee);
-
         if (root.has("error")) {
             String errorMessage = root.path("error").path("message").asText("Erreur inconnue de l'API de routage.");
             throw new FunctionnalException("Impossible de calculer l'itinéraire : " + errorMessage);
         }
 
         JsonNode durationNode = root.path("routes").path(0).path("summary").path("duration");
-
         if (durationNode.isMissingNode()) {
             throw new FunctionnalException("La durée du trajet est manquante dans la réponse de l'API. Réponse reçue: " + root.toPrettyString());
         }
@@ -122,15 +120,12 @@ public class OpenRouteService {
      */
     public double getTravelDistanceInKilometers(String adresseDepart, String adresseArrivee) throws FunctionnalException {
         JsonNode root = getRouteResponse(adresseDepart, adresseArrivee);
-
         if (root.has("error")) {
             String errorMessage = root.path("error").path("message").asText("Erreur inconnue de l'API de routage.");
             throw new FunctionnalException("Impossible de calculer la distance : " + errorMessage);
         }
 
-        // Utilisation de la même structure que pour la durée
         JsonNode distanceNode = root.path("routes").path(0).path("summary").path("distance");
-
         if (distanceNode.isMissingNode()) {
             throw new FunctionnalException("La distance du trajet est manquante dans la réponse de l'API. Réponse reçue: " + root.toPrettyString());
         }
