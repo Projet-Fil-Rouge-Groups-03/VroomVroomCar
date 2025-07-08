@@ -44,4 +44,10 @@ public class ReservationResponseDto {
      */
     @Schema(description = "Identifiant du véhicule réservé", example = "1")
     private Integer carId;
+
+    /**
+     * Objet contenant les détails du véhicule associé.
+     */
+    @Schema(description = "Infos du véhicule associé")
+    private CarResponseDto car;
 }
