@@ -39,6 +39,7 @@ public class NotificationMapper {
         dto.setId(notification.getId());
         dto.setContenu(notification.getContenu());
         dto.setNom(notification.getNom());
+        dto.setDate(notification.getDate());
         dto.setUserId(notification.getUser().getId());
         dto.setUserName(notification.getUser().getPrenom() +  " " + notification.getUser().getNom());
         return dto;
