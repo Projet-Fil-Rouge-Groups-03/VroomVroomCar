@@ -46,6 +46,8 @@ public class SubscribeMapper {
     public SubscribeResponseDto toResponseDto(Subscribe subscribe){
         return new SubscribeResponseDto(
                 subscribe.getUser().getId(),
+                subscribe.getUser().getPrenom(),
+                subscribe.getUser().getNom(),
                 subscribe.getTrip().getId(),
                 subscribe.getDateInscription());
     }

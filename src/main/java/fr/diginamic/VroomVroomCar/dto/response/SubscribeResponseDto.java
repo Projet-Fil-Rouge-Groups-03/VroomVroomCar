@@ -26,6 +26,18 @@ public class SubscribeResponseDto {
      */
     @Schema(description = "Utilisateur inscrit", hidden = true)
     private Integer userId;
+
+    /**
+     * Prenom de l'utilisateur inscrit au trajet.
+     */
+    @Schema(description = "Prenom de l'utilisateur inscrit", hidden = true)
+    private String prenom;
+    /**
+     * Nom de l'utilisateur inscrit au trajet.
+     */
+    @Schema(description = "Nom de l'utilisateur inscrit", hidden = true)
+    private String nom;
+
     /**
      * Informations du trajet auquel l'utilisateur est inscrit.
      */
