@@ -114,5 +114,11 @@ public class TripResponseDto {
          */
         @Schema(description = "Distance du trajet estimé", example = "7km")
         private double distanceInKm;
+
+        /**
+         * Objet contenant la pollution totale en gramme CO2 du trajet.
+         */
+        @Schema(description = "Pollution du trajet estimé", example = "60g CO2")
+        private double pollution;
 }
 
