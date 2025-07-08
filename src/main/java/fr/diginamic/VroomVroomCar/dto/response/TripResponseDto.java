@@ -102,5 +102,17 @@ public class TripResponseDto {
          */
         @Schema(description = "Infos de l'organisateur du trajet", example = "Didier Mazier")
         private UserSummaryDto organisateur;
+
+        /**
+         * Objet contenant le temps de trajets estimé.
+         */
+        @Schema(description = "Temps de trajet estimé", example = "7h")
+        private String timeTravel;
+
+        /**
+         * Objet contenant le nombre de km du trajet.
+         */
+        @Schema(description = "Distance du trajet estimé", example = "7km")
+        private double distanceInKm;
 }
 
