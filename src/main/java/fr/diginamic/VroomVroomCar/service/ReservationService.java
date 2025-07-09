@@ -96,6 +96,20 @@ public class ReservationService implements IReservationService {
                 .collect(Collectors.toList());
     }
 
+    public List<ReservationResponseDto> getUpcomingReservationsByUserId(Integer userId) {
+        List<Reservation> reservations = reservationRepository.findUpcomingByUserId(userId);
+        return reservations.stream()
+                .map(reservationMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<ReservationResponseDto> getPastReservationsByUserId(Integer userId) {
+        List<Reservation> reservations = reservationRepository.findPastByUserId(userId);
+        return reservations.stream()
+                .map(reservationMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
     // Update Reservation
     @Transactional
     public ReservationResponseDto updateReservation(Integer id, ReservationRequestDto requestDto) throws FunctionnalException {
