@@ -9,6 +9,8 @@ import fr.diginamic.VroomVroomCar.service.TripService;
 import fr.diginamic.VroomVroomCar.util.DateUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +36,10 @@ public class TripController implements ITripController {
 
     // Read Trip (GET)
     @GetMapping
-    public ResponseEntity<List<TripResponseDto>> getAllTrips(){
-        List<TripResponseDto> trips = tripService.getAllTrips();
+    public ResponseEntity<Page<TripResponseDto>> getAllTrips(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size){
+        Page<TripResponseDto> trips = tripService.getAllTrips(page, size);
         return ResponseEntity.ok(trips);
     }
 

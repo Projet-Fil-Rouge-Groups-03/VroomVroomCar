@@ -9,8 +9,7 @@ import fr.diginamic.VroomVroomCar.mapper.TripMapper;
 import fr.diginamic.VroomVroomCar.repository.*;
 import fr.diginamic.VroomVroomCar.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -66,11 +65,10 @@ public class TripService implements ITripService {
 
     // Read Trip
     @Transactional(readOnly = true)
-    public List<TripResponseDto> getAllTrips() {
-        List<Trip> trips = tripRepository.findAll();
-        return trips.stream()
-                .map(tripMapper::toResponse)
-                .collect(Collectors.toList());
+    public Page<TripResponseDto> getAllTrips(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dateDebut").descending());
+        Page<Trip> trips = tripRepository.findAll(pageable);
+        return trips.map(tripMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
