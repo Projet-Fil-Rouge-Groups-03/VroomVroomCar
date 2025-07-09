@@ -39,7 +39,12 @@ INSERT INTO trajet (organisateur_id, car_id, date_debut, date_fin, heure_depart,
 (3, 7, '2025-07-06', '2025-07-06', '09:30:00', '11:00:00', 'Place Rihour', 'Lille', 'Gare Centrale', 'Bruxelles', 2),
 (4, 10, '2025-07-07', '2025-07-07', '07:00:00', '13:00:00', 'Université Grenoble', 'Grenoble', 'Promenade des Anglais', 'Nice', 4),
 (5, 8, '2025-07-08', '2025-07-08', '10:00:00', '12:30:00', 'Place de la Victoire', 'Bordeaux', 'Capitole', 'Toulouse', 1),
-(2, 9, '2025-07-09', '2025-07-09', '14:00:00', '15:45:00', 'Place Kléber', 'Strasbourg', 'Place Stanislas', 'Nancy', 3);
+(2, 9, '2025-07-09', '2025-07-09', '14:00:00', '15:45:00', 'Place Kléber', 'Strasbourg', 'Place Stanislas', 'Nancy', 3),
+(1, 1, '2025-07-10', '2025-07-11', '08:30:00', '12:30:00', 'Gare Saint-Charles', 'Gare de Lyon Part-Dieu', 'Marseille', 'Lyon', 2),
+(2, 3, '2025-07-11', '2025-07-12', '09:00:00', '14:00:00', 'Place de Jaude', 'Place Masséna', 'Clermont-Fd', 'Nice', 4),
+(4, 4, '2025-07-12', '2025-07-13', '07:00:00', '11:00:00', 'Gare de Rennes', 'Gare de Nantes', 'Rennes', 'Nantes', 1),
+(3, 5, '2025-07-13', '2025-07-14', '06:30:00', '10:30:00', 'Université de Tours', 'Gare de Bordeaux', 'Tours', 'Bordeaux', 3),
+(5, 2, '2025-07-14', '2025-07-15', '10:00:00', '15:00:00', 'Gare de Dijon', 'Gare de Strasbourg', 'Dijon', 'Strasbourg', 2);
 
 INSERT INTO inscription (utilisateur_id, trajet_id, date_inscription) VALUES
 (1, 1, '2025-06-15'),
