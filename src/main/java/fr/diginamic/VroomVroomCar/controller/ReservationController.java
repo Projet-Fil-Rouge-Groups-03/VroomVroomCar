@@ -59,6 +59,17 @@ public class ReservationController implements IReservationController {
         return ResponseEntity.ok(reservations);
     }
 
+    @GetMapping("/user/{userId}/upcoming")
+    public ResponseEntity<List<ReservationResponseDto>> getUpcomingReservationsByUserId(@PathVariable Integer userId) {
+        List<ReservationResponseDto> reservations = reservationService.getUpcomingReservationsByUserId(userId);
+        return ResponseEntity.ok(reservations);
+    }
+
+    @GetMapping("/user/{userId}/past")
+    public ResponseEntity<List<ReservationResponseDto>> getPastReservationsByUserId(@PathVariable Integer userId) {
+        List<ReservationResponseDto> reservations = reservationService.getPastReservationsByUserId(userId);
+        return ResponseEntity.ok(reservations);
+    }
 
     // Update Reservation (PUT)
     @PutMapping("/update/{id}")

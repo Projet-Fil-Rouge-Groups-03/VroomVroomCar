@@ -6,6 +6,8 @@ import fr.diginamic.VroomVroomCar.entity.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -40,4 +42,22 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     List<Reservation> findByCompanyCarAndDateDebutAfter(CompanyCar companyCar, Date date);
     List<Reservation> findByUserId(Integer userId);
+
+    /**
+     * Trouve les réservations futures ou en cours pour un utilisateur donné,
+     * triées par date de début croissante.
+     * @param userId L'ID de l'utilisateur.
+     * @return Une liste de réservations.
+     */
+    @Query("SELECT r FROM Reservation r WHERE r.user.id = :userId AND r.dateFin >= CURRENT_DATE ORDER BY r.dateDebut ASC")
+    List<Reservation> findUpcomingByUserId(@Param("userId") Integer userId);
+
+    /**
+     * Trouve les réservations passées pour un utilisateur donné,
+     * triées par date de début décroissante (les plus récentes d'abord).
+     * @param userId L'ID de l'utilisateur.
+     * @return Une liste de réservations.
+     */
+    @Query("SELECT r FROM Reservation r WHERE r.user.id = :userId AND r.dateFin < CURRENT_DATE ORDER BY r.dateDebut DESC")
+    List<Reservation> findPastByUserId(@Param("userId") Integer userId);
 }
