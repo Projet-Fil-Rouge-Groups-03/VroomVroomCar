@@ -77,9 +77,11 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
      * @param userId l'identifiant de l'utilisateur (organisateur ou passager)
      * @return une liste de trajets futurs, triés par date de début et heure de départ croissantes
      */
-    @Query("SELECT DISTINCT t FROM Trip t " +
-            "LEFT JOIN Subscribe s ON s.trip.id = t.id " +
-            "WHERE (t.organisateur.id = :userId OR s.user.id = :userId) " +
+    @Query("SELECT t FROM Trip t WHERE t.id IN (" +
+            "  SELECT t1.id FROM Trip t1 WHERE t1.organisateur.id = :userId" +
+            "  UNION" +
+            "  SELECT s.trip.id FROM Subscribe s WHERE s.user.id = :userId" +
+            ") " +
             "AND (t.dateFin IS NULL AND t.dateDebut >= CURRENT_DATE OR t.dateFin >= CURRENT_DATE) " +
             "ORDER BY t.dateDebut ASC, t.heureDepart ASC")
     List<Trip> findUpcomingUserTrips(@Param("userId") Integer userId);
@@ -96,9 +98,11 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
      * @param userId l'identifiant de l'utilisateur (organisateur ou passager)
      * @return une liste de trajets passés, triés par date de début et heure de départ décroissantes
      */
-    @Query("SELECT DISTINCT t FROM Trip t " +
-            "LEFT JOIN Subscribe s ON s.trip.id = t.id " +
-            "WHERE (t.organisateur.id = :userId OR s.user.id = :userId) " +
+    @Query("SELECT t FROM Trip t WHERE t.id IN (" +
+            "  SELECT t1.id FROM Trip t1 WHERE t1.organisateur.id = :userId" +
+            "  UNION" +
+            "  SELECT s.trip.id FROM Subscribe s WHERE s.user.id = :userId" +
+            ") " +
             "AND (t.dateFin IS NOT NULL AND t.dateFin < CURRENT_DATE OR t.dateFin IS NULL AND t.dateDebut < CURRENT_DATE) " +
             "ORDER BY t.dateDebut DESC, t.heureDepart DESC")
     List<Trip> findPastUserTrips(@Param("userId") Integer userId);
