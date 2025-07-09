@@ -6,6 +6,9 @@ import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.CompanyCar;
 import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.entity.VehiculeType;
+import fr.diginamic.VroomVroomCar.service.CO2Service;
+import fr.diginamic.VroomVroomCar.util.CO2Util;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Component;
  * entre les DTOs de requête et de réponse et l'entité Car.
  */
 @Component
+@RequiredArgsConstructor
 public class CarMapper {
 
     /**
@@ -28,11 +32,17 @@ public class CarMapper {
         car.setMarque(dto.getMarque());
         car.setModele(dto.getModele());
         car.setNbDePlaces(dto.getNbDePlaces());
-        car.setPollution(dto.getPollution());
         car.setInfosSupp(dto.getInfosSupp());
         car.setUser(user);
         car.setMotorisation(dto.getMotorisation());
         car.setCategories(dto.getCategorie());
+
+        if(dto.getPollution() == null){
+            double pollutionDefault = CO2Util.getDefaultCO2ForMotorisation(dto.getMotorisation());
+            car.setPollution(String.valueOf(pollutionDefault));
+        } else {
+            car.setPollution(dto.getPollution());
+        }
         return car;
     }
 

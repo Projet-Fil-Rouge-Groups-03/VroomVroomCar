@@ -60,7 +60,8 @@ public class CO2Service {
         }
 
         double co2ParKm = getCo2Km(car);
-        return co2ParKm * distanceKm;
+        double rawCo2 = co2ParKm * distanceKm;
+        return Math.round(rawCo2 * 10.0) / 10.0;
     }
 
 

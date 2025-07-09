@@ -11,6 +11,7 @@ import fr.diginamic.VroomVroomCar.entity.User;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.repository.CarRepository;
 import fr.diginamic.VroomVroomCar.repository.UserRepository;
+import fr.diginamic.VroomVroomCar.service.CO2Service;
 import fr.diginamic.VroomVroomCar.service.OpenRouteService;
 import fr.diginamic.VroomVroomCar.util.TimeTravelUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +24,7 @@ public class TripMapper {
 
     private final CarMapper carMapper;
     private final OpenRouteService openRouteService;
+    private final CO2Service co2Service;
     private final TimeTravelUtil timeTravelUtil;
 
     public Trip toEntity(TripRequestDto request, User organisateur, Car car) {
@@ -68,27 +70,26 @@ public class TripMapper {
         // === Estimations ===
         String adresseDepart = trip.getLieuDepart() + ", " + trip.getVilleDepart();
         String adresseArrivee = trip.getLieuArrivee() + ", " + trip.getVilleArrivee();
-        response.setTimeTravel("Inconnue"); // Valeur par défaut
-        response.setDistanceInKm(0.0); // Valeur par défaut
+        // Valeurs par défaut
+        response.setTimeTravel("Inconnue");
+        response.setDistanceInKm(0.0);
+        response.setPollution(0.0);
+        // Calculs
         try {
             // Appel pour la durée
             double durationInSeconds = openRouteService.getTravelDurationInSeconds(adresseDepart, adresseArrivee);
             response.setTimeTravel(timeTravelUtil.formatDuration(durationInSeconds));
-
-        } catch (FunctionnalException e) {
-            System.err.println("Erreur fonctionnelle pour la durée : " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Erreur technique pour la durée : " + e.getMessage());
-        }
-        try {
             // Appel pour la distance
             double distanceKm = openRouteService.getTravelDistanceInKilometers(adresseDepart, adresseArrivee);
             response.setDistanceInKm(distanceKm);
+            // Appel pour la pollution
+            double pollutionCO2 = co2Service.calculerCo2TrajetAvecOSM(trip.getCar(), trip);
+            response.setPollution(pollutionCO2);
 
         } catch (FunctionnalException e) {
-            System.err.println("Erreur fonctionnelle pour la distance : " + e.getMessage());
+            System.err.println("Erreur fonctionnelle" + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Erreur technique pour la distance : " + e.getMessage());
+            System.err.println("Erreur technique" + e.getMessage());
         }
 
         return response;
