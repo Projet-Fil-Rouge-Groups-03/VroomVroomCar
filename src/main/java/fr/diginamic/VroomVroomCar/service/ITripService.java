@@ -8,6 +8,8 @@ import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalTime;
 import java.util.Date;
@@ -36,7 +38,7 @@ public interface ITripService {
      *
      * @return une liste de trajets sous forme de DTO
      */
-    List<TripResponseDto> getAllTrips();
+    Page<TripResponseDto> getAllTrips(int page, int size);
 
     /**
      * Récupère un trajet à partir de son identifiant.
