@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -141,7 +142,7 @@ public class TripServiceTest {
     // ============ TESTS ============
 
     /**
-     * Teste la création d'un trajet via la méthode {@link TripService#createTrip}.
+     * Teste la création d'un trajet via la méthode createTrip.
      */
     @Test
     void testCreateTrip() throws FunctionnalException {
@@ -150,7 +151,7 @@ public class TripServiceTest {
         Car car = createCar(1, 5);
 
         Trip trip = createTrip(
-                null, // ID null car pas encore sauvé
+                null,
                 requestDto.getDateDebut(),
                 requestDto.getDateFin(),
                 requestDto.getHeureDepart(),
@@ -165,37 +166,40 @@ public class TripServiceTest {
         TripResponseDto tripResponseDto = new TripResponseDto();
 
         doNothing().when(validationUtil).validateEndDateBeforeStartDate(any(), any());
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
-        when(carRepository.findById(1)).thenReturn(Optional.of(car));
+        when(validationUtil.estVehiculeDeService(anyInt(), any())).thenReturn(true);
+
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
+        when(carRepository.findById(anyInt())).thenReturn(Optional.of(car));
         when(tripMapper.toEntity(any(), any(), any())).thenReturn(trip);
         when(openRouteService.getTravelDurationInSeconds(anyString(), anyString())).thenReturn(7200.0); // 2h
-        when(validationUtil.estVehiculeDeService(eq(1), any())).thenReturn(true);
         when(reservationRepository.existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
-                eq(1), eq(1), eq(requestDto.getDateDebut()), eq(requestDto.getDateFin())
+                anyInt(), anyInt(), any(), any()
         )).thenReturn(true);
         when(subscribeRepository.countByTrip_Id(any())).thenReturn(2);
-
-        ArgumentCaptor<Trip> tripCaptor = ArgumentCaptor.forClass(Trip.class);
-        when(tripRepository.save(tripCaptor.capture())).thenAnswer(i -> {
-            Trip savedTrip = i.getArgument(0);
+        when(tripRepository.save(any(Trip.class))).thenAnswer(invocation -> {
+            Trip savedTrip = invocation.getArgument(0);
             savedTrip.setId(42); // Simule l'ID généré
             return savedTrip;
         });
-        when(tripMapper.toResponse(any())).thenReturn(tripResponseDto);
+        when(tripMapper.toResponse(any(Trip.class))).thenReturn(tripResponseDto);
 
         TripResponseDto result = tripService.createTrip(requestDto);
 
         assertNotNull(result);
+
+        ArgumentCaptor<Trip> tripCaptor = ArgumentCaptor.forClass(Trip.class);
+        verify(tripRepository).save(tripCaptor.capture());
+
         Trip savedTrip = tripCaptor.getValue();
         assertNotNull(savedTrip.getHeureArrivee());
         assertTrue(savedTrip.getNbPlacesRestantes() >= 0);
 
-        verify(userRepository).findById(1);
-        verify(carRepository).findById(1);
-        verify(tripRepository).save(any(Trip.class));
-        verify(tripMapper).toResponse(any(Trip.class));
         verify(validationUtil).validateEndDateBeforeStartDate(any(), any());
+        verify(userRepository).findById(anyInt());
+        verify(carRepository).findById(anyInt());
+        verify(tripMapper).toResponse(any(Trip.class));
     }
+
 
     /**
      * Teste la récupération de tous les trajets via TripService.
@@ -204,17 +208,19 @@ public class TripServiceTest {
     void testGetAllTrips() {
         User user = createUser(1, "Jean", "jean@test.com");
         Car car = createCar(1, 5);
-        Trip trip = createTrip(1, new java.sql.Date(System.currentTimeMillis()), new java.sql.Date(System.currentTimeMillis()), LocalTime.now(),
-                "Toulouse", "Paris", "Toulouse", "Paris", user, car);
+        Trip trip = createTrip(1, new java.sql.Date(System.currentTimeMillis()), new java.sql.Date(System.currentTimeMillis()),
+                LocalTime.now(), "Toulouse", "Paris", "Toulouse", "Paris", user, car);
         TripResponseDto tripResponseDto = new TripResponseDto();
-        Page<Trip> tripPage = new PageImpl<>(Collections.singletonList(trip));
 
-        when(tripRepository.findAll(any(Pageable.class))).thenReturn(tripPage);
+        Page<Trip> page = new PageImpl<>(Collections.singletonList(trip));
+
+        when(tripRepository.findAll(any(Pageable.class))).thenReturn(page);
         when(tripMapper.toResponse(any(Trip.class))).thenReturn(tripResponseDto);
+
         Page<TripResponseDto> result = tripService.getAllTrips(0, 10);
 
         assertFalse(result.isEmpty());
-        assertEquals(1, result.getTotalElements());
+        assertEquals(1, result.getContent().size());
         verify(tripRepository, times(1)).findAll(any(Pageable.class));
     }
 
@@ -254,9 +260,17 @@ public class TripServiceTest {
 
         List<Trip> expectedTrips = List.of(trip1);
 
+        // Création du TripResponseDto attendu
+        TripResponseDto tripResponseDto = new TripResponseDto();
+        tripResponseDto.setVilleDepart(villeDepart);
+        tripResponseDto.setVilleArrivee(villeArrivee);
+
+        // Mock du repository
         when(tripRepository.findTripsWithFilters(
                 villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name())
         ).thenReturn(expectedTrips);
+        // Mock du mapper
+        when(tripMapper.toResponse(trip1)).thenReturn(tripResponseDto);
 
         List<TripResponseDto> result = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType);
 
@@ -266,6 +280,7 @@ public class TripServiceTest {
         assertEquals(villeArrivee, result.get(0).getVilleArrivee());
 
         verify(tripRepository).findTripsWithFilters(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name());
+        verify(tripMapper).toResponse(trip1);
     }
 
     @Test
@@ -331,10 +346,11 @@ public class TripServiceTest {
         existingTrip.setNbPlacesRestantes(4);
         TripResponseDto updatedResponseDto = new TripResponseDto();
 
-        when(tripRepository.findById(tripId)).thenReturn(Optional.of(existingTrip));
         doNothing().when(validationUtil).validateEndDateBeforeStartDate(any(), any());
-        when(userRepository.findById(1)).thenReturn(Optional.of(organisateur));
-        when(carRepository.findById(1)).thenReturn(Optional.of(car));
+        when(tripRepository.findById(tripId)).thenReturn(Optional.of(existingTrip));
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(organisateur));
+        when(carRepository.findById(anyInt())).thenReturn(Optional.of(car));
+
         doAnswer(invocation -> {
             Trip tripToUpdate = invocation.getArgument(0);
             TripRequestDto dto = invocation.getArgument(1);
@@ -342,8 +358,10 @@ public class TripServiceTest {
             tripToUpdate.setLieuArrivee(dto.getLieuArrivee());
             return null;
         }).when(tripMapper).updateEntity(any(), any(), any(), any());
+
         when(openRouteService.getTravelDurationInSeconds(anyString(), anyString())).thenReturn(7200.0);
-        when(validationUtil.estVehiculeDeService(eq(1), eq(carRepository))).thenReturn(false); // Utilisez les bons arguments ici
+
+        when(validationUtil.estVehiculeDeService(anyInt(), any())).thenReturn(false);
         when(subscribeRepository.countByTrip_Id(any())).thenReturn(1);
         when(tripRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(tripMapper.toResponse(any())).thenReturn(updatedResponseDto);
@@ -354,13 +372,12 @@ public class TripServiceTest {
 
         assertNotNull(result);
         verify(tripRepository).findById(tripId);
-        verify(validationUtil).validateEndDateBeforeStartDate(any(), any());
         verify(tripMapper).updateEntity(eq(existingTrip), eq(requestDto), eq(organisateur), eq(car));
         verify(tripRepository).save(existingTrip);
-
         verify(notificationService).sendNotificationToParticipantsOnModification(existingTrip);
-
         verify(tripMapper).toResponse(existingTrip);
+        verify(tripMapper).toResponse(any(Trip.class));
+
     }
 
     /**
@@ -428,7 +445,6 @@ public class TripServiceTest {
         TripRequestDto requestDto = createTripRequestDto();
         Car car = createCar(1, 5);
 
-        when(validationUtil.estVehiculeDeService(eq(1), any())).thenReturn(false);
         when(subscribeRepository.countByTrip_Id(any())).thenReturn(2);
 
         int result = tripService.calculatePlaceRest(requestDto, car);

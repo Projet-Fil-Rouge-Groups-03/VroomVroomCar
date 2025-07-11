@@ -31,6 +31,7 @@ public class TripService implements ITripService {
     private final SubscribeRepository subscribeRepository;
     private final NotificationService notificationService;
     private final OpenRouteService openRouteService;
+
     private final ValidationUtil validationUtil;
 
     // Create Trip
