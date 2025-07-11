@@ -15,6 +15,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -204,16 +207,17 @@ public class TripServiceTest {
         Trip trip = createTrip(1, new java.sql.Date(System.currentTimeMillis()), new java.sql.Date(System.currentTimeMillis()), LocalTime.now(),
                 "Toulouse", "Paris", "Toulouse", "Paris", user, car);
         TripResponseDto tripResponseDto = new TripResponseDto();
+        Page<Trip> tripPage = new PageImpl<>(Collections.singletonList(trip));
 
-        when(tripRepository.findAll()).thenReturn(Collections.singletonList(trip));
+        when(tripRepository.findAll(any(Pageable.class))).thenReturn(tripPage);
         when(tripMapper.toResponse(any(Trip.class))).thenReturn(tripResponseDto);
-
-        List<TripResponseDto> result = tripService.getAllTrips();
+        Page<TripResponseDto> result = tripService.getAllTrips(0, 10);
 
         assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(tripRepository, times(1)).findAll();
+        assertEquals(1, result.getTotalElements());
+        verify(tripRepository, times(1)).findAll(any(Pageable.class));
     }
+
 
     /**
      * Teste la récupération d'un trajet par son identifiant via TripService.
