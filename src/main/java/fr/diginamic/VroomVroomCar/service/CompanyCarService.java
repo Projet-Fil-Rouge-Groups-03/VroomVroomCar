@@ -33,6 +33,7 @@ public class CompanyCarService implements ICompanyCarService {
     private final CompanyCarMapper companyCarMapper;
     private final CarApiService carApiService;
     private final NotificationService notificationService;
+    private final ValidationUtil validationUtil;
 
     // GET by ID
 
@@ -178,7 +179,7 @@ public class CompanyCarService implements ICompanyCarService {
     @Transactional(readOnly = true)
     @Override
     public List<CompanyCarResponseDto> searchCompanyCar(String marque, String modele, int nbDePlaces, Date dateDebut, Date dateFin) throws FunctionnalException {
-        ValidationUtil.validateEndDateBeforeStartDate(dateDebut, dateFin);
+        validationUtil.validateEndDateBeforeStartDate(dateDebut, dateFin);
 
         List<CompanyCar> companyCars = companyCarRepository.findCompanyCarWithFilters(
                 marque,

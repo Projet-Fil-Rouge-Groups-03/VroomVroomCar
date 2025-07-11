@@ -143,7 +143,7 @@ public class ReservationService implements IReservationService {
     @Transactional
     public void deleteReservation(Integer id) throws FunctionnalException {
         if(!reservationRepository.existsById(id)){
-            throw new FunctionnalException("La reservation avec l'ID \" + id + \" n'existe pas.");
+            throw new FunctionnalException("La reservation avec l'ID " + id + " n'existe pas.");
         }
         reservationRepository.deleteById(id);
     }

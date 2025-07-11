@@ -1,46 +1,48 @@
 package fr.diginamic.VroomVroomCar.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OpenRouteServiceTest {
-    @Mock
-    private RestTemplate restTemplate;
 
     @Mock
-    private ObjectMapper objectMapper;
+    private RestTemplate restTemplate;
 
     @InjectMocks
     private OpenRouteService openRouteService;
 
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Mock
+    private OpenRouteService selfMock;
 
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(openRouteService, "API_KEY", "clé-fictive");
-        ReflectionTestUtils.setField(openRouteService, "objectMapper", new ObjectMapper());
+        ReflectionTestUtils.setField(openRouteService, "self", selfMock);
     }
 
     @Test
-    void testGetCoordinatesFromAddress() throws Exception {
+    void testGetCoordinatesFromAddress() {
         String mockResponse = "{\"features\":[{\"geometry\":{\"coordinates\":[2.3522,48.8566]}}]}";
-        when(restTemplate.getForEntity(anyString(), eq(String.class)))
+
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(ResponseEntity.ok(mockResponse));
 
         double[] coordinates = openRouteService.getCoordinatesFromAddress("10 rue de la paix, Paris");
@@ -50,23 +52,41 @@ class OpenRouteServiceTest {
     }
 
     @Test
-    void testGetTravelDurationInSeconds() throws FunctionnalException {
-        // Mock géocodage (appelé 2 fois)
-        String mockGeocodeResponseStart = "{\"features\":[{\"geometry\":{\"coordinates\":[2.3522,48.8566]}}]}";
-        String mockGeocodeResponseEnd = "{\"features\":[{\"geometry\":{\"coordinates\":[4.8357,45.7640]}}]}";
+    void testGetTravelDurationInSeconds() throws Exception {
+        String routeJson = """
+            {
+              "routes": [{
+                "summary": {
+                  "duration": 3600.0
+                }
+              }]
+            }
+        """;
+        JsonNode mockedJson = objectMapper.readTree(routeJson);
+        when(selfMock.getRouteResponse(anyString(), anyString())).thenReturn(mockedJson);
+        double duration = openRouteService.getTravelDurationInSeconds(
+                "10 rue de la paix, Paris", "1 place Bellecour, Lyon"
+        );
 
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
-                .thenReturn(ResponseEntity.ok(mockGeocodeResponseStart))
-                .thenReturn(ResponseEntity.ok(mockGeocodeResponseEnd));
-        String mockRouteResponse = "{\"routes\":[{\"summary\":{\"duration\":3600.0}}]}";
-        when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
-                .thenReturn(ResponseEntity.ok(mockRouteResponse));
+        assertEquals(3600.0, duration, 0.001);
+    }
 
-        double duration = openRouteService.getTravelDurationInSeconds("10 rue de la paix, Paris", "1 place Bellecour, Lyon");
-
-        assertEquals(3600, duration, 0.001);
-
-        verify(restTemplate, times(2)).exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class));
-        verify(restTemplate, times(1)).postForEntity(anyString(), any(), eq(String.class));
+    @Test
+    void testGetTravelDistanceInKilometers() throws Exception {
+        String routeJson = """
+            {
+              "routes": [{
+                "summary": {
+                  "distance": 500000.0
+                }
+              }]
+            }
+        """;
+        JsonNode mockedJson = objectMapper.readTree(routeJson);
+        when(selfMock.getRouteResponse(anyString(), anyString())).thenReturn(mockedJson);
+        double distance = openRouteService.getTravelDistanceInKilometers(
+                "10 rue de la paix, Paris", "1 place Bellecour, Lyon"
+        );
+        assertEquals(500.0, distance, 0.001);
     }
 }
