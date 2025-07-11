@@ -137,13 +137,13 @@ public final class ValidationUtil {
     /**
      * Valide qu'une date de fin est postérieure à la date de début.
      */
-    public void validateEndDateBeforeStartDate(Date dateDebut, Date dateFin) throws FunctionnalException {
+    public static void validateEndDateBeforeStartDate(Date dateDebut, Date dateFin) throws FunctionnalException {
         if (dateDebut != null && dateFin != null && dateFin.before(dateDebut)) {
             throw new FunctionnalException("La date de fin doit être postérieure à la date de début.");
         }
     }
 
-    public boolean estVehiculeDeService(Integer idCar, CarRepository carRepository) throws FunctionnalException {
+    public static boolean estVehiculeDeService(Integer idCar, CarRepository carRepository) throws FunctionnalException {
         Car car = carRepository.findById(idCar)
                 .orElseThrow(() -> new FunctionnalException("Véhicule non trouvé"));
 

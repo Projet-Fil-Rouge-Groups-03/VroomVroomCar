@@ -31,13 +31,12 @@ public class TripService implements ITripService {
     private final SubscribeRepository subscribeRepository;
     private final NotificationService notificationService;
     private final OpenRouteService openRouteService;
-    private final ValidationUtil validationUtil;
 
     // Create Trip
     @Transactional
     public TripResponseDto createTrip(TripRequestDto tripRequestDto) throws FunctionnalException {
         // Validation des dates
-        validationUtil.validateEndDateBeforeStartDate(tripRequestDto.getDateDebut(), tripRequestDto.getDateFin());
+        ValidationUtil.validateEndDateBeforeStartDate(tripRequestDto.getDateDebut(), tripRequestDto.getDateFin());
 
         // Récupération des entités depuis la base de données
         User organisateur = userRepository.findById(tripRequestDto.getOrganisateurId())
@@ -118,7 +117,7 @@ public class TripService implements ITripService {
 
         // Validation des dates
         if (tripRequestDto.getDateDebut() != null && tripRequestDto.getDateFin() != null) {
-            validationUtil.validateEndDateBeforeStartDate(tripRequestDto.getDateDebut(), tripRequestDto.getDateFin());
+            ValidationUtil.validateEndDateBeforeStartDate(tripRequestDto.getDateDebut(), tripRequestDto.getDateFin());
         }
 
         // Récupération des entités si elles sont modifiées
@@ -194,7 +193,7 @@ public class TripService implements ITripService {
         Integer organizerId = tripRequestDto.getOrganisateurId();
 
         // Si c'est un véhicule de service, on doit décompter les places occupées
-        if (validationUtil.estVehiculeDeService(car.getId(), carRepository)) {
+        if (ValidationUtil.estVehiculeDeService(car.getId(), carRepository)) {
             // Vérifier si l'organisateur a déjà une réservation pour ce véhicule sur ces dates
             boolean organizerHasReservation = reservationRepository.existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
                     car.getId(),
