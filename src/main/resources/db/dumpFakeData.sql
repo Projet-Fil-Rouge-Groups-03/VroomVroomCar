@@ -9,16 +9,16 @@ INSERT INTO utilisateur (nom, prenom, mail, libelle, code_postal, ville, mot_de_
 ('Bernard', 'Lucie', 'lucie.bernard@example.com', '5 rue Lafayette','62750', 'Là', 'mdp567', 'ROLE_ACTIF');
 
 INSERT INTO voiture (marque, modele, nb_places, pollution, infos_supp, utilisateur_id, motorisation, categories) VALUES
-('Renault', 'Clio', 5, NULL, NULL, 1, 'ESSENCE', 'MINI_CITADINES'),
-('Peugeot', '208', 5, NULL, NULL, 1, 'HYBRIDE', 'CITADINES'),
-('Toyota', 'Yaris', 5, NULL, NULL, 1, 'ELECTRIQUE', 'COMPACTES'),
-('Volkswagen', 'Golf', 5, NULL, NULL, 1, 'ESSENCE', 'BERLINES_TAILLE_M'),
-('BMW', 'Série 1', 5, NULL, NULL, 2, 'HYBRIDE', 'BERLINES_TAILLE_M'),
-('Citroën', 'C3', 5, NULL, 'Voiture urbaine confortable', 3, 'ESSENCE', 'CITADINES'),
-('Renault', 'Clio', 5, NULL, NULL, 1, 'ESSENCE', 'MINI_CITADINES'),
-('Hyundai', 'Ioniq 5', 5, NULL, '100% électrique', 5, 'ELECTRIQUE', 'SUV'),
-('BMW', 'Série 1', 5, NULL, NULL, 2, 'HYBRIDE', 'BERLINES_TAILLE_M'),
-('Opel', 'Corsa', 5, NULL, NULL, 4, 'ESSENCE', 'MINI_CITADINES');
+('Renault', 'Clio', 5, 120, NULL, 1, 'ESSENCE', 'MINI_CITADINES'),
+('Peugeot', '208', 5, 80, NULL, 1, 'HYBRIDE', 'CITADINES'),
+('Toyota', 'Yaris', 5, 0, NULL, 1, 'ELECTRIQUE', 'COMPACTES'),
+('Volkswagen', 'Golf', 5, 120, NULL, 1, 'ESSENCE', 'BERLINES_TAILLE_M'),
+('BMW', 'Série 1', 5, 80, NULL, 2, 'HYBRIDE', 'BERLINES_TAILLE_M'),
+('Citroën', 'C3', 5, 120, 'Voiture urbaine confortable', 3, 'ESSENCE', 'CITADINES'),
+('Renault', 'Clio', 5, 120, NULL, 1, 'ESSENCE', 'MINI_CITADINES'),
+('Hyundai', 'Ioniq 5', 5, 0, '100% électrique', 5, 'ELECTRIQUE', 'SUV'),
+('BMW', 'Série 1', 5, 80, NULL, 2, 'HYBRIDE', 'BERLINES_TAILLE_M'),
+('Opel', 'Corsa', 5, 120, NULL, 4, 'ESSENCE', 'MINI_CITADINES');
 
 INSERT INTO voiture_de_service (id, immatriculation, url_photo, status) VALUES
 (1, 'AB-123-CD', NULL, 'EN_SERVICE'),
@@ -35,16 +35,16 @@ INSERT INTO réservation (user_id,voiture_de_service_id, date_début, date_fin) 
 (5, 5, '2025-06-28', '2025-06-30');
 
 INSERT INTO trajet (organisateur_id, car_id, date_debut, date_fin, heure_depart, heure_arrivee, lieu_depart, ville_depart, lieu_arrivee, ville_arrivee, nb_places_restantes) VALUES
-(2, 6, '2025-07-05', '2025-07-05', '08:00:00', '12:00:00', 'Gare de Lyon', 'Paris', 'Part-Dieu', 'Lyon', 3),
-(3, 7, '2025-07-06', '2025-07-06', '09:30:00', '11:00:00', 'Place Rihour', 'Lille', 'Gare Centrale', 'Bruxelles', 2),
-(4, 10, '2025-07-07', '2025-07-07', '07:00:00', '13:00:00', 'Université Grenoble', 'Grenoble', 'Promenade des Anglais', 'Nice', 4),
-(5, 8, '2025-07-08', '2025-07-08', '10:00:00', '12:30:00', 'Place de la Victoire', 'Bordeaux', 'Capitole', 'Toulouse', 1),
-(2, 9, '2025-07-09', '2025-07-09', '14:00:00', '15:45:00', 'Place Kléber', 'Strasbourg', 'Place Stanislas', 'Nancy', 3),
+(2, 6, '2025-08-05', '2025-08-05', '08:00:00', '12:00:00', 'Gare de Lyon', 'Paris', 'Part-Dieu', 'Lyon', 3),
+(3, 7, '2025-09-06', '2025-09-06', '09:30:00', '11:00:00', 'Place Rihour', 'Lille', 'Gare Centrale', 'Bruxelles', 2),
+(4, 10, '2025-07-22', '2025-07-24', '07:00:00', '13:00:00', 'Université Grenoble', 'Grenoble', 'Promenade des Anglais', 'Nice', 4),
+(5, 8, '2025-07-28', '2025-07-30', '10:00:00', '12:30:00', 'Place de la Victoire', 'Bordeaux', 'Capitole', 'Toulouse', 1),
+(2, 9, '2025-08-09', '2025-08-09', '14:00:00', '15:45:00', 'Place Kléber', 'Strasbourg', 'Place Stanislas', 'Nancy', 3),
 (1, 1, '2025-07-10', '2025-07-11', '08:30:00', '12:30:00', 'Gare Saint-Charles', 'Gare de Lyon Part-Dieu', 'Marseille', 'Lyon', 2),
-(2, 3, '2025-07-11', '2025-07-12', '09:00:00', '14:00:00', 'Place de Jaude', 'Place Masséna', 'Clermont-Fd', 'Nice', 4),
-(4, 4, '2025-07-12', '2025-07-13', '07:00:00', '11:00:00', 'Gare de Rennes', 'Gare de Nantes', 'Rennes', 'Nantes', 1),
+(2, 3, '2025-10-11', '2025-10-12', '09:00:00', '14:00:00', 'Place de Jaude', 'Place Masséna', 'Clermont-Fd', 'Nice', 4),
+(4, 4, '2025-08-12', '2025-08-13', '07:00:00', '11:00:00', 'Gare de Rennes', 'Gare de Nantes', 'Rennes', 'Nantes', 1),
 (3, 5, '2025-07-13', '2025-07-14', '06:30:00', '10:30:00', 'Université de Tours', 'Gare de Bordeaux', 'Tours', 'Bordeaux', 3),
-(5, 2, '2025-07-14', '2025-07-15', '10:00:00', '15:00:00', 'Gare de Dijon', 'Gare de Strasbourg', 'Dijon', 'Strasbourg', 2);
+(5, 2, '2025-08-14', '2025-08-15', '10:00:00', '15:00:00', 'Gare de Dijon', 'Gare de Strasbourg', 'Dijon', 'Strasbourg', 2);
 
 INSERT INTO inscription (utilisateur_id, trajet_id, date_inscription) VALUES
 (1, 1, '2025-06-15'),
