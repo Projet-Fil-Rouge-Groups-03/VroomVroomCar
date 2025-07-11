@@ -57,6 +57,8 @@ public class TripServiceTest {
     private NotificationService notificationService;
     @Mock
     private OpenRouteService openRouteService;
+    @Mock
+    private ValidationUtil validationUtil;
 
     @InjectMocks
     private TripService tripService;
@@ -163,48 +165,41 @@ public class TripServiceTest {
 
         TripResponseDto tripResponseDto = new TripResponseDto();
 
-        // Configuration des mocks
-        // Pour les méthodes statiques, on utilise MockedStatic
-        try (MockedStatic<ValidationUtil> mockedStatic = mockStatic(ValidationUtil.class)) {
-            mockedStatic.when(() -> ValidationUtil.validateEndDateBeforeStartDate(any(), any()))
-                    .thenAnswer(invocation -> null);
-            when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
-            when(carRepository.findById(anyInt())).thenReturn(Optional.of(car));
-            when(tripMapper.toEntity(any(), any(), any())).thenReturn(trip);
-            when(openRouteService.getTravelDurationInSeconds(anyString(), anyString())).thenReturn(7200.0); // 2h
+        doNothing().when(validationUtil).validateEndDateBeforeStartDate(any(), any());
+        when(validationUtil.estVehiculeDeService(anyInt(), any())).thenReturn(true);
 
-            when(ValidationUtil.estVehiculeDeService(anyInt(), any())).thenReturn(true);
-            when(reservationRepository.existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
-                    anyInt(), anyInt(), any(), any()
-            )).thenReturn(true);
-            when(subscribeRepository.countByTrip_Id(any())).thenReturn(2);
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
+        when(carRepository.findById(anyInt())).thenReturn(Optional.of(car));
+        when(tripMapper.toEntity(any(), any(), any())).thenReturn(trip);
+        when(openRouteService.getTravelDurationInSeconds(anyString(), anyString())).thenReturn(7200.0); // 2h
+        when(reservationRepository.existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
+                anyInt(), anyInt(), any(), any()
+        )).thenReturn(true);
+        when(subscribeRepository.countByTrip_Id(any())).thenReturn(2);
+        when(tripRepository.save(any(Trip.class))).thenAnswer(invocation -> {
+            Trip savedTrip = invocation.getArgument(0);
+            savedTrip.setId(42); // Simule l'ID généré
+            return savedTrip;
+        });
+        when(tripMapper.toResponse(any(Trip.class))).thenReturn(tripResponseDto);
 
-            when(tripRepository.save(any(Trip.class))).thenAnswer(invocation -> {
-                Trip savedTrip = invocation.getArgument(0);
-                savedTrip.setId(42); // Simule l'ID généré
-                return savedTrip;
-            });
+        TripResponseDto result = tripService.createTrip(requestDto);
 
-            when(tripMapper.toResponse(any(Trip.class))).thenReturn(tripResponseDto);
+        assertNotNull(result);
 
-            TripResponseDto result = tripService.createTrip(requestDto);
+        ArgumentCaptor<Trip> tripCaptor = ArgumentCaptor.forClass(Trip.class);
+        verify(tripRepository).save(tripCaptor.capture());
 
-            assertNotNull(result);
+        Trip savedTrip = tripCaptor.getValue();
+        assertNotNull(savedTrip.getHeureArrivee());
+        assertTrue(savedTrip.getNbPlacesRestantes() >= 0);
 
-            ArgumentCaptor<Trip> tripCaptor = ArgumentCaptor.forClass(Trip.class);
-            verify(tripRepository).save(tripCaptor.capture());
-
-            Trip savedTrip = tripCaptor.getValue();
-            assertNotNull(savedTrip.getHeureArrivee());
-            assertTrue(savedTrip.getNbPlacesRestantes() >= 0);
-
-            verify(userRepository).findById(anyInt());
-            verify(carRepository).findById(anyInt());
-            verify(tripMapper).toResponse(any(Trip.class));
-
-            mockedStatic.verify(() -> ValidationUtil.validateEndDateBeforeStartDate(any(), any()));
-        }
+        verify(validationUtil).validateEndDateBeforeStartDate(any(), any());
+        verify(userRepository).findById(anyInt());
+        verify(carRepository).findById(anyInt());
+        verify(tripMapper).toResponse(any(Trip.class));
     }
+
 
     /**
      * Teste la récupération de tous les trajets via TripService.
@@ -351,43 +346,38 @@ public class TripServiceTest {
         existingTrip.setNbPlacesRestantes(4);
         TripResponseDto updatedResponseDto = new TripResponseDto();
 
-        // Configuration des mocks avec MockedStatic pour les méthodes statiques
-        try (MockedStatic<ValidationUtil> mockedStatic = mockStatic(ValidationUtil.class)) {
-            mockedStatic.when(() -> ValidationUtil.validateEndDateBeforeStartDate(any(), any()))
-                    .thenAnswer(invocation -> null);
+        doNothing().when(validationUtil).validateEndDateBeforeStartDate(any(), any());
+        when(tripRepository.findById(tripId)).thenReturn(Optional.of(existingTrip));
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(organisateur));
+        when(carRepository.findById(anyInt())).thenReturn(Optional.of(car));
 
-            when(tripRepository.findById(tripId)).thenReturn(Optional.of(existingTrip));
-            when(userRepository.findById(anyInt())).thenReturn(Optional.of(organisateur));
-            when(carRepository.findById(anyInt())).thenReturn(Optional.of(car));
+        doAnswer(invocation -> {
+            Trip tripToUpdate = invocation.getArgument(0);
+            TripRequestDto dto = invocation.getArgument(1);
+            tripToUpdate.setHeureDepart(dto.getHeureDepart());
+            tripToUpdate.setLieuArrivee(dto.getLieuArrivee());
+            return null;
+        }).when(tripMapper).updateEntity(any(), any(), any(), any());
 
-            doAnswer(invocation -> {
-                Trip tripToUpdate = invocation.getArgument(0);
-                TripRequestDto dto = invocation.getArgument(1);
-                tripToUpdate.setHeureDepart(dto.getHeureDepart());
-                tripToUpdate.setLieuArrivee(dto.getLieuArrivee());
-                return null;
-            }).when(tripMapper).updateEntity(any(), any(), any(), any());
+        when(openRouteService.getTravelDurationInSeconds(anyString(), anyString())).thenReturn(7200.0);
 
-            when(openRouteService.getTravelDurationInSeconds(anyString(), anyString())).thenReturn(7200.0);
+        when(validationUtil.estVehiculeDeService(anyInt(), any())).thenReturn(false);
+        when(subscribeRepository.countByTrip_Id(any())).thenReturn(1);
+        when(tripRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(tripMapper.toResponse(any())).thenReturn(updatedResponseDto);
 
-            when(ValidationUtil.estVehiculeDeService(anyInt(), any())).thenReturn(false);
-            when(subscribeRepository.countByTrip_Id(any())).thenReturn(1);
-            when(tripRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-            when(tripMapper.toResponse(any())).thenReturn(updatedResponseDto);
+        doNothing().when(notificationService).sendNotificationToParticipantsOnModification(any(Trip.class));
 
-            doNothing().when(notificationService).sendNotificationToParticipantsOnModification(any(Trip.class));
+        TripResponseDto result = tripService.updateTrip(tripId, requestDto);
 
-            TripResponseDto result = tripService.updateTrip(tripId, requestDto);
+        assertNotNull(result);
+        verify(tripRepository).findById(tripId);
+        verify(tripMapper).updateEntity(eq(existingTrip), eq(requestDto), eq(organisateur), eq(car));
+        verify(tripRepository).save(existingTrip);
+        verify(notificationService).sendNotificationToParticipantsOnModification(existingTrip);
+        verify(tripMapper).toResponse(existingTrip);
+        verify(tripMapper).toResponse(any(Trip.class));
 
-            assertNotNull(result);
-            verify(tripRepository).findById(tripId);
-            verify(tripMapper).updateEntity(eq(existingTrip), eq(requestDto), eq(organisateur), eq(car));
-            verify(tripRepository).save(existingTrip);
-            verify(notificationService).sendNotificationToParticipantsOnModification(existingTrip);
-            verify(tripMapper).toResponse(existingTrip);
-
-            mockedStatic.verify(() -> ValidationUtil.validateEndDateBeforeStartDate(any(), any()));
-        }
     }
 
     /**
@@ -455,13 +445,11 @@ public class TripServiceTest {
         TripRequestDto requestDto = createTripRequestDto();
         Car car = createCar(1, 5);
 
-        when(carRepository.findById(eq(1))).thenReturn(Optional.of(car));
-
         when(subscribeRepository.countByTrip_Id(any())).thenReturn(2);
 
         int result = tripService.calculatePlaceRest(requestDto, car);
 
-        assertEquals(3, result); // 5 - 2 = 3 places restantes
+        assertEquals(3, result);
         verify(subscribeRepository).countByTrip_Id(requestDto.getId());
     }
 
@@ -473,24 +461,18 @@ public class TripServiceTest {
         TripRequestDto requestDto = createTripRequestDto();
         Car car = createCar(1, 5);
 
-        try (MockedStatic<ValidationUtil> mockedStatic = mockStatic(ValidationUtil.class)) {
-            mockedStatic.when(() -> ValidationUtil.estVehiculeDeService(eq(1), any()))
-                    .thenReturn(true);
+        when(validationUtil.estVehiculeDeService(eq(1), any())).thenReturn(true);
+        when(reservationRepository.existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
+                eq(1), eq(1), eq(requestDto.getDateDebut()), eq(requestDto.getDateFin())
+        )).thenReturn(true);
+        when(subscribeRepository.countByTrip_Id(any())).thenReturn(1);
 
-            when(reservationRepository.existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
-                    eq(1), eq(1), eq(requestDto.getDateDebut()), eq(requestDto.getDateFin())
-            )).thenReturn(true);
+        int result = tripService.calculatePlaceRest(requestDto, car);
 
-            when(subscribeRepository.countByTrip_Id(any())).thenReturn(1);
-
-            int result = tripService.calculatePlaceRest(requestDto, car);
-
-            assertEquals(3, result);
-
-            mockedStatic.verify(() -> ValidationUtil.estVehiculeDeService(eq(1), any()));
-            verify(reservationRepository).existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
-                    eq(1), eq(1), eq(requestDto.getDateDebut()), eq(requestDto.getDateFin())
-            );
-        }
+        assertEquals(3, result);
+        verify(validationUtil).estVehiculeDeService(eq(1), any());
+        verify(reservationRepository).existsByCompanyCar_IdAndUser_IdAndDateDebutAndDateFin(
+                eq(1), eq(1), eq(requestDto.getDateDebut()), eq(requestDto.getDateFin())
+        );
     }
 }
