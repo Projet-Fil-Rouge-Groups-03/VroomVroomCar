@@ -11,11 +11,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Filtre pour limiter le taux de requêtes entrantes.
+ * Ce filtre est utilisé pour protéger les endpoints sensibles contre les abus.
+ */
 @Component
 public class RateLimitingFilter implements Filter {
+
+    /**
+     * Map pour stocker les requêtes des clients avec leur timestamp.
+     */
     private final Map<String, List<Long>> requestCounts = new ConcurrentHashMap<>();
+
+    /**
+     * Nombre maximum de requêtes autorisées par heure.
+     */
     private final int MAX_REQUESTS = 100; // par heure
 
+    /**
+     * Méthode principale du filtre qui est appelée à chaque requête.
+     *
+     * @param request  La requête servlet.
+     * @param response La réponse servlet.
+     * @param chain    La chaîne de filtres.
+     * @throws IOException      Si une erreur d'entrée/sortie se produit.
+     * @throws ServletException Si une erreur de servlet se produit.
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -36,16 +57,35 @@ public class RateLimitingFilter implements Filter {
         chain.doFilter(request, response);
     }
 
+    /**
+     * Détermine si un endpoint doit être limité en taux de requêtes.
+     *
+     * @param path   Le chemin de la requête.
+     * @param method La méthode HTTP utilisée.
+     * @return true si le chemin et la méthode doivent être limités, false sinon.
+     */
     private boolean shouldRateLimit(String path, String method) {
         return ("POST".equals(method) &&
                 (path.equals("/login") || path.equals("/register")));
     }
 
+    /**
+     * Récupère l'adresse IP du client.
+     *
+     * @param request La requête HTTP.
+     * @return L'adresse IP du client.
+     */
     private String getClientIp(HttpServletRequest request) {
         String xfHeader = request.getHeader("X-Forwarded-For");
         return (xfHeader == null) ? request.getRemoteAddr() : xfHeader.split(",")[0];
     }
 
+    /**
+     * Vérifie si un client a dépassé le taux de requêtes autorisées.
+     *
+     * @param clientIp L'adresse IP du client.
+     * @return true si le client a dépassé le taux de requêtes autorisées, false sinon.
+     */
     private boolean isRateLimited(String clientIp) {
         long now = System.currentTimeMillis();
         List<Long> requests = requestCounts.computeIfAbsent(clientIp, k -> new ArrayList<>());
