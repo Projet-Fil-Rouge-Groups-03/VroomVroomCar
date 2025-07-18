@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.entity;
 
+import fr.diginamic.VroomVroomCar.config.StringCryptoConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +20,17 @@ public class User {
     private Integer id;
     private String nom;
     private String prenom;
+
+    @Column(unique = true, nullable = false)
+    @Convert(converter = StringCryptoConverter.class)
     private String mail;
+    @Convert(converter = StringCryptoConverter.class)
     private String ville;
+    @Convert(converter = StringCryptoConverter.class)
     private String codePostal;
+    @Convert(converter = StringCryptoConverter.class)
     private String libelle;
+
     private String motDePasse;
 
     @Enumerated(EnumType.STRING)
