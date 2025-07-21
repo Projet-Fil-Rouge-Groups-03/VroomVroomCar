@@ -63,7 +63,12 @@ public interface ITripController {
     @Operation(summary = "Récupérer tous les trajets")
     @ApiResponse(responseCode = "200", description = "Liste des trajets")
     @GetMapping
-    ResponseEntity<Page<TripResponseDto>> getAllTrips(int page, int size);
+    ResponseEntity<Page<TripResponseDto>> getAllTrips(
+            @Parameter(description = "Numéro de la page à récupérer. La numérotation des pages commence à zéro.")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Nombre d'éléments par page.")
+            @RequestParam(defaultValue = "5") int size
+    );
 
     /**
      * Récupère un trajet à partir de son identifiant.
@@ -104,18 +109,19 @@ public interface ITripController {
     @GetMapping("/search")
     ResponseEntity<Page<TripResponseDto>> searchTrips(
             @Parameter(description = "Ville de départ")
-            @RequestParam(required = false) String villeDepart,
+            @RequestParam String villeDepart,
             @Parameter(description = "Ville d'arrivée")
-            @RequestParam(required = false) String villeArrivee,
+            @RequestParam String villeArrivee,
             @Parameter(description = "Date de début (format: yyyy-MM-dd)")
-            @RequestParam(required = false) String dateDebutStr,
+            @RequestParam String dateDebutStr,
             @Parameter(description = "Heure de départ (format: HH:mm:ss)")
-            @RequestParam(required = false)
+            @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heureDepart,
             @Parameter(description = "Type de véhicule (ex: SERVICE, PERSONNEL, TOUS)")
             @RequestParam(defaultValue = "TOUS") VehiculeType vehiculeType,
-
+            @Parameter(description = "Numéro de la page à récupérer. La numérotation des pages commence à zéro.")
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Nombre d'éléments par page.")
             @RequestParam(defaultValue = "5") int size
     );
 
