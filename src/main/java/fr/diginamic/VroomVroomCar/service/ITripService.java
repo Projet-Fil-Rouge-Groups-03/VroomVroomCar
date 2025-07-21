@@ -100,7 +100,7 @@ public interface ITripService {
      * Calcule l'heure d'arrivée estimée en fonction de l'heure de départ et des lieux indiqués.
      *
      * @param heureDepart l'heure de départ
-     * @param lieuDepart le lieu précis de départ
+     * @param lieuDepart le lieu précis de départ (ex: adresse ou point de rendez-vous)
      * @param lieuArrivee le lieu précis d'arrivée
      * @param villeDepart la ville de départ
      * @param villeArrivee la ville d'arrivée
@@ -115,8 +115,8 @@ public interface ITripService {
      *
      * @param tripRequestDto les informations du trajet
      * @param car l'entité véhicule utilisé pour le trajet
-     * @return le nombre de places restantes disponibles
-     * @throws FunctionnalException en cas d'erreur de logique métier
+     * @return le nombre de places restantes disponibles, toujours ≥ 0
+     * @throws FunctionnalException en cas d'erreur de logique métier (véhicule introuvable, etc.)
      */
     int calculatePlaceRest(TripRequestDto tripRequestDto, Car car) throws FunctionnalException;
 }
