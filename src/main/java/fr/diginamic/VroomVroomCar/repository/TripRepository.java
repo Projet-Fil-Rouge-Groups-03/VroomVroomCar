@@ -56,12 +56,13 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
             "AND (:vehiculeType = 'TOUS' OR " +
             "     (:vehiculeType = 'VOITURE_SERVICE' AND cc.id IS NOT NULL) OR " +
             "     (:vehiculeType = 'VOITURE_COVOIT' AND cc.id IS NULL))")
-    List<Trip> findTripsWithFilters(
+    Page<Trip> findTripsWithFilters(
             @Param("villeDepart") String villeDepart,
             @Param("villeArrivee") String villeArrivee,
             @Param("dateDebut") Date dateDebut,
             @Param("heureDepart") LocalTime heureDepart,
-            @Param("vehiculeType") String vehiculeType
+            @Param("vehiculeType") String vehiculeType,
+            Pageable pageable
     );
 
     /**
