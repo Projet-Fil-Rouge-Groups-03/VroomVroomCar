@@ -1,7 +1,10 @@
 package fr.diginamic.VroomVroomCar.controller;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
+import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
+import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
+import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import fr.diginamic.VroomVroomCar.exception.ResourceNotFoundException;
@@ -12,10 +15,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -29,6 +34,16 @@ import java.util.List;
 @RequestMapping("/api/trips")
 public interface ITripController {
 
+    /**
+     * Crée un nouveau trajet à partir des données reçues.
+     * Les entités User et Car sont automatiquement récupérées par le service
+     * à partir des identifiants fournis dans le TripRequestDto.
+     *
+     * @param tripRequestDto les données du trajet à créer (incluant organisateurId et carId)
+     * @return le trajet créé avec son identifiant
+     * @throws ResourceNotFoundException si une ressource liée (véhicule, utilisateur...) est introuvable
+     * @throws FunctionnalException en cas d'erreur métier (ex : réservation en conflit)
+     */
     @Operation(summary = "Créer un nouveau trajet")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trajet créé avec succès"),
@@ -37,18 +52,26 @@ public interface ITripController {
     })
     @PostMapping("/create")
     ResponseEntity<TripResponseDto> createTrip(
-            @Parameter(description = "Données du trajet à créer", required = true)
             @Valid @RequestBody TripRequestDto tripRequestDto
     ) throws ResourceNotFoundException, FunctionnalException;
 
+    /**
+     * Récupère la liste de tous les trajets existants.
+     *
+     * @return une liste de trajets
+     */
     @Operation(summary = "Récupérer tous les trajets")
     @ApiResponse(responseCode = "200", description = "Liste des trajets")
     @GetMapping
-    ResponseEntity<Page<TripResponseDto>> getAllTrips(
-            @Parameter(description = "Numéro de la page", required = true) @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Taille de la page", required = true) @RequestParam(defaultValue = "10") int size
-    );
+    ResponseEntity<Page<TripResponseDto>> getAllTrips(int page, int size);
 
+    /**
+     * Récupère un trajet à partir de son identifiant.
+     *
+     * @param id l'identifiant du trajet à récupérer
+     * @return le trajet correspondant
+     * @throws FunctionnalException si le trajet n'existe pas
+     */
     @Operation(summary = "Récupérer un trajet par son identifiant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trajet trouvé"),
@@ -59,6 +82,17 @@ public interface ITripController {
             @Parameter(description = "ID du trajet", required = true) @PathVariable Integer id
     ) throws FunctionnalException;
 
+    /**
+     * Recherche des trajets en fonction de critères facultatifs tels que la ville de départ,
+     * la ville d'arrivée, la date de début, l'heure de départ et le type de véhicule.
+     *
+     * @param villeDepart la ville de départ (facultative)
+     * @param villeArrivee la ville d'arrivée (facultative)
+     * @param dateDebutStr la date de début du trajet (facultative, au format ISO: yyyy-MM-dd)
+     * @param heureDepart l'heure de départ du trajet (facultative, au format ISO: HH:mm:ss)
+     * @param vehiculeType le type de véhicule souhaité (par défaut : TOUS)
+     * @return une liste de trajets correspondant aux critères, ou un code 400 en cas d'erreur de requête
+     */
     @Operation(
             summary = "Recherche de trajets",
             description = "Permet de rechercher des trajets selon différents critères (ville de départ, d'arrivée, date, heure, type de véhicule)"
@@ -69,15 +103,30 @@ public interface ITripController {
     })
     @GetMapping("/search")
     ResponseEntity<Page<TripResponseDto>> searchTrips(
-            @Parameter(description = "Ville de départ") @RequestParam(required = false) String villeDepart,
-            @Parameter(description = "Ville d'arrivée") @RequestParam(required = false) String villeArrivee,
-            @Parameter(description = "Date de début (format: yyyy-MM-dd)") @RequestParam(required = false) String dateDebutStr,
-            @Parameter(description = "Heure de départ (format: HH:mm:ss)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heureDepart,
-            @Parameter(description = "Type de véhicule (ex: SERVICE, PERSONNEL, TOUS)") @RequestParam(defaultValue = "TOUS") VehiculeType vehiculeType,
-            @Parameter(description = "Numéro de la page") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Taille de la page") @RequestParam(defaultValue = "5") int size
+            @Parameter(description = "Ville de départ")
+            @RequestParam(required = false) String villeDepart,
+            @Parameter(description = "Ville d'arrivée")
+            @RequestParam(required = false) String villeArrivee,
+            @Parameter(description = "Date de début (format: yyyy-MM-dd)")
+            @RequestParam(required = false) String dateDebutStr,
+            @Parameter(description = "Heure de départ (format: HH:mm:ss)")
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heureDepart,
+            @Parameter(description = "Type de véhicule (ex: SERVICE, PERSONNEL, TOUS)")
+            @RequestParam(defaultValue = "TOUS") VehiculeType vehiculeType,
+
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
     );
 
+    /**
+     * Récupère la liste des trajets à venir pour un utilisateur donné.
+     * L'utilisateur peut être organisateur ou simple passager.
+     *
+     * @param userId l'identifiant de l'utilisateur
+     * @return liste des trajets futurs triés par date croissante
+     * @throws ResourceNotFoundException si l'utilisateur n'existe pas
+     */
     @Operation(summary = "Récupérer les trajets à venir d'un utilisateur",
             description = "Retourne la liste des trajets futurs auxquels un utilisateur participe ou qu'il organise.")
     @ApiResponses(value = {
@@ -89,6 +138,14 @@ public interface ITripController {
             @Parameter(description = "ID de l'utilisateur", required = true) @PathVariable Integer userId
     ) throws ResourceNotFoundException;
 
+    /**
+     * Récupère la liste des trajets passés pour un utilisateur donné.
+     * L'utilisateur peut être organisateur ou simple passager (abonné).
+     *
+     * @param userId l'identifiant de l'utilisateur
+     * @return liste des trajets passés triés par date décroissante
+     * @throws ResourceNotFoundException si l'utilisateur n'existe pas
+     */
     @Operation(summary = "Récupérer les trajets passés d'un utilisateur",
             description = "Retourne la liste des trajets déjà effectués par un utilisateur, qu'il soit organisateur ou passager.")
     @ApiResponses(value = {
@@ -100,6 +157,16 @@ public interface ITripController {
             @Parameter(description = "ID de l'utilisateur", required = true) @PathVariable Integer userId
     ) throws ResourceNotFoundException;
 
+    /**
+     * Met à jour un trajet existant avec de nouvelles données.
+     * Les entités User et Car sont automatiquement récupérées par le service
+     * si les identifiants sont modifiés dans le TripRequestDto.
+     *
+     * @param id l'identifiant du trajet à modifier
+     * @param tripRequestDto les nouvelles données du trajet
+     * @return le trajet mis à jour
+     * @throws FunctionnalException si le trajet n'existe pas ou en cas d'erreur métier
+     */
     @Operation(summary = "Mettre à jour un trajet existant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trajet mis à jour"),
@@ -108,9 +175,16 @@ public interface ITripController {
     @PutMapping("/update/{id}")
     ResponseEntity<TripResponseDto> updateTrip(
             @Parameter(description = "ID du trajet", required = true) @PathVariable Integer id,
-            @Parameter(description = "Nouvelles données du trajet", required = true) @Valid @RequestBody TripRequestDto tripRequestDto
+            @Valid @RequestBody TripRequestDto tripRequestDto
     ) throws FunctionnalException;
 
+    /**
+     * Supprime un trajet existant à partir de son identifiant.
+     *
+     * @param id l'identifiant du trajet à supprimer
+     * @return un message de confirmation
+     * @throws FunctionnalException si le trajet n'existe pas
+     */
     @Operation(summary = "Supprimer un trajet")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trajet supprimé"),
