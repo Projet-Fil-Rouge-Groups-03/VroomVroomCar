@@ -1,0 +1,39 @@
+services:
+
+  angular-app:
+    build:
+      context: ../VroomVroomCar-front
+    image: angular-app
+    ports:
+      - "4200:4200"
+    depends_on:
+      - springboot-app
+  springboot-app:
+    build:
+      context: .
+    image: springboot-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/vroomvroomcar
+      SPRING_DATASOURCE_USERNAME: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vroomvroomcar
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
