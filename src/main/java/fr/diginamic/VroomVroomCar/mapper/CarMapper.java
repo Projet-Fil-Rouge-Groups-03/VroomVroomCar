@@ -67,6 +67,8 @@ public class CarMapper {
 
         if (car instanceof CompanyCar) {
             dto.setType(VehiculeType.VOITURE_SERVICE);
+            CompanyCar companyCar = (CompanyCar) car;
+            dto.setUrlPhoto(companyCar.getUrlPhoto());
         } else {
             dto.setType(VehiculeType.VOITURE_COVOIT);
         }
