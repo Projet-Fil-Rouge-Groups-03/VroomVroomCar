@@ -16,9 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -258,28 +256,30 @@ public class TripServiceTest {
         Trip trip1 = createTrip(1, dateDebut, dateDebut, heureDepart,
                 "Centre", "Gare", villeDepart, villeArrivee, user, car);
 
-        List<Trip> expectedTrips = List.of(trip1);
-
         // Création du TripResponseDto attendu
         TripResponseDto tripResponseDto = new TripResponseDto();
         tripResponseDto.setVilleDepart(villeDepart);
         tripResponseDto.setVilleArrivee(villeArrivee);
 
+        // Pagination :
+        Pageable pageable = PageRequest.of(0, 5, Sort.by("dateDebut").ascending().and(Sort.by("heureDepart").ascending()));
+        Page<Trip> expectedPage = new PageImpl<>(List.of(trip1), pageable, 1);
+
         // Mock du repository
         when(tripRepository.findTripsWithFilters(
-                villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name())
-        ).thenReturn(expectedTrips);
+                villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name(), pageable)
+        ).thenReturn(expectedPage);
         // Mock du mapper
         when(tripMapper.toResponse(trip1)).thenReturn(tripResponseDto);
 
-        List<TripResponseDto> result = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType);
+        Page<TripResponseDto> result = tripService.searchTrips(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType, 0,5);
 
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(villeDepart, result.get(0).getVilleDepart());
-        assertEquals(villeArrivee, result.get(0).getVilleArrivee());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(villeDepart, result.getContent().getFirst().getVilleDepart());
+        assertEquals(villeArrivee, result.getContent().getFirst().getVilleArrivee());
 
-        verify(tripRepository).findTripsWithFilters(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name());
+        verify(tripRepository).findTripsWithFilters(villeDepart, villeArrivee, dateDebut, heureDepart, vehiculeType.name(),pageable);
         verify(tripMapper).toResponse(trip1);
     }
 
