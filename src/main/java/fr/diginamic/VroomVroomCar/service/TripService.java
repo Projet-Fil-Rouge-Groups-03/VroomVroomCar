@@ -80,18 +80,19 @@ public class TripService implements ITripService {
     }
 
     @Transactional(readOnly = true)
-    public List<TripResponseDto> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
-                                  LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException {
-        List<Trip> trips = tripRepository.findTripsWithFilters(
+    public Page<TripResponseDto> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
+                                  LocalTime heureDepart, VehiculeType vehiculeType,int page, int size) throws FunctionnalException {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dateDebut").ascending().and(Sort.by("heureDepart").ascending()));
+
+        Page<Trip> trips = tripRepository.findTripsWithFilters(
                 villeDepart,
                 villeArrivee,
                 dateDebut,
                 heureDepart,
-                vehiculeType.name()
+                vehiculeType.name(),
+                pageable
         );
-        return trips.stream()
-                .map(tripMapper::toResponse)
-                .collect(Collectors.toList());
+        return trips.map(tripMapper::toResponse);
     }
 
     @Transactional(readOnly = true)

@@ -63,7 +63,12 @@ public interface ITripController {
     @Operation(summary = "Récupérer tous les trajets")
     @ApiResponse(responseCode = "200", description = "Liste des trajets")
     @GetMapping
-    ResponseEntity<Page<TripResponseDto>> getAllTrips(int page, int size);
+    ResponseEntity<Page<TripResponseDto>> getAllTrips(
+            @Parameter(description = "Numéro de la page à récupérer. La numérotation des pages commence à zéro.")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Nombre d'éléments par page.")
+            @RequestParam(defaultValue = "5") int size
+    );
 
     /**
      * Récupère un trajet à partir de son identifiant.
@@ -86,11 +91,11 @@ public interface ITripController {
      * Recherche des trajets en fonction de critères facultatifs tels que la ville de départ,
      * la ville d'arrivée, la date de début, l'heure de départ et le type de véhicule.
      *
-     * @param villeDepart   la ville de départ (facultative)
-     * @param villeArrivee  la ville d'arrivée (facultative)
-     * @param dateDebut     la date de début du trajet (facultative, au format ISO: yyyy-MM-dd)
-     * @param heureDepart   l'heure de départ du trajet (facultative, au format ISO: HH:mm:ss)
-     * @param vehiculeType  le type de véhicule souhaité (par défaut : TOUS)
+     * @param villeDepart la ville de départ (facultative)
+     * @param villeArrivee la ville d'arrivée (facultative)
+     * @param dateDebutStr la date de début du trajet (facultative, au format ISO: yyyy-MM-dd)
+     * @param heureDepart l'heure de départ du trajet (facultative, au format ISO: HH:mm:ss)
+     * @param vehiculeType le type de véhicule souhaité (par défaut : TOUS)
      * @return une liste de trajets correspondant aux critères, ou un code 400 en cas d'erreur de requête
      */
     @Operation(
@@ -102,22 +107,23 @@ public interface ITripController {
             @ApiResponse(responseCode = "400", description = "Paramètres invalides ou erreur fonctionnelle")
     })
     @GetMapping("/search")
-    ResponseEntity<List<TripResponseDto>> searchTrips(
+    ResponseEntity<Page<TripResponseDto>> searchTrips(
             @Parameter(description = "Ville de départ")
-            @RequestParam(required = false) String villeDepart,
-
+            @RequestParam String villeDepart,
             @Parameter(description = "Ville d'arrivée")
-            @RequestParam(required = false) String villeArrivee,
-
+            @RequestParam String villeArrivee,
             @Parameter(description = "Date de début (format: yyyy-MM-dd)")
-            @RequestParam(required = false) String dateDebutStr,
-
+            @RequestParam String dateDebutStr,
             @Parameter(description = "Heure de départ (format: HH:mm:ss)")
-            @RequestParam(required = false)
+            @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heureDepart,
-
             @Parameter(description = "Type de véhicule (ex: SERVICE, PERSONNEL, TOUS)")
-            @RequestParam(defaultValue = "TOUS") VehiculeType vehiculeType);
+            @RequestParam(defaultValue = "TOUS") VehiculeType vehiculeType,
+            @Parameter(description = "Numéro de la page à récupérer. La numérotation des pages commence à zéro.")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Nombre d'éléments par page.")
+            @RequestParam(defaultValue = "5") int size
+    );
 
     /**
      * Récupère la liste des trajets à venir pour un utilisateur donné.

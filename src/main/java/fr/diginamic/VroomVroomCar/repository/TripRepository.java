@@ -51,17 +51,18 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
     @Query("SELECT t FROM Trip t LEFT JOIN CompanyCar cc ON (t.car IS NOT NULL AND t.car.id = cc.id) " +
             "WHERE (:villeDepart IS NULL OR t.villeDepart = :villeDepart) " +
             "AND (:villeArrivee IS NULL OR t.villeArrivee = :villeArrivee) " +
-            "AND (:dateDebut IS NULL OR t.dateDebut >= :dateDebut) " +
+            "AND (:dateDebut IS NULL OR :dateDebut BETWEEN t.dateDebut AND t.dateFin) " +
             "AND (:heureDepart IS NULL OR t.heureDepart >= :heureDepart) " +
             "AND (:vehiculeType = 'TOUS' OR " +
             "     (:vehiculeType = 'VOITURE_SERVICE' AND cc.id IS NOT NULL) OR " +
             "     (:vehiculeType = 'VOITURE_COVOIT' AND cc.id IS NULL))")
-    List<Trip> findTripsWithFilters(
+    Page<Trip> findTripsWithFilters(
             @Param("villeDepart") String villeDepart,
             @Param("villeArrivee") String villeArrivee,
             @Param("dateDebut") Date dateDebut,
             @Param("heureDepart") LocalTime heureDepart,
-            @Param("vehiculeType") String vehiculeType
+            @Param("vehiculeType") String vehiculeType,
+            Pageable pageable
     );
 
     /**

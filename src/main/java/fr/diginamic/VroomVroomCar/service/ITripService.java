@@ -1,15 +1,12 @@
 package fr.diginamic.VroomVroomCar.service;
 
 import fr.diginamic.VroomVroomCar.dto.request.TripRequestDto;
-import fr.diginamic.VroomVroomCar.dto.response.CarResponseDto;
 import fr.diginamic.VroomVroomCar.dto.response.TripResponseDto;
-import fr.diginamic.VroomVroomCar.dto.response.UserResponseDto;
 import fr.diginamic.VroomVroomCar.entity.Car;
 import fr.diginamic.VroomVroomCar.entity.Trip;
 import fr.diginamic.VroomVroomCar.entity.VehiculeType;
 import fr.diginamic.VroomVroomCar.exception.FunctionnalException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalTime;
 import java.util.Date;
@@ -24,8 +21,6 @@ public interface ITripService {
 
     /**
      * Crée un nouveau trajet à partir des données fournies.
-     * Le service récupère automatiquement les entités User et Car depuis la base de données
-     * à partir des identifiants fournis dans le DTO.
      *
      * @param tripRequestDto les informations nécessaires à la création du trajet
      * @return le trajet créé sous forme de DTO
@@ -34,9 +29,11 @@ public interface ITripService {
     TripResponseDto createTrip(TripRequestDto tripRequestDto) throws FunctionnalException;
 
     /**
-     * Récupère la liste de tous les trajets existants.
+     * Récupère une page de tous les trajets existants.
      *
-     * @return une liste de trajets sous forme de DTO
+     * @param page le numéro de la page à récupérer
+     * @param size le nombre d'éléments par page
+     * @return une page de trajets sous forme de DTO
      */
     Page<TripResponseDto> getAllTrips(int page, int size);
 
@@ -51,22 +48,22 @@ public interface ITripService {
 
     /**
      * Recherche les trajets en fonction des critères de filtre fournis.
-     * Tous les paramètres sont optionnels, mais au moins un doit être présent pour que la recherche ait du sens.
      *
-     * @param villeDepart   la ville de départ du trajet (peut être {@code null} pour ignorer ce critère)
-     * @param villeArrivee  la ville d'arrivée du trajet (peut être {@code null} pour ignorer ce critère)
-     * @param dateDebut     la date de début du trajet (peut être {@code null} pour ignorer ce critère)
-     * @param heureDepart   l'heure de départ du trajet (peut être {@code null} pour ignorer ce critère)
-     * @param vehiculeType  le type de véhicule souhaité (ex : SERVICE, PERSONNEL, TOUS)
-     * @return une liste de trajets correspondant aux critères spécifiés
+     * @param villeDepart la ville de départ du trajet (peut être {@code null} pour ignorer ce critère)
+     * @param villeArrivee la ville d'arrivée du trajet (peut être {@code null} pour ignorer ce critère)
+     * @param dateDebut la date de début du trajet (peut être {@code null} pour ignorer ce critère)
+     * @param heureDepart l'heure de départ du trajet (peut être {@code null} pour ignorer ce critère)
+     * @param vehiculeType le type de véhicule souhaité
+     * @param page le numéro de la page à récupérer
+     * @param size le nombre d'éléments par page
+     * @return une page de trajets correspondant aux critères spécifiés
      * @throws FunctionnalException si une erreur fonctionnelle survient lors de la recherche
      */
-    List<TripResponseDto> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
-                           LocalTime heureDepart, VehiculeType vehiculeType) throws FunctionnalException;
+    Page<TripResponseDto> searchTrips(String villeDepart, String villeArrivee, Date dateDebut,
+                                      LocalTime heureDepart, VehiculeType vehiculeType, int page, int size) throws FunctionnalException;
 
     /**
-     * Service permettant de récupérer les trajets futurs (à venir) d'un utilisateur,
-     * qu'il en soit l'organisateur ou un participant inscrit.
+     * Récupère les trajets futurs d'un utilisateur, qu'il en soit l'organisateur ou un participant inscrit.
      *
      * @param userId l'identifiant de l'utilisateur concerné
      * @return la liste des trajets futurs
@@ -74,8 +71,7 @@ public interface ITripService {
     List<TripResponseDto> getUpcomingUserTrips(Integer userId);
 
     /**
-     * Service permettant de récupérer les trajets passés d'un utilisateur,
-     * qu'il en soit l'organisateur ou un participant inscrit.
+     * Récupère les trajets passés d'un utilisateur, qu'il en soit l'organisateur ou un participant inscrit.
      *
      * @param userId l'identifiant de l'utilisateur concerné
      * @return la liste des trajets passés
@@ -84,8 +80,6 @@ public interface ITripService {
 
     /**
      * Met à jour un trajet existant avec les nouvelles données fournies.
-     * Le service récupère automatiquement les entités User et Car depuis la base de données
-     * si les identifiants sont modifiés dans le DTO.
      *
      * @param id l'identifiant du trajet à mettre à jour
      * @param tripRequestDto les nouvelles données du trajet
@@ -111,6 +105,7 @@ public interface ITripService {
      * @param villeDepart la ville de départ
      * @param villeArrivee la ville d'arrivée
      * @return l'heure estimée d'arrivée
+     * @throws FunctionnalException en cas d'erreur lors du calcul
      */
     LocalTime calculateArrivalTime(LocalTime heureDepart, String lieuDepart,
                                    String lieuArrivee, String villeDepart, String villeArrivee) throws FunctionnalException;
@@ -118,11 +113,7 @@ public interface ITripService {
     /**
      * Calcule le nombre de places restantes pour un trajet donné.
      *
-     * Si le véhicule associé est un véhicule de service et que l'organisateur a déjà une réservation
-     * pour ce véhicule aux mêmes dates, une place lui est réservée (décomptée). Ensuite, toutes les
-     * inscriptions existantes sont également décomptées du nombre total de places disponibles.
-     *
-     * @param tripRequestDto les informations du trajet (dates, identifiant, etc.)
+     * @param tripRequestDto les informations du trajet
      * @param car l'entité véhicule utilisé pour le trajet
      * @return le nombre de places restantes disponibles, toujours ≥ 0
      * @throws FunctionnalException en cas d'erreur de logique métier (véhicule introuvable, etc.)
