@@ -38,6 +38,7 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
         String jwt = Jwts.builder()
                 .setSubject(mail)
                 .claim("roles", role)
+                .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + (EXPIRES_IN * 1000L)))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
@@ -45,6 +46,8 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
         return ResponseCookie.from(TOKEN_COOKIE, jwt)
                 .httpOnly(true)
                 .maxAge(EXPIRES_IN)
+                .secure(false) //À passer en true en prod HTTPS
+                .sameSite("Strict")
                 .path("/")
                 .build();
     }
@@ -52,6 +55,7 @@ public class JwtAuthentificationService implements IJwtAuthentificationService {
     public void invalidateToken(HttpServletResponse http) {
         Cookie cookie = new Cookie(TOKEN_COOKIE, "");
             cookie.setHttpOnly(true);
+            cookie.setSecure(false); //À passer en true en prod HTTPS
             cookie.setMaxAge(0);
             cookie.setPath("/");
         http.addCookie(cookie);

@@ -39,23 +39,20 @@ public class UserController implements IUserController {
     }
 
     @PostMapping("/create-user")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> addUser(@RequestBody UserRequestDto user) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.createUser(user));
     }
     @PutMapping("/edit-user/{id}")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> editUser(@PathVariable Integer id ,@RequestBody UserRequestDto user) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.updateUser(id,user));
     }
 
     @PutMapping("/edit-user-by-nom")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> editUser(@RequestParam String nom ,@RequestBody UserRequestDto user) throws ResourceNotFoundException {
         return ResponseEntity.ok(userService.updateUser(nom,user));
     }
     @DeleteMapping("/{id}")
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable Integer id) throws ResourceNotFoundException {
         userService.deleteUser(id);
         return ResponseEntity.ok("L'utilisateur à l'id : " + id + " à bien été supprimé");
