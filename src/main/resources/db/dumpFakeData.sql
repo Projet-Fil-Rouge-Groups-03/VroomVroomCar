@@ -18,23 +18,23 @@ INSERT INTO voiture (marque, modele, nb_places, pollution, infos_supp, utilisate
 ('Renault', 'Clio', 5, 120, NULL, 1, 'ESSENCE', 'MINI_CITADINES'),
 ('Hyundai', 'Ioniq 5', 5, 0, '100% électrique', 5, 'ELECTRIQUE', 'SUV'),
 ('BMW', 'Série 1', 5, 80, NULL, 2, 'HYBRIDE', 'BERLINES_TAILLE_M'),
-('Opel', 'Corsa', 5, 120, NULL, 4, 'ESSENCE', 'MINI_CITADINES');
-('Toyota', 'Yaris', 5, 0, NULL, 1, 'HYBRIDE', 'COMPACTES'),
+('Opel', 'Corsa', 5, 120, NULL, 4, 'ESSENCE', 'MINI_CITADINES'),
+('Toyota', 'Yaris', 5, 0, NULL, 1, 'HYBRIDE', 'COMPACTES');
 
 INSERT INTO voiture_de_service (id, immatriculation, url_photo, status) VALUES
 (1, 'AB-123-CD', 'https://images.caradisiac.com/logos-ref/modele/modele--renault-clio-5/S7-modele--renault-clio-5.jpg', 'EN_SERVICE'),
 (2, 'EF-456-GH', 'https://images.caradisiac.com/logos-ref/modele/modele--peugeot-e-208-2e-generation/S7-modele--peugeot-e-208-2e-generation.jpg', 'HORS_SERVICE'),
 (3, 'IJ-789-KL', 'https://images.caradisiac.com/logos-ref/modele/modele--toyota-yaris-3/S7-modele--toyota-yaris-3.jpg', 'REPARATION'),
 (4, 'MN-321-OP', 'https://images.caradisiac.com/logos-ref/modele/modele--volkswagen-golf-8/S7-modele--volkswagen-golf-8.jpg', 'EN_SERVICE'),
-(5, 'QR-654-ST', 'https://images.caradisiac.com/logos-ref/modele/modele--bmw-serie-1-f21-m-3-portes/S7-modele--bmw-serie-1-f21-m-3-portes.jpg', 'EN_SERVICE');
-(11, 'CK-965-MY', 'https://images.caradisiac.com/photo/7/3/8/5/147385/S0-s0-essai-video-toyota-yaris-hybride-2020-l-economie-sans-l-ennui-638614-147385.jpg', 'EN_SERVICE')
+(5, 'QR-654-ST', 'https://images.caradisiac.com/logos-ref/modele/modele--bmw-serie-1-f21-m-3-portes/S7-modele--bmw-serie-1-f21-m-3-portes.jpg', 'EN_SERVICE'),
+(11, 'CK-965-MY', 'https://images.caradisiac.com/photo/7/3/8/5/147385/S0-s0-essai-video-toyota-yaris-hybride-2020-l-economie-sans-l-ennui-638614-147385.jpg', 'EN_SERVICE');
 
 INSERT INTO réservation (user_id,voiture_de_service_id, date_début, date_fin) VALUES
 (2, 1, '2025-06-20', '2025-06-21'),
 (2, 2, '2025-07-01', '2025-07-03'),
 (3, 3, '2025-06-22', '2025-06-24'),
 (4, 4, '2025-10-25', '2025-10-27'),
-(5, 5, '2025-06-28', '2025-06-30');
+(5, 5, '2025-06-28', '2025-06-30'),
 (2, 1, '2025-08-01', '2025-08-03'),
 (3, 2, '2025-08-05', '2025-08-07'),
 (4, 3, '2025-08-10', '2025-08-12'),
@@ -51,7 +51,7 @@ INSERT INTO trajet (organisateur_id, car_id, date_debut, date_fin, heure_depart,
 (2, 3, '2025-10-11', '2025-10-12', '09:00:00', '14:00:00', 'Place de Jaude', 'Clermont-Fd', 'Place Masséna', 'Nice', 4),
 (4, 4, '2025-08-12', '2025-08-13', '07:00:00', '11:00:00', 'Gare de Rennes', 'Rennes', 'Gare de Nantes', 'Nantes', 1),
 (3, 5, '2025-07-13', '2025-07-14', '06:30:00', '10:30:00', 'Université de Tours', 'Tours', 'Gare de Bordeaux', 'Bordeaux', 3),
-(5, 2, '2025-08-14', '2025-08-15', '10:00:00', '15:00:00', 'Gare de Dijon', 'Dijon', 'Gare de Strasbourg', 'Strasbourg', 2);
+(5, 2, '2025-08-14', '2025-08-15', '10:00:00', '15:00:00', 'Gare de Dijon', 'Dijon', 'Gare de Strasbourg', 'Strasbourg', 2),
 (2, 6, '2025-09-01', '2025-09-01', '08:00:00', '12:00:00', 'Gare de Lyon', 'Paris', 'Part-Dieu', 'Lyon', 3),
 (3, 7, '2025-09-05', '2025-09-05', '09:30:00', '11:00:00', 'Place Rihour', 'Lille', 'Gare Centrale', 'Bruxelles', 2),
 (4, 10, '2025-09-10', '2025-09-12', '07:00:00', '13:00:00', 'Université Grenoble', 'Grenoble', 'Promenade des Anglais', 'Nice', 4),
@@ -63,7 +63,7 @@ INSERT INTO inscription (utilisateur_id, trajet_id, date_inscription) VALUES
 (2, 1, '2025-06-15'),
 (3, 2, '2025-06-16'),
 (4, 3, '2025-06-17'),
-(5, 4, '2025-06-18');
+(5, 4, '2025-06-18'),
 (1, 6, '2025-07-20'),
 (2, 6, '2025-07-20'),
 (3, 7, '2025-07-21'),

@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import fr.diginamic.VroomVroomCar.entity.Categorie;
 import fr.diginamic.VroomVroomCar.entity.Motorisation;
 import fr.diginamic.VroomVroomCar.entity.VehiculeType;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "DTO pour les réponses relatives à une voiture.")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CarResponseDto {
 
     @Schema(description = "L'identifiant unique de la voiture", example = "1")
@@ -53,4 +55,7 @@ public class CarResponseDto {
 
     @Schema(description = "Le type de véhicule", example = "VOITURE_SERVICE ou VOITURE_COVOIT")
     private VehiculeType type;
+
+    @Schema(description = "URL de la photo du véhicule de service", example = "https://example.com/photo.jpg")
+    private String urlPhoto;
 }
