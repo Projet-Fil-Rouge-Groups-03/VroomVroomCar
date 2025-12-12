@@ -37,7 +37,7 @@ pipeline {
             steps {
                 dir('back-end') {
                     withSonarQubeEnv('SonarQube') {
-                        sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=qualiair-back'
+                        sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=VroomVroomCar'
                     }
                 }
             }
