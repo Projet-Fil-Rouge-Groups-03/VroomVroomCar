@@ -42,6 +42,7 @@ pipeline {
                     sh '''
                         mkdir -p back-end/src/main/resources
                         cp $app_properties back-end/src/main/resources/application.properties
+                        cp $app_env_properties back-end/src/main/resources/application-env.properties
                     '''
                 }
             }
