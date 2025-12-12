@@ -75,4 +75,4 @@ INSERT INTO notification (user_id, date, nom, contenu) VALUES
 (3, '2025-06-12', 'Trajet disponible', 'Un nouveau trajet correspondant à vos préférences est disponible.'),
 (4, '2025-06-11', 'Modification de trajet', 'Les horaires de votre trajet vers Nice ont été modifiés.'),
 (5, '2025-06-10', 'Nouvelle voiture ajoutée', 'Une nouvelle voiture est disponible pour réservation.'),
-(2, '2025-06-09', 'Rappel de trajet', 'N’oubliez pas votre trajet Paris-Lyon prévu le 5 juillet.');
+(2, '2025-06-09', 'Rappel de trajet', 'N\'oubliez pas votre trajet Paris-Lyon prévu le 5 juillet.');
