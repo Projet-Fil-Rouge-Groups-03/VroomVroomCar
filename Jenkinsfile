@@ -38,7 +38,12 @@ pipeline {
                 withCredentials([
                     file(credentialsId: 'API_PROPERTIES_APPLICATION', variable: 'app_properties'),
                     file(credentialsId: 'API_ENV_PROPERTIES_APPLICATION', variable: 'app_env_properties')
-                ])
+                ]) {
+                    sh '''
+                        mkdir -p src/main/resources
+                        cp $app_properties src/main/resources/application.properties
+                    '''
+                }
             }
         }
 
