@@ -1,5 +1,6 @@
 package fr.diginamic.VroomVroomCar.config;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +10,8 @@ public class JacksonConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        return JsonMapper.builder()
+                .findAndAddModules()
+                .build();
     }
 }
