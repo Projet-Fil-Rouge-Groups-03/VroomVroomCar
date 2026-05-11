@@ -31,5 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+docker-compose.yml
 
 src/main/resources/application-env.properties
