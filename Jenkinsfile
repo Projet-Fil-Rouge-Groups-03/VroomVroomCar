@@ -59,6 +59,8 @@ pipeline {
             post {
                 always {
                     junit 'back-end/**/target/surefire-reports/*.xml'
+                    archiveArtifacts artifacts: 'back-end/target/surefire-reports/*.txt',
+                                     allowEmptyArchive: true
                 }
                 failure {
                     echo 'Des tests unitaires ont échoué !'
