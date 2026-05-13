@@ -50,6 +50,25 @@ pipeline {
             }
         }
 
+        stage('Unit Tests') {
+            steps {
+                dir('back-end') {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit 'back-end/**/target/surefire-reports/*.xml'
+                }
+                failure {
+                    echo 'Des tests unitaires ont échoué !'
+                }
+                success {
+                    echo 'Tous les tests sont passés !'
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 dir('back-end') {
